@@ -1,0 +1,11 @@
+\contentsline {chapter}{\numberline {1}Abstract}{3}
+\contentsline {chapter}{\numberline {2}Introduction}{4}
+\contentsline {chapter}{\numberline {3}Problem Statement}{5}
+\contentsline {section}{\numberline {3.1}OK}{5}
+\contentsline {chapter}{\numberline {4}Blockchain Basics}{6}
+\contentsline {section}{\numberline {4.1}Basics}{6}
+\contentsline {chapter}{\numberline {5}Blockchain Scalability}{8}
+\contentsline {chapter}{\numberline {6}Smart Contract Security}{9}
+\contentsline {chapter}{\numberline {7}State of the Energy Market}{10}
+\contentsline {chapter}{\numberline {8}Design and Implementation}{11}
+\contentsline {chapter}{\numberline {9}Conclusion}{12}
