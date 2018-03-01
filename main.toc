@@ -1,26 +1,47 @@
-\contentsline {chapter}{\numberline {1}Abstract}{3}
-\contentsline {chapter}{\numberline {2}Introduction}{4}
-\contentsline {chapter}{\numberline {3}Problem Statement}{5}
-\contentsline {section}{\numberline {3.1}OK}{5}
-\contentsline {chapter}{\numberline {4}Blockchain Basics}{6}
-\contentsline {section}{\numberline {4.1}Blockchain Fundamentals}{6}
-\contentsline {subsection}{\numberline {4.1.1}Cryptographic Hash Functions}{6}
-\contentsline {subsection}{\numberline {4.1.2}Transaction}{6}
-\contentsline {subsection}{\numberline {4.1.3}Block}{6}
-\contentsline {subsection}{\numberline {4.1.4}Blockchain}{6}
-\contentsline {section}{\numberline {4.2}Ethereum}{6}
-\contentsline {subsection}{\numberline {4.2.1}EVM state machine}{6}
-\contentsline {subsection}{\numberline {4.2.2}Transactions in Ethereum}{6}
-\contentsline {subsection}{\numberline {4.2.3}Gas}{6}
-\contentsline {subsection}{\numberline {4.2.4}Transaction Fees - Scalability}{6}
-\contentsline {chapter}{\numberline {5}Blockchain Scalability}{7}
-\contentsline {chapter}{\numberline {6}Smart Contract Security}{8}
-\contentsline {chapter}{\numberline {7}State of the Energy Market}{9}
-\contentsline {chapter}{\numberline {8}Design and Implementation}{10}
-\contentsline {section}{\numberline {8.1}Business Logic}{10}
-\contentsline {section}{\numberline {8.2}Smart Contracts}{10}
-\contentsline {section}{\numberline {8.3}Monitoring Server}{10}
-\contentsline {subsection}{\numberline {8.3.1}REST API}{10}
-\contentsline {subsection}{\numberline {8.3.2}Python Client}{10}
-\contentsline {subsection}{\numberline {8.3.3}web3.py interaction}{10}
-\contentsline {chapter}{\numberline {9}Conclusion}{11}
+\contentsline {chapter}{\numberline {1}Abstract}{4}
+\contentsline {chapter}{\numberline {2}Introduction}{5}
+\contentsline {section}{\numberline {2.1}Motivation}{5}
+\contentsline {section}{\numberline {2.2}Problem Statement}{5}
+\contentsline {section}{\numberline {2.3}Scope}{5}
+\contentsline {section}{\numberline {2.4}Outline}{5}
+\contentsline {chapter}{\numberline {3}Blockchain Basics}{6}
+\contentsline {section}{\numberline {3.1}Blockchain Fundamentals}{6}
+\contentsline {subsection}{\numberline {3.1.1}Cryptographic Hash Functions}{6}
+\contentsline {subsection}{\numberline {3.1.2}Transaction}{6}
+\contentsline {subsection}{\numberline {3.1.3}Block}{6}
+\contentsline {subsection}{\numberline {3.1.4}Blockchain}{6}
+\contentsline {section}{\numberline {3.2}Ethereum}{6}
+\contentsline {subsection}{\numberline {3.2.1}EVM state machine}{6}
+\contentsline {subsection}{\numberline {3.2.2}Transactions as State Transitions}{6}
+\contentsline {subsection}{\numberline {3.2.3}Gas}{6}
+\contentsline {subsection}{\numberline {3.2.4}Programming in Ethereum}{6}
+\contentsline {subsubsection}{Solidity}{6}
+\contentsline {subsubsection}{Tooling}{6}
+\contentsline {chapter}{\numberline {4}Blockchain Scalability}{7}
+\contentsline {section}{\numberline {4.1}Bottlenecks in Scalability}{7}
+\contentsline {section}{\numberline {4.2}Network Level Scalability}{7}
+\contentsline {subsection}{\numberline {4.2.1}Proof of Authority Networks}{7}
+\contentsline {subsection}{\numberline {4.2.2}Sidechains}{7}
+\contentsline {subsection}{\numberline {4.2.3}Plasma}{7}
+\contentsline {subsection}{\numberline {4.2.4}Sharding}{7}
+\contentsline {subsection}{\numberline {4.2.5}Payment Channels}{7}
+\contentsline {section}{\numberline {4.3}Contract Level Scalability}{7}
+\contentsline {subsection}{\numberline {4.3.1}Gas Costs}{7}
+\contentsline {subsection}{\numberline {4.3.2}Optimizing for gas}{7}
+\contentsline {subsection}{\numberline {4.3.3}Encoding}{7}
+\contentsline {chapter}{\numberline {5}Smart Contract Security}{8}
+\contentsline {section}{\numberline {5.1}Past Vulnerabilities}{8}
+\contentsline {subsection}{\numberline {5.1.1}TheDAO}{8}
+\contentsline {subsection}{\numberline {5.1.2}KotE}{8}
+\contentsline {section}{\numberline {5.2}Security of deployed Smart Contracts}{8}
+\contentsline {section}{\numberline {5.3}Best Practices}{8}
+\contentsline {section}{\numberline {5.4}Access Control}{8}
+\contentsline {chapter}{\numberline {6}State of the Energy Market}{9}
+\contentsline {chapter}{\numberline {7}Design and Implementation}{10}
+\contentsline {section}{\numberline {7.1}Business Logic}{10}
+\contentsline {section}{\numberline {7.2}Smart Contracts}{10}
+\contentsline {section}{\numberline {7.3}Monitoring Server}{10}
+\contentsline {subsection}{\numberline {7.3.1}REST API}{10}
+\contentsline {subsection}{\numberline {7.3.2}Python Client}{10}
+\contentsline {subsection}{\numberline {7.3.3}web3.py interaction}{10}
+\contentsline {chapter}{\numberline {8}Conclusion}{11}
