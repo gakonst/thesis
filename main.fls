@@ -43,6 +43,18 @@ INPUT C:/Program Files (x86)/MiKTeX 2.9/tex/generic/oberdiek/infwarerr.sty
 INPUT C:/Program Files (x86)/MiKTeX 2.9/tex/generic/oberdiek/infwarerr.sty
 INPUT C:/Program Files (x86)/MiKTeX 2.9/tex/generic/oberdiek/ltxcmds.sty
 INPUT C:/Program Files (x86)/MiKTeX 2.9/tex/generic/oberdiek/ltxcmds.sty
+INPUT lib/solidity-highlighting.tex
+INPUT lib/solidity-highlighting.tex
+INPUT C:/Users/GAK/AppData/Roaming/MiKTeX/2.9/tex/latex/listings/listings.sty
+INPUT C:/Users/GAK/AppData/Roaming/MiKTeX/2.9/tex/latex/listings/listings.sty
+INPUT C:/Users/GAK/AppData/Roaming/MiKTeX/2.9/tex/latex/listings/lstmisc.sty
+INPUT C:/Users/GAK/AppData/Roaming/MiKTeX/2.9/tex/latex/listings/lstmisc.sty
+INPUT C:/Users/GAK/AppData/Roaming/MiKTeX/2.9/tex/latex/listings/listings.cfg
+INPUT C:/Users/GAK/AppData/Roaming/MiKTeX/2.9/tex/latex/listings/listings.cfg
+INPUT C:/Users/GAK/AppData/Roaming/MiKTeX/2.9/tex/latex/xcolor/xcolor.sty
+INPUT C:/Users/GAK/AppData/Roaming/MiKTeX/2.9/tex/latex/xcolor/xcolor.sty
+INPUT C:/Program Files (x86)/MiKTeX 2.9/tex/latex/graphics-cfg/color.cfg
+INPUT C:/Program Files (x86)/MiKTeX 2.9/tex/latex/graphics-cfg/color.cfg
 INPUT C:/Users/GAK/AppData/Roaming/MiKTeX/2.9/tex/latex/fancyhdr/fancyhdr.sty
 INPUT C:/Users/GAK/AppData/Roaming/MiKTeX/2.9/tex/latex/fancyhdr/fancyhdr.sty
 INPUT C:/Users/GAK/AppData/Roaming/MiKTeX/2.9/tex/latex/etoolbox/etoolbox.sty
@@ -108,12 +120,21 @@ INPUT chapters/state_of_energy_market.tex
 INPUT chapters/state_of_energy_market.tex
 INPUT chapters/design_implementation.tex
 INPUT chapters/design_implementation.tex
+INPUT code/example1.sol
+INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/tfm/public/cm/cmtt10.tfm
+INPUT code/example1.sol
+INPUT code/example1.sol
+INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/tfm/public/cm/cmbx12.tfm
 INPUT chapters/conclusion.tex
 INPUT chapters/conclusion.tex
 INPUT main.aux
 INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb
 INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb
+INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb
+INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb
 INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb
 INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb
 INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb
 INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb
+INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb
+INPUT C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb

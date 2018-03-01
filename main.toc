@@ -8,4 +8,10 @@
 \contentsline {chapter}{\numberline {6}Smart Contract Security}{9}
 \contentsline {chapter}{\numberline {7}State of the Energy Market}{10}
 \contentsline {chapter}{\numberline {8}Design and Implementation}{11}
+\contentsline {section}{\numberline {8.1}Business Logic}{11}
+\contentsline {section}{\numberline {8.2}Smart Contracts}{11}
+\contentsline {section}{\numberline {8.3}Monitoring Server}{11}
+\contentsline {subsection}{\numberline {8.3.1}REST API}{11}
+\contentsline {subsection}{\numberline {8.3.2}Python Client}{11}
+\contentsline {subsection}{\numberline {8.3.3}web3.py interaction}{11}
 \contentsline {chapter}{\numberline {9}Conclusion}{12}
