@@ -9,7 +9,6 @@
 % Setup Header / Footer
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-
 \fancyhead{}
 \fancyhead[RO,LE]{Ethereum Master Thesis}
 \fancyfoot{}
@@ -21,9 +20,11 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Setup Title format per chapter: "ChapterNumber: ChapterTitle" %
+
 \usepackage{titlesec}
+
 \titleformat{\chapter}[hang] 
-{\normalfont\huge\bfseries}{\thechapter:}{1em}{} 
+{\normalfont\huge\bfseries}{\thechapter}{1em}{} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -41,6 +42,8 @@
 \tableofcontents
 
 \chapter{Abstract}
+
+
 \input{chapters/abstract}
 
 \chapter{Introduction}
