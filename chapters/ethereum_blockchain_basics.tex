@@ -1,23 +1,66 @@
-\section{Blockchain Fundamentals}
-\subsection{Cryptographic Hash Functions}
-\subsection{Transaction}
-A transaction is a bunch of data 
-\subsection{Block}
-A block is a group of Transactions
-\subsection{Blockchain}
-A blockchain is a series of blocks linked to its previous one by referencing a hash pointer 
+\section{Introduction}
+A blockchain is a database that can be shared by non-trusting individuals without having a central party that maintains the state of the database. Namely, it is a list of \textit{blocks} that grows with time. Each block contains metadata in the form of \textit{blockheaders} and a group of transactions. A block is chained to its previous one by referencing the previous block's hash. As more blocks get added to the chain, previous blocks and their contents are considered to be more secure.
 
-\section{Use Cases}
+\section{Bitcoin}
+In 2009 Satoshi Nakamoto first publishes the Bitcoin whitepaper. There, Nakamoto describes ``a purely peer-to-peer version of electronic cash would allow online payments to be sent directly from one party to another without going through a financial institution.''
+In the beginning, Bitcoin was primarily used for fast and low-cost financial transactions. It was soon realized that its uses could be extended to more than just transfering value from A to B. The concept of colored coins, \cite{colored} was introduced, where users were able to embed extra data on a bitcoin, effectively painting a coin with  that could represent ownership over a title, digital tokens etc.
 
-\subsection{Blockchain Types}
-\subsubsection{Public Blockchain}
-\subsubsection{Private Blockchain}
-
+\section{Ethereum}
+In 2015, Vitalik Buterin authored the Ethereum Whitepaper \cite{vitalik} which was an alternative cryptocurrency to Bitcoin that enabled the creation of \textit{Smart Contracts}. Smart Contracts as a term was first introduced by Nick Szabo in 1996 as a model for verified trustless computation. The Ethereum Network acts as a world computer and smart contracts are code that gets executed trustlessly on every node that is part of the network. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Ethereum}
+\pagebreak
 
-\subsection{EVM state machine}
+\section{Blockchain Fundamentals}
+Before getting into the specifics of blockchains and Ethereum, the next section will be used to explain fundamental terms on cryptograpy and blockchain.
+
+\subsection{Public Key Cryptography}
+Also refered to as Assymetric Cryptography, it is a system that uses a pair of keys to encrypt and decrypt data. The two keys are usually called \textbf{public} and \textbf{private}, due to the private key being known only to its owner while the public key is known to the public. The main advantage of Public Key Cryptography is the lack of need for a secure channel for the initial exchange of keys between any communicating parties.
+
+The security Public Key Cryptography is based on cryptographic algorithms which are not solvable efficiently due to certain mathematical problems, such as the factorization of large integer numbers for RSA or the discrete logarithm problem for ECDSA, being hard.
+
+When a person encrypts a message with one key, its pair can be used to decrypt the same message. If a message gets encrypted with the private key of the sender, any receiver can verify that the message was indeed sent by the sender as they are the only possible owners of the private key used to enrypt the message. This achieves authentication, and the process is often referred to as \textit{signing} of a message. 
+
+% Insert figure about authentication from the above scheme
+
+\subsection{Cryptographic Hash Functions}
+
+A hash function is any function that is used to map arbitrary size data to fixed size. The result of a hash function is often called the \textit{hash} of its input. Cryptographic hash functions are hash functions that satisfy properties which make them useful for cryptograpy % Should use something different than wikipedia (https://en.wikipedia.org/wiki/Cryptographic_hash_function).
+
+More specifically, a secure cryptographic hash function should satisfy the following properties (\(H(x)\) refers to the hash of x):
+\begin{enumerate}
+   \item \textbf{Collision Resistance}: It should be computationally infeasible to find x and y such that \(H(x) = H(y)\). 
+   \item \textbf{Pre-Image Resistance}: Given \(H(x)\) it should be computationally infeasible to find \(x\).
+   \item \textbf{Second Pre-Image Resistance}: Given \(H(x)\) it should be computationally infeasible to find \(x'\) so that \(H(x') = H(x)\).
+\end{enumerate}
+
+Bitcoin uses the SHA-256 cryptographic hash function, while Ethereum uses KECCAK-256. Both functions' outputs are 256 bits long which is considered secure given the document's writing date standards.
+
+\subsection{Transaction}
+A transaction is a data structure which at its most general representation should include the following:
+\begin{enumerate}
+    \item Transaction Hash
+    \item From
+    \item To
+    \item Amount
+    \item Extra Data
+\end{enumerate}
+
+\subsection{Block}
+A block is a data structure which is comprised of headers and transactions. A block in Ethereum which contains 2 transactions can be seen below:
+% INSERT geth block 
+
+\subsection{Blockchain}
+Each block references a previous block by adding its hash to its header. A block needs to have a valid previous block hash in order to be valid itself. This essentially creates a chain of blocks each one linked to its previous one all the way to the genesis block. 
+In Bitcoin new blocks get created every approximately every 10 minutes, while in Ethereum every 12.5 seconds. The process of mining and how consensus is achieved is considered outside the scope of this Master Thesis.
+
+\subsection{Blockchain Types}
+Data on blockchains are public and readable by anyone. This is one of the main benefits of using a blockchain, transparency. However this does not apply to all business use-cases and Enterprises are looking at using their own permissioned (or private) blockchain for their internal business processes.
+
+Private blockchain implementations are JP Morgan's Quorum, IBM Hyperledger or R3 Enterprise. As described in \cite{publicprivate}, explain differences advantages disadvantages of private vs public.
+
+\subsection{Ethereum Virtual Machine}
+The Ethereum Virtual Machine (EVM) is the runtime environment for smart contracts on Ethereum. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Transactions as State Transitions}
@@ -26,10 +69,15 @@ A blockchain is a series of blocks linked to its previous one by referencing a h
 \subsection{Gas}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Programming in Ethereum}
-\subsubsection{Solidity}
-Contract oriented, explain ABI, bytecode
+\section{Programming in Ethereum}
+\subsection{Programming Languages}
+Many ones, most popular being Solidity. 
+Contract oriented, compiles to bytecode, explain ABI 
 
-\subsubsection{Tooling}
-Truffle, geth, docker, parity blabla
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Tooling}
+\subsubsection{Docker}
+Docker is used for isolated processes that interoperate with each other, same each time, no it works on my machine, launch network with docker-compose.
+\subsubsection{Geth - Parity - Ganache}
+Blockchian clients, Geth PoW with custom genesis, Parity can run PoA, Ganache for testnet locally. Compare Parity Genesis vs Geth Genesis blocks
+\subsubsection{Truffle}
+Truffle development framework. 

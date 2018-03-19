@@ -1,0 +1,19 @@
+\begin{thebibliography}{1}
+
+\bibitem{colored}
+Colored coins, 2013.
+
+\bibitem{publicprivate}
+Vitalik Buterin.
+\newblock On public and private blockchains.
+\newblock
+  \url{https://blog.ethereum.org/2015/08/07/on-public-and-private-blockchains},
+  2015.
+
+\bibitem{vitalik}
+Vitalik Buterin et~al.
+\newblock A next-generation smart contract and decentralized application
+  platform.
+\newblock {\em white paper}, 2014.
+
+\end{thebibliography}

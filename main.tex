@@ -3,15 +3,17 @@
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
+\usepackage{hyperref}
 
 \input{lib/solidity-highlighting}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Setup Header / Footer
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhead{}
 \fancyhead[RO,LE]{Ethereum Master Thesis}
-\fancyfoot{}
+\fancyfoot{:}
 \fancyfoot[LE,RO]{\thepage}
 \fancyfoot[C]{Chapter \thechapter}
 \fancyfoot[RE,LO]{Georgios Konstantopoulos}
@@ -69,5 +71,7 @@
 \chapter{Conclusion}
 \input{chapters/conclusion.tex}
 
+\bibliographystyle{plain}
+\bibliography{references}
 
 \end{document}
