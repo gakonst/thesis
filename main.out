@@ -1,48 +1,46 @@
 \BOOKMARK [0][-]{chapter.1}{Abstract}{}% 1
 \BOOKMARK [0][-]{chapter.2}{Introduction}{}% 2
-\BOOKMARK [1][-]{section.2.1}{Motivation}{chapter.2}% 3
+\BOOKMARK [1][-]{section.2.1}{History}{chapter.2}% 3
 \BOOKMARK [1][-]{section.2.2}{Problem Statement}{chapter.2}% 4
 \BOOKMARK [1][-]{section.2.3}{Scope}{chapter.2}% 5
 \BOOKMARK [1][-]{section.2.4}{Outline}{chapter.2}% 6
 \BOOKMARK [0][-]{chapter.3}{Blockchain Basics}{}% 7
-\BOOKMARK [1][-]{section.3.1}{Introduction}{chapter.3}% 8
-\BOOKMARK [1][-]{section.3.2}{Bitcoin}{chapter.3}% 9
-\BOOKMARK [1][-]{section.3.3}{Ethereum}{chapter.3}% 10
-\BOOKMARK [1][-]{section.3.4}{Blockchain Fundamentals}{chapter.3}% 11
-\BOOKMARK [2][-]{subsection.3.4.1}{Public Key Cryptography}{section.3.4}% 12
-\BOOKMARK [2][-]{subsection.3.4.2}{Cryptographic Hash Functions}{section.3.4}% 13
-\BOOKMARK [2][-]{subsection.3.4.3}{Transaction}{section.3.4}% 14
-\BOOKMARK [2][-]{subsection.3.4.4}{Block}{section.3.4}% 15
-\BOOKMARK [2][-]{subsection.3.4.5}{Blockchain}{section.3.4}% 16
-\BOOKMARK [2][-]{subsection.3.4.6}{Blockchain Types}{section.3.4}% 17
-\BOOKMARK [2][-]{subsection.3.4.7}{Ethereum Virtual Machine}{section.3.4}% 18
-\BOOKMARK [2][-]{subsection.3.4.8}{Transactions as State Transitions}{section.3.4}% 19
-\BOOKMARK [2][-]{subsection.3.4.9}{Gas}{section.3.4}% 20
-\BOOKMARK [1][-]{section.3.5}{Programming in Ethereum}{chapter.3}% 21
-\BOOKMARK [2][-]{subsection.3.5.1}{Programming Languages}{section.3.5}% 22
-\BOOKMARK [2][-]{subsection.3.5.2}{Tooling}{section.3.5}% 23
-\BOOKMARK [0][-]{chapter.4}{Blockchain Scalability}{}% 24
-\BOOKMARK [1][-]{section.4.1}{Bottlenecks in Scalability}{chapter.4}% 25
-\BOOKMARK [1][-]{section.4.2}{Network Level Scalability}{chapter.4}% 26
-\BOOKMARK [1][-]{section.4.3}{Contract Level Scalability}{chapter.4}% 27
-\BOOKMARK [2][-]{subsection.4.3.1}{Gas Costs}{section.4.3}% 28
-\BOOKMARK [2][-]{subsection.4.3.2}{Optimizing for gas}{section.4.3}% 29
-\BOOKMARK [2][-]{subsection.4.3.3}{Encoding}{section.4.3}% 30
-\BOOKMARK [0][-]{chapter.5}{Smart Contract Security}{}% 31
-\BOOKMARK [1][-]{section.5.1}{Past Vulnerabilities}{chapter.5}% 32
-\BOOKMARK [1][-]{section.5.2}{Security of deployed Smart Contracts}{chapter.5}% 33
-\BOOKMARK [1][-]{section.5.3}{Best Practices}{chapter.5}% 34
-\BOOKMARK [1][-]{section.5.4}{Access Control}{chapter.5}% 35
-\BOOKMARK [0][-]{chapter.6}{Blockchain and the Energy Market}{}% 36
-\BOOKMARK [1][-]{section.6.1}{Advantages of Blockchain}{chapter.6}% 37
-\BOOKMARK [1][-]{section.6.2}{Our Use-case}{chapter.6}% 38
-\BOOKMARK [0][-]{chapter.7}{Design and Implementation}{}% 39
-\BOOKMARK [1][-]{section.7.1}{Business Logic}{chapter.7}% 40
-\BOOKMARK [1][-]{section.7.2}{Smart Contracts}{chapter.7}% 41
-\BOOKMARK [1][-]{section.7.3}{Monitoring Server}{chapter.7}% 42
-\BOOKMARK [2][-]{subsection.7.3.1}{REST API}{section.7.3}% 43
-\BOOKMARK [2][-]{subsection.7.3.2}{Python Client}{section.7.3}% 44
-\BOOKMARK [2][-]{subsection.7.3.3}{web3.py interaction}{section.7.3}% 45
-\BOOKMARK [0][-]{chapter.8}{Conclusion}{}% 46
-\BOOKMARK [1][-]{section.8.1}{Results}{chapter.8}% 47
-\BOOKMARK [1][-]{section.8.2}{Future Work}{chapter.8}% 48
+\BOOKMARK [1][-]{section.3.1}{Overview}{chapter.3}% 8
+\BOOKMARK [2][-]{subsection.3.1.1}{Public Key Cryptography}{section.3.1}% 9
+\BOOKMARK [2][-]{subsection.3.1.2}{Cryptographic Hash Functions}{section.3.1}% 10
+\BOOKMARK [1][-]{section.3.2}{Ethereum Blockchain}{chapter.3}% 11
+\BOOKMARK [2][-]{subsection.3.2.1}{Transaction}{section.3.2}% 12
+\BOOKMARK [2][-]{subsection.3.2.2}{Block}{section.3.2}% 13
+\BOOKMARK [2][-]{subsection.3.2.3}{Blockchain}{section.3.2}% 14
+\BOOKMARK [2][-]{subsection.3.2.4}{Blockchain Types}{section.3.2}% 15
+\BOOKMARK [2][-]{subsection.3.2.5}{Transactions as State Transitions}{section.3.2}% 16
+\BOOKMARK [2][-]{subsection.3.2.6}{Ethereum Virtual Machine}{section.3.2}% 17
+\BOOKMARK [2][-]{subsection.3.2.7}{Gas}{section.3.2}% 18
+\BOOKMARK [1][-]{section.3.3}{Programming in Ethereum}{chapter.3}% 19
+\BOOKMARK [2][-]{subsection.3.3.1}{Programming Languages}{section.3.3}% 20
+\BOOKMARK [2][-]{subsection.3.3.2}{Tooling}{section.3.3}% 21
+\BOOKMARK [0][-]{chapter.4}{Blockchain Scalability}{}% 22
+\BOOKMARK [1][-]{section.4.1}{Bottlenecks in Scalability}{chapter.4}% 23
+\BOOKMARK [1][-]{section.4.2}{Network Level Scalability}{chapter.4}% 24
+\BOOKMARK [1][-]{section.4.3}{Contract Level Scalability}{chapter.4}% 25
+\BOOKMARK [2][-]{subsection.4.3.1}{Gas Costs}{section.4.3}% 26
+\BOOKMARK [2][-]{subsection.4.3.2}{Optimizing for gas}{section.4.3}% 27
+\BOOKMARK [2][-]{subsection.4.3.3}{Encoding}{section.4.3}% 28
+\BOOKMARK [0][-]{chapter.5}{Smart Contract Security}{}% 29
+\BOOKMARK [1][-]{section.5.1}{Past Vulnerabilities}{chapter.5}% 30
+\BOOKMARK [1][-]{section.5.2}{Security of deployed Smart Contracts}{chapter.5}% 31
+\BOOKMARK [1][-]{section.5.3}{Best Practices}{chapter.5}% 32
+\BOOKMARK [1][-]{section.5.4}{Access Control}{chapter.5}% 33
+\BOOKMARK [0][-]{chapter.6}{Blockchain and the Energy Market}{}% 34
+\BOOKMARK [1][-]{section.6.1}{Advantages of Blockchain}{chapter.6}% 35
+\BOOKMARK [1][-]{section.6.2}{Our Use-case}{chapter.6}% 36
+\BOOKMARK [0][-]{chapter.7}{Design and Implementation}{}% 37
+\BOOKMARK [1][-]{section.7.1}{Business Logic}{chapter.7}% 38
+\BOOKMARK [1][-]{section.7.2}{Smart Contracts}{chapter.7}% 39
+\BOOKMARK [1][-]{section.7.3}{Monitoring Server}{chapter.7}% 40
+\BOOKMARK [2][-]{subsection.7.3.1}{REST API}{section.7.3}% 41
+\BOOKMARK [2][-]{subsection.7.3.2}{Python Client}{section.7.3}% 42
+\BOOKMARK [2][-]{subsection.7.3.3}{web3.py interaction}{section.7.3}% 43
+\BOOKMARK [0][-]{chapter.8}{Conclusion}{}% 44
+\BOOKMARK [1][-]{section.8.1}{Results}{chapter.8}% 45
+\BOOKMARK [1][-]{section.8.2}{Future Work}{chapter.8}% 46

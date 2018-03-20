@@ -1,0 +1,4 @@
+$ solc --optimize --asm Packing.sol | grep sstore | wc-l
+2
+$ solc --asm Packing.sol | grep sstore | wc -l
+6

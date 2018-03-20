@@ -1,18 +1,59 @@
 \section{Bottlenecks in Scalability}
-Explain proof of work and how it limits transactions per second.
-A variety of Scalability Solutions have been thought of such as Plasma, blabla, Ethermint?
-We argue that there are two levels of scalability. Scalability on Contract and on Network Level. While the solutions described above are aiming at solving the Network level scalability, it is argued that scalability cna be also be improved by proper contract design, i.e better algorithm
+A blockchain's scalability is often measured in transactions per second. A block gets appended to the chain every 15 seconds on avereage in Ethereum, and can contain only a finite amount of transactions. As a result, transaction throughput is bound by the frequency of new blocks and by the number of transactions in them.
+
+Proof-of-Work has been the only consensus algorithm to date that has proven to be effective against attackers, while still relatively maintaining the decentralization of the network. Due to faster block times, it can handle ~7 transactions per second (tx/s), which is better than bitcoin's 3 tx/s however still not comparable to Visa's 2000 consistent tx/s or 60000 at peak. As a result, creating scalable blockchain architectures has been a topic of interest.
+
+We argue that there are two levels of scalability, scalability on contract and on network level. Better contract design can result in transactions which require less gas to execute, and thus allow for more transactions to fit in a block while also making it cheaper for the end user. It should be noted that as Ethereum's current blockGasLimit is set by the miners at 8003916, if all transactions in Ethereum were financial transactions (each costing 21000 gas), each block would be able to handle ~381 transactions per block, which is 25 tx/s, which is still not comparable to traditional payment operators. 
 
 \section{Network Level Scalability}
-Long term solutions include. Due to the use case we will focus on shorter term solutions are shardign and casper pos
-Shorter term solutions include payment channels, sidechains and alternative consensus algorithms. Due to the corporate setup, we choose to use proof of authority networks and further analyze them along with a minimal implementation of payment channels
-% \subsection{Proof of Authority Networks}
-% \subsection{Sidechains}
-% \subsection{Plasma}
-% \subsection{Sharding}
-% \subsection{Payment Channels}
+A naive solution in achieving scalability involves increasing the size of each block, or in Ethereum terms the \textit{blockGasLimit}. This solution is not sustainable as it compromises decentralization, due to increased network and hardware costs. Bigger blocks require more disk space for storing the blockchain, better bandwith for the block propagation and more processing power on a node to verify the computations in a block. This eventually requires computers with datacenter-level network connections and processing power which are not accessible to the average consumer, thus damaging decentralization which is the core value proposition of blockchain. The blockGasLimit can be voted on by miners\footnote{\url{https://www.etherchain.org/tools/gasLimitVoting}}. % In addition to the reasons stated above, increasing the gas limit also potentially damages the security of the network due to increased uncle rates, Ethereum's analog to Bitcoin's orphan blocks \footnote{\url{https://blockchain.info/orphaned-blocks}}. Longer propagation time implies that a miner will spend more time searching for a solution until they receive a valid block, and thus has more chances of finding a valid block in that time. As a result, 
 
+Long term solutions in Ethereum are categorized in:
+\begin{enumerate}
+    \item Sidechains: First described in \cite{sidechains}, sidechains (side-blockchains) are running in `parallel' to the mainchain, while using a sort of mechanism to benefit from the security of the main blockchain (mainchain). This allows them to implement consensus rules which are more flexible and customized to their use-case, allowing for potentially infinite scalability.
+    \item Proof of Stake: Proof of Work provides security at the cost of energy consumed by miners. Alternative consensus algorithms such as Proof of Stake (PoS), are more friendly to the environment than Proof of Work\cite{powenv}. Instead of consuming energy, PoS involves validators who are `staking' their ETH and by modeling their incentives and appropriately punishing malicious behavior, the network can have the same security as PoW. Ethereum is planning to transition to PoS, however there is no clear date when this is going to happen as this is still under heavy research.
+    \item Sharding: Due to the architecture of the EVM, it is not parallelizable. Sharding refers to having nodes which validate different parts of the blockchain, allowing for parallelizability on computations. 
+    \item State channels: In the case of micropayments which involve a number of transactions between parties, there is no need to make every transaction on the blokcchain. The proposed technique involves exchanging signed messages offchain and settling when the transactions are finished. As a result, a transaction is done to open the state channel, and another to settle it.
+\end{enumerate}
+    
 \section{Contract Level Scalability}
+In a recent study \cite{DBLP:journals/corr/ChenLLZ17}, after evaluating 4240 smart contracts, it is found that over 70\% of them are under-optimized with respect to gas from the compiler. In this section we explore how gas gets computed and ways we can save on gas.
+
+[INSERT TABLE ON GAS COSTS SHOWING SSTORE ETC]
+% \input{code/opcode_table.tex}
+
 \subsection{Gas Costs}
+A smart contract gets compiled to EVM Assembly. There, by inspection or by using tools we can estimate the gas cost for deploying a contract or calling a function. The EVM operates on 32 byte words and requires a SSTORE command every 32 bytes. It also applies packing, which means that 2 128 storage variables can be stored with 1 SSTORE command. The \textit{optimize} flag of the Solidity compiler needs to be activated to access this feature when programming in Solidity.
+
+\begin{figure}[H]
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \lstinputlisting[language=Solidity]{code/Packing.sol}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \lstinputlisting{code/solc.txt}
+    \end{subfigure}
+    \label{struct_optimization}
+    \caption{Running the optimizer in storage variables less than 256 bytes results in 2 SSTORE commands instead of 6 which a significant saving in gas costs}
+\end{figure}
+
 \subsection{Optimizing for gas}
+Various methods have been proposed for saving gas costs. A recent construction\cite{gastoken} describes pre-buying gas at low cost periods in order to spend when prices are higher at times when the network is congested. 
+
+General rules that should be followed for saving gas costs:
+\begin{enumerate}
+    \item There is no reason in saving chunks of data on a blockchain, unless the data itself needs to be stored forever. If the data's proof of existence needs to be stored, a 32 byte hash is sufficient.
+    \item Enable compiler optimizations
+    \item Use `delete' on unused variables. SSTORE's formula refunds when setting back to 0. [ REPHRASE ]
+    \item Use `bytes32' instead of `string' for strings that are of known size. `bytes32' always fit in an EVM word, while `string' types can be arbitrarily long and thus require more gas for saving their length. FACTCHECK
+    \item ADDMORE
+\end{enumerate}
+
+Finally, as described in \cite{DBLP:journals/corr/ChenLLZ17} there is a lot of room for further compiler optimizations. Future Solidity compiler versions are addressing some already\footnote{\url{https://github.com/ethereum/solidity/issues/3760}}\footnote{\url{https://github.com/ethereum/solidity/issues/3716}}\footnote{\url{https://github.com/ethereum/solidity/issues/3691}}
+
 \subsection{Encoding}
+We describe a technique of bitmasking and shifting data,  influenced by \cite{virtualstruct}. It allows for gas savings compared to when storing as a normal structure. This compromises some of the readability of the library, however we can export a user-friendly API which allows to save up to X gas on data storage. This will be utilized in the implementation in Section X. 
+
+CONTINUEHERE
