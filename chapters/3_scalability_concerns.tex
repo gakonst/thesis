@@ -1,0 +1,133 @@
+\chapter{Blockchain Scalability}
+
+\section{Bottlenecks in Scalability}
+A blockchain's scalability is often measured in transactions per second. A block gets appended to the chain every 15 seconds on avereage in Ethereum, and can contain only a finite amount of transactions. As a result, transaction throughput is bound by the frequency of new blocks and by the number of transactions in them.
+
+Proof-of-Work has been the only consensus algorithm to date that has proven to be effective against attackers, while still relatively maintaining the decentralization of the network. Due to faster block times, it can handle ~7 transactions per second (tx/s), which is better than bitcoin's 3 tx/s however still not comparable to Visa's 2000 consistent tx/s or 60000 at peak. As a result, creating scalable blockchain architectures has been a topic of interest.
+
+We argue that there are two levels of scalability, scalability on contract and on network level. Better contract design can result in transactions which require less gas to execute, and thus allow for more transactions to fit in a block while also making it cheaper for the end user. It should be noted that as Ethereum's current blockGasLimit is set by the miners at 8003916, if all transactions in Ethereum were financial transactions (each costing 21000 gas), each block would be able to handle ~381 transactions per block, which is 25 tx/s, which is still not comparable to traditional payment operators. 
+
+\section{Network Level Scalability}
+A naive solution in achieving scalability involves increasing the size of each block, or in Ethereum terms the \textit{blockGasLimit}. This solution is not sustainable as it compromises decentralization, due to increased network and hardware costs. Bigger blocks require more disk space for storing the blockchain, better bandwith for the block propagation and more processing power on a node to verify the computations in a block. This eventually requires computers with datacenter-level network connections and processing power which are not accessible to the average consumer, thus damaging decentralization which is the core value proposition of blockchain. The blockGasLimit can be voted on by miners\footnote{\url{https://www.etherchain.org/tools/gasLimitVoting}}. % In addition to the reasons stated above, increasing the gas limit also potentially damages the security of the network due to increased uncle rates, Ethereum's analog to Bitcoin's orphan blocks \footnote{\url{https://blockchain.info/orphaned-blocks}}. Longer propagation time implies that a miner will spend more time searching for a solution until they receive a valid block, and thus has more chances of finding a valid block in that time. As a result, 
+
+Long term solutions in Ethereum are categorized in:
+\begin{enumerate}
+    \item Sidechains: First described in \cite{sidechains}, sidechains (side-blockchains) are running in `parallel' to the mainchain, while using a sort of mechanism to benefit from the security of the main blockchain (mainchain). This allows them to implement consensus rules which are more flexible and customized to their use-case, allowing for potentially infinite scalability.
+    \item Proof of Stake: Proof of Work provides security at the cost of energy consumed by miners. Alternative consensus algorithms such as Proof of Stake (PoS), are more friendly to the environment than Proof of Work\cite{powenv}. Instead of consuming energy, PoS involves validators who are `staking' their ETH and by modeling their incentives and appropriately punishing malicious behavior, the network can have the same security as PoW. Ethereum is planning to transition to PoS, however there is no clear date when this is going to happen as this is still under heavy research.
+    \item Sharding: Due to the architecture of the EVM, it is not parallelizable. Sharding refers to having nodes which validate different parts of the blockchain, allowing for parallelizability on computations. 
+    \item State channels: In the case of micropayments which involve a number of transactions between parties, there is no need to make every transaction on the blokcchain. The proposed technique involves exchanging signed messages offchain and settling when the transactions are finished. As a result, a transaction is done to open the state channel, and another to settle it.
+\end{enumerate}
+    
+\section{Contract Level Scalability}
+In a recent study \cite{DBLP:journals/corr/ChenLLZ17}, after evaluating 4240 smart contracts, it is found that over 70\% of them are under-optimized with respect to gas from the compiler. In this section we explore how gas gets computed and ways we can save on gas and transaction costs.
+
+
+\subsection{Gas Costs}
+An Ethereum transaction's gas costs are split in: % https://ethereum.stackexchange.com/a/29560
+\begin{enumerate}
+    \item \textbf{Transaction Costs:} The cost of sending data to the blockchain. There are 4 items which make up the full transaction cost:
+        \begin{enumerate}
+            \item The base cost of a transaction (21000 gas)
+            \item The cost of a contract deployment (32000 gas)
+            \item The cost for every zero byte of data or contracts for a transaction.
+            \item The cost of every non-zero byte of data or contracts for a transaction.
+        \end{enumerate}
+    \item \textbf{Execution Costs:} The cost of computational operations which are executed as a result of the the transaction, as described in detail in \cite{ethereum, gas} 
+\end{enumerate} 
+
+[INSERT TABLE ON GAS COSTS SHOWING SSTORE ETC]
+
+% bytecontracts includes constructor and general initialisation contracts which is not needed anymore at runtime. The contracts that is sent during deployment (bytecontracts), even excluding the constructor arguments, is - in general - different from the contracts that is stored at that address (the runtimeBytecontracts).
+
+
+% \input{contracts/opcontracts_table.tex}
+Gas costs get translated to transaction fees. As a result, a contract should be designed to minimize its operational gas costs in order to minimize its transaction fees. In addition, as gas is a unit for computational costs, less gas consumed results in less burden on the nodes validating the smart contracts which can lead to increased scalability.
+
+From the gas cost table, it can be seen that the most expensive operations involve SSTORE operations. The focus of this section will be to explore ways to decrease gas costs on Smart Contracts, either through better practices or by handcrafting optimizations for specific use cases.
+
+It should be noted, that non-standard methods have been proposed for reducing fees incurred by gas costs. A recent construction\cite{gastoken} describes a method for buying gas at low cost periods and saving it in order to spend it when prices are higher at times when the network is congested. The economic applications of gas arbitrage are outside the scope of this Master Thesis. 
+
+General rules that should be followed for saving gas costs:
+\begin{enumerate}
+    \item Enable compiler optimizations (although can lead to unexpected scenarios \cite{compiler})
+    \item Reuse contracts through libraries\cite{library}
+    \item Setting a variable back to zero refunds 15000 gas through SSTORE, so if a variable is going to be unused it is considered good practice to call delete on it. 
+    \item Use `bytes32' instead of `string' for strings that are of known size. `bytes32' always fit in an EVM word, while `string' types can be arbitrarily long and thus require more gas for saving their length. [NEEDSCITATION]
+    \item Do not save large amounts of data on a blockchain. Instead, save a hash to prove their existence at a lower point in time.
+\end{enumerate}
+
+As described in \cite{DBLP:journals/corr/ChenLLZ17} there is a lot of room for further compiler optimizations. Future Solidity compiler versions are addressing some already\footnote{\url{https://github.com/ethereum/solidity/issues/3760}}\footnote{\url{https://github.com/ethereum/solidity/issues/3716}}\footnote{\url{https://github.com/ethereum/solidity/issues/3691}}
+
+The EVM operates on 32 byte words [CITE] implying that a SSTORE command is needed to store 32 bytes of data. The compiler is able to tightly pack data together, which means that 2 128 bit storage variables can be efficiently stored with 1 SSTORE command. The \textit{optimize} flag of the Solidity compiler needs to be activated to access this feature when programming in Solidity.
+
+\begin{figure}[H]
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \lstinputlisting[language=Solidity]{contracts/Packing.sol}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \lstinputlisting{code/solc.txt}
+  \end{subfigure}
+  \label{struct_optimization}
+  \caption{Running the optimizer in storage variables less than 256 bytes results in 2 SSTORE commands instead of 6 which a significant saving in gas costs}
+\end{figure}
+
+\subsection{Gas Savings Case Study}
+In order to illustrate our findings and compare accross different scenarios, we will perform a Solidity benchmarking test based on a use-case of a Solidity Smart Contract which describes a game. The contract must allows a user to register as a player if they are not already registered and allow them to create a character with some traits. Table X describes these traits:
+
+% Table describing character characteristics.
+\input{tables/character.tex} % Phrase this better
+The size of the variables is selected so that all the information required to describe a `Character' can fit in a 256 bit word.
+
+For each of the following implementations we will examine the deployment gas costs, as well as the gas costs for calling the `CreateCharacter' function:
+
+\begin{enumerate}
+    \item Tightly packed structures for setting data
+    \item Bit masking encoding for setting data
+    \item Bit masking encoding utilizing libraries, influenced by \cite{virtualstruct}.
+\end{enumerate}
+
+%% TODO Make contracts appear in some good way. 2 columns, each one for Create/Get character.
+The full contracts of each contract can be found in the Appendix. 
+For each test described, the optimizer was run 0, 1, 100, 500 and 50000 times.
+% \lstinputlisting[language=Solidity]{contracts/GameInterface.sol}
+\subsubsection{GameTightlyPacked.sol}
+We're utilizing a structure here and by taking advantage of the optimizer packing everything in a word we can perform a full write to structure with only X gas 
+
+% \lstinputlisting[language=Solidity]{contracts/GameTightlyPacked.sol}
+
+\subsubsection{GameByteMasking.sol}
+Here we create a new character by shifting variables. This concept can be though as a `virtualstruct'. Essentially instead of creating a `struct' as Soldiity expects it and let the compiler do the parsing, we do it ourselves. That way, we achieve gas costs which are substantially lower.
+% \lstinputlisting[language=Solidity]{contracts/GameByteMasking.sol}
+\input{tables/GameByteMasking.tex}:
+
+In addition, as we essentially do the optimization ourselves, the deployed bytecode is smaller. 
+This is not exactly intuitive, as it'd be expected that the solidity compiler is able to pack everything perfectly. It turns out\footnote{https://github.com/figs999/Ethereum/blob/master/Solc.aComedyInOneAct} that the compiler is not very efficient and as a result this method is far more efficient. With this method we are able to store and fetch all the data in a very efficient way, which costs X\% gas less than the previous implementation. However, this method does not allow for a readable and maintainable interface. In order to export every functionality it is needed to convert the `uint' variables to bytes to perform the bit operations on functions. This creates undesired overhead and thus is avoided.
+
+\subsubsection{GameByteMaskingLib.sol}
+It is important to consider code reusability, in the case another developer wanted to develop on the same structure, they should not need to deploy the core functionality of the `Character' structure each time. Utilizing the `using X for Y' syntax, we can export the library's API in a format that is similar to calling functions on struct's in Golang \footnote{\url{ golangtutorials.blogspot.de/2011/06/methods-on-structs.html}}.
+
+The are two ways to export functions when creating Solidity APIs:
+\begin{enumerate}
+    \item Internal: The library's bytecode is inlined to the main contract's code. This results in larger bytecode during deployment, however each of the contract's function are immediately jumping and returning to the Library's code, like any function. In this case, only the main contract gets deployed.
+    \item Public: This is a more complex process:
+        \begin{enumerate}
+            \item The library contract gets compiled and deployed
+            \item The main contract gets compiled and has placeholder slots in the bytecode.
+            \item The placeholder gets replaced by the deployed library's address
+            \item Any function call that requires the library utilizes the `delegatecall' opcode.
+        \end{enumerate}
+\end{enumerate}
+
+The usage of the former can be done for separating the code and creating a more well done repository. The latter's usability cna be seen with more general purpose functions such as error-checked functions for mathematic operations. That way, instaed of everyone having to deploy their own version, they can use the already deployed one. The tradeoff comes between deployment costs and calling each function. When the bytecode is inlined, the jumping is done internally, while delegatecall requires additional resources. Finally there is a security gain, such as when everyone uses the same version of an audited library compared to everyone deploying their own. We opt for the internal approach, because cheaper and does not make sense to deploy, i.e. not enough people will care about it.
+
+The final version is split in two files, a library file and a main file. [ EXPLAIN LIBRARIES ]. 
+% \lstinputlisting[language=Solidity]{contracts/GameByteMaskingLib.sol}
+%\footnote{\url{http://solidity.readthedocs.io/en/v0.4.21/contracts.html#using-for}}
+
+\subsection{Results}
+It can be seen that in all cases the optimizer's first iteration creates significant gas savings. However, the more optimizer-runs were done, the more gas cost was spent during deployment, however the cost of `CreateCharacter' went down. Code in Solidity is either optimized for size, and thus costs less to deploy, or for runtime costs, which costs more to deploy but each function costs less \cite{optimizer-tradeoff}.
+
+We described a technique which relies on the compiler's optimizer to pack the data in a struct and do the gas savings, however is simpler and more elegant. The second and third technique are more complex and allow for further gas optimizations. The second technique is more efficient however lacks reusability and is less maintanable. On the other hand, utilizing libraries however we can export a user-friendly API for reusing our code for anyone who has the same use case as us. This technique will be utilized in the Design and implementation section.

@@ -1,0 +1,21 @@
+\begin{table}[H]
+	\centering
+	\vspace*{-1ex}
+	\scriptsize
+	\caption{Required variables and size. Sizes add up to 256 bits}
+	\vspace{-1ex}
+	\label{character}
+	\begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Name} & \textbf{Type}  & \textbf{Comment}\\ \hline 
+        playerID      & uint16         & Game supports up to 65535 players\\
+        creationTime  & uint32         & Game supports timestamps up to 2**32 = 02/07/2106 @ 6:28am (UTC) \\
+        class         & uint4          & Game supports up to 16 classes \\
+        race          & uint4          & Game supports up to 16 classes \\
+        strength      & uint16         & Stats can be up to 65535\\
+        agility       & uint16         & Stats can be up to 65535 \\
+        wisdom        & uint16         & Stats can be up to 65535 \\
+        metadata      & bytes19        & Utilize the rest of the word for metadata \\
+        \hline
+    \end{tabular}
+\end{table}
