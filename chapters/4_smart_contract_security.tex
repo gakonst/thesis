@@ -1,19 +1,79 @@
-\chapter{Smart Contract Security}
-Smart contracts immutable, lack of tooling, and developer mistakes
+\chapter{Ethereum and Security}
 
-\section{Past Vulnerabilities}
-Past vulnerabilities had lots of money locked, business logic of application broken. Brief summary of some vulns. Refer to relevant literature for more in depth.
+The Ethereum platform itself has proven to be robust and reliable as a blockchain as it has been resistant to both censorship and double-spend attacks. In this chapter we discuss vulnerabilities that have been found in the network's implementation which resulted in Denial of Service-like attacks and the blockchain's state being bloated with junk data. Afterwards, we discuss the security of smart contracts and the best practices that need to be applied in order to have a proper workflow. We contribute to the existing literature by evaluating the usage of the tools `Slither' and `Echidna' towards finding smart contract vulnerabilities and edge cases.
 
-Online platforms for training and exploiting have been developed.
+\section{Past Attacks}
+\subsection{Network Level Attacks}
 
-\section{Security of deployed Smart Contracts}
-Talk about the literature which has already mapped through the deployed contracts. 
-Which tools did they use? Oyente, Mythril etc
+\paragraph{September October 2016 Spam Attacks}
+During the period of September-October 2016, an attacker was able to spam the Ethereum network's state by creating 19 million accounts. The attack was made possible by a mispricing in the SUICIDE opcode of smart contracts, allowing an attacker to create a large amount of transactions that created the accounts at a low cost. The creation of these accounts bloated the blockchain's state which resulted in clients being unable to synchronize in time, effectively causing a Denial of Service attack to the network \cite{eip150faq}. As a response, two hard-forks\footnote{A non-backwards compatible upgrade mechanism that creates new rules for a blockchain, usually to improve the system} were proposed \cite{eip607, eip608}. Tangerine Whistle solved the gas pricing issue and at a later point, Spurious Dragon cleared the world stated from the accounts created by the spam attack. 
 
-\section{Best Practices}
-Contract oriented, keep it simple, no tx.origin, ktl as described in literature
+\paragraph{Eclipse Attacks on Ethereum}
+\cite{cryptoeprint:2018:236} describes `eclipse' attacks on Ethereum, a type of attack which was considered to be harder to perform on Ethereum nodes. The researchers communicated the potential effects of the attack and the vulnerabilities were fixed in geth v1.8\footnote{Most popular implementation of Ethereum in golang}. This vulnerability was not abused in the wild, and as a result there was no need for a hard-fork. It should be noted, that other client implementations such as parity or cpp-ethereum were not found to be vulnerable, which shows that having a diverse set of implementations of a protocol can contribute to the network's security.
+
+\subsection{Smart Contract Attacks}
+Contrary to the network itself, Smart Contracts have proven to be quite vulnerable in the past. The biggest hack was the `DAO hack' which involved more than 50 million dollars in value. The breaking point then was that the network hard-forked (similarly to the HF during the spam attacks) into a state that reverted the results of the hack. This was not widely accepted by the community, and a part of the Ethereum chain with the hack is still being maintained today as `Ethereum Classic' \cite{etc}. 
+
+In 2017, two large-scale attacks were done on Parity's\footnote{The ParityTech team developed a popular multisig-wallet smart contract which held the funds gathered by many ICOs} wallet, resulting in  approximately 30 million dollars being stolen in July 2017\cite{parityhack}. The fix to this hack introduced another vulnerability in the library's code which was exploited in November 2017 which resulted which resulted in 150 million dollars of funds being locked in the smart contract forever \cite{paritypostmortem}. A number of proposals were made \cite{eip867} in order to recover the locked funds. All of these would require an `irregular state change' similar to what happened with the DAO\footnote{~12 million ETH were moved from the “Dark DAO” and “Whitehat DAO” contracts into the WithdrawDAO recovery contract\cite{daofork2}} which was considered bad practice, considering the precedent that the DAO incident caused.
+
+% https://github.com/paritytech/parity/issues/6995
+\section{Smart Contract Security}
+Due to the high financial amounts often involved with smart contracts, security audits from internal and external parties are considered a needed step before deployment to production. It is also being practiced that companies with public smart contracts also engage in bug-bounties, where they encourage users to interact with versions of their contracts deployed on a testnet, in order to identify any other vulnerabilities. Comprehensive studies on identifying the security, privacy and scalability of smart contracts \cite{DBLP:journals/corr/abs-1710-06372} as well as taxonomies aiming to organize past smart contract vulnerabilities have been done \cite{Atzei:2017:SAE:3080353.3080363,tools} have been done, however due to the rapid evolution of the field they get outdated very soon. 
+
+There is a need for auditors and developers to use automated auditing tools on their smart contracts and also use the latest version of the Solidity  Compiler. As an example, none of the tools mentioned in \cite{tools} were able to detect the `Uninitialized Storage Pointer' vulnerability\footnote{\url{https://github.com/ethereum/solidity/issues/2628}. This particular vulnerability has been exploited in Smart Contract honeypots as discussed in Section X}, however the Solidity Compiler was later updated to throw a Warning if this vulnerability exists. 
+
+\subsection{Automated Tools}
+
+Auditing smart contracts significantly more effective when the source code is available. Taking into account the tools which have not been examined in our literature, we came in contact with TrailOfBits, a security auditing firm, and used their suite of tools to extend the already built taxonomies.
+
+We utilized the tool Slither\footnote{Currently not open-sourced. TrailOfBits shared it with us to use it in the thesis.} to audit smart contracts which had their source code available. As our concern is primarily in auditing and ensuring smart contracts that have yet to be deployed, we process all the smart contracts with the latest version of the Solidity compiler, v0.4.21, which provides verbose warnings and errors. [ CITE ]
+
+As Slither is a static analyzer and works on the code, its modules (called `detectors') are to find certain coding patterns which can be considered harmful to the smart contract. This includes detecting popular past contract vulnerabilities such as Reentrancy or the Parity library selfdestruct bug, however it's not limited to that as new functionalities can be added through its scriptable API. We describe its modules:
+
+\textbf{Constant/View functions that write to state:} It is planned to make constant and view functions unable to modify state variables by default in the next Solidity compiler versions, however until that happens, it should be enforced manually by developers. It ensures that the code functions as advertised.
+
+\textbf{Misnamed constructors that allow modification of `owner'-like variables:} A constructor in a smart contract is run once at contract creation and usually sets an `owner' variable which allows the contract's deployer to have some extra functionality on the contract. In past cases, constructors were not named properly and were callable by adversaries, leading to smart contracts being drained of funds (Rubixi)
+
+\textbf{Reentrancy bugs:} After TheDAO brought reentrancy and race-to-empty\footnote{\url{http://vessenes.com/more-ethereum-attacks-race-to-empty-is-the-real-deal/}} to the spotlight, all vulnerability scanners for Ethereum smart contracts are able to detect this vulnerability.
+
+\textbf{Deletion of struct with mapping}: Deleting a struct with a mapping inside resets the contents of the struct, however it does not clear the contents of a mapping. This has not been reported as an exploit in the wild\footnote{TrailOfBits have found this bug in audits}, however it can be critical in the case of a banking DApp that keeps tracks of balances. A full Proof of Concept is given Appendix A.
+
+\textbf{Variable Shadowing:} This is a unique feature of Slither that has not been implemented in other scanners (has been used in honeypot contracts)
+
+\textbf{Similar Naming between State Variables:} Warns useres in the case two state variables with same length have very similar names, leading to more clear variable naming in order to avoid misconceptions and typos.
+
+\textbf{Unimplemented Function Detection:} This ensures that the implementation of an interface stays compliant and does not diverge from the intended implementation.
+
+\textbf{Unused State Variables:} Detects state variables that are not used in any operations and suggests their removal. Makes code simpler and less gas intensive.
+
+\textbf{Unprotected Function Detection:} Detects public functions which have no modifiers and do not perform any assertions on state variables. The current implementation can impose false positives, however it does not have false negatives. This is able to find the Parity Wallet hack.
+
+\textbf{Wrong Event Prefix:} As per the best practices, the names of `events' should be capitalized. After a discussion on Github\footnote{\url{https://github.com/ethereum/solidity/issues/2877}}, using `emit' for events is going to be a mandatory for Solidity 0.5.0 and onwards.
 
 
-\section{Access Control}
-There is NO private data, just functions that can be called by certain individuals
-A proper access control model needs to be implemented so that only authorized users can access certain functions. 
+It is seen that Slither can be used both for finding known vulnerabilities, but also to avoid common coding anti-patterns and mistkaes. Due to its highly scriptable API we can extend it to include more rules. We contributed to the Slither repository by adding support for detecting `tx.origin' and `block.blockhash' usage. The usage of `tx.origin' should be avoided unless necessary, and as stated in the Solidity documentation can incur in loss of funds\footnote{\url{http://solidity.readthedocs.io/en/v0.4.21/security-considerations.html}} `block.blockhash' has been misused in smart contracts and ended up in 400 ETH being stolen from the SmartBillions contract [CITE]. We also contributed to the improvement of the accuracy of the modules `UnimplementedFunctionDetection'.
+
+
+
+\subsection{Honeypot Smart Contracts}
+As of March 2018, no novel critical vulnerabilities have been identified in smart contracts. Smart Contracts that are architected to look vulnerable to known exploits started surfacing, when their true purpose is stealing the funds of aspiring hackers. These contract honeypots are funded with an initial small amount of ether (0.5 to 2 ether). Hackers who attempt to exploit them need to first deposit some amount (depending on the honeypot's implementation) before trying to drain the contract. Each honeypot has a well-hidden mechanism to prevent the attacker from draining the funds, essentially locking up any funds that get deposited by individuals other than the contracts deployer. 
+
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Solidity]{code/Gift_1_ETH.sol}
+    \caption{Example honeypot}
+    \label{smart_contract}
+\end{figure}
+
+The above contract was initialized with 1 ether at its balance. An attack can drain the contract by calling the $GetGift$ function with the correct password. Due to the attacker not knowing the password, they proceed to change it, using the $SetPass$ function, which requires at least a 1 ether deposit, which is acceptable since the attacker will get that back. This also requires that the `passHasBeenSet' variable is false, or that the PassHasBeenSet function has not been called yet.
+
+A naive attacker would inspect the contract's transactions in Etherscan\footnote{https://etherscan.io/address/0xd8993f49f372bb014fb088eabec95cfdc795cbf6} and after notice that no transaction refering to `PassHasBeenSet' has been made, and thus proceed to attack the contract and change the password, only to find that the password did not get changed. A transaction where a contract calls another contract's function is called a `Message Call'. Etherscan shows this kind of calls as `Internal Transactions', only when they include values of more than 0 ether. In this case, `PassHasBeenSet' does not accept Ether and thus cannot be detected in Etherscan. The contract's owner called `PassHasBeenSet' from another contract and as a result the password is not changeable. Detecting that the `passHasBeenSet' variable had been set to true can be done by inspecting the storage of the smart contract, which is always public.
+\lstinputlisting[language=Python]{code/getstorageat.py}
+
+An extensive analysis of smart contracts as honeypots is made in \cite{honeypots} which was released to accompany the research of this Master Thesis.
+
+\subsection{Towards more secure smart contracts}
+It is apparent that since smart contracts being unmodifiable after deployment, there is no way of patching any vulnerabilities. Testing platforms have been setup so that developers can practice and test their skills. A developer should keep their code as simple as possible, while providing test coverage for as many scenarios as possible. Using audited and tested code for parts of contracts that have already been implemented (eg. an $ERC20$ token contract) ensures that these parts of the code are going to be secured. Following the best practices as described by the industry\'s most sophisticated auditors\footnote{\url{https://consensys.github.io/smart-contract-best-practices/known_attacks/}}. Finally, developers should be looking for confluence between the results of different automated analyzers and turn their efforts there.
+% % https://ethernaut.zeppelin.solutions/
+% % http://hackthiscontract.io/
+% http://solidity.readthedocs.io/en/v0.4.21/security-considerations.html#recommendations
