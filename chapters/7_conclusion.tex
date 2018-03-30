@@ -25,6 +25,9 @@ MAIAN's features are useful and provide useful insight for creating detection me
 Mythril \cite{mythril} is a tool developed by ConsenSys\footnote{\url{https://new.consensys.net/}}. Its unique feature allows it to directly connect to Ethereum and evaluate a deployed contract at any ethereum network. It allows for direction inspection of contract storage which can be used to evaluate a contract's state. As an example, the aforementioned contract honeypot in Section X could be swiftly inspected and it would be immediately noticed that the `passHasBeenSet' variable is true.
 \lstinputlisting{code/myth_example.log}
 
+\subsubsection{Solium}
+Solium \cite{solium} is a linter for Solidity. It performs static analysis on the code by analyzing its abstract syntax tree and is able to identify and fix styling and security issues according to preconfigured rules. The plugin for security\footnote{\url{https://github.com/duaraghav8/solium-plugin-security}} can be used to further identify security issues in smart contracts according to best-practices as set by the community and by leading companies.
+
 \subsection{Energy Billing and Accounting on Blockchain}
 An proposal for billing and accounting models is seen on\cite{billaccount}, however it is oriented towards a cloud-management use case and does not implement or go in-depth in a sophisticated smart contract architecture. 
 
