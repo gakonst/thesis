@@ -1,71 +1,142 @@
 \chapter{Ethereum and Blockchain Basics}
-\section{Overview}
-Before getting into the specifics of blockchains and Ethereum, the next section will be used to explain fundamental terms on cryptograpy and blockchain.
+
+\section{General Background}
+Before getting into the specifics of blockchains and Ethereum, the next section will be used to explain fundamental terms on cryptography (hash functions and public key cryptography) and blockchain.
 
 In non technical terms, a blockchain is a database that can be shared by non-trusting individuals without having a central party that maintains the state of the database. Namely, it is a growing list of \textit{blocks} that grows over time. Each block contains various metadata (\textit{blockheaders}) and a number of transactions. A block is chained to its previous one by referencing the previous block's hash. As more blocks get added to the chain, previous blocks and their contents are considered to be more secure.
 
 Any future reference to blockchain terminology such as the contents of a block or a transaction will be referring to the implementations of the Ethereum Platform. The Ethereum Yellowpaper provides details on the formal definitions and contents of each entity~\cite{ethereum}.
 
-\subsection{Public Key Cryptography}
-Also refered to as Assymetric Cryptography, it is a system that uses a pair of keys to encrypt and decrypt data. The two keys are usually called \textbf{public} and \textbf{private}, due to the private key being known only to its owner while the public key is known to the public. The main advantage of Public Key Cryptography is the lack of need for a secure channel for the initial exchange of keys between any communicating parties.
-
-The security Public Key Cryptography is based on cryptographic algorithms which are not solvable efficiently due to certain mathematical problems, such as the factorization of large integer numbers for RSA or the discrete logarithm problem for ECDSA, being hard.
-
-When a person encrypts a message with one key, its pair can be used to decrypt the same message. If a message gets encrypted with the private key of the sender, any receiver can verify that the message was indeed sent by the sender as they are the only possible owners of the private key used to enrypt the message. This achieves authentication, and the process is often referred to as \textit{signing} of a message. 
-
-% Insert figure about authentication from the above scheme
-
 \subsection{Cryptographic Hash Functions}
-
 A hash function is any function that is used to map arbitrary size data to fixed size. The result of a hash function is often called the \textit{hash} of its input. Cryptographic hash functions are hash functions that fullfil certain security properties and are used in cryptograpy % Should use something different than wikipedia (https://en.wikipedia.org/wiki/Cryptographic_hash_function).
 
 More specifically, a secure cryptographic hash function should satisfy the following properties (\(H(x)\) refers to the hash of x):
 \begin{enumerate}
    \item \textbf{Collision Resistance}: It should be computationally infeasible to find x and y such that \(H(x) = H(y)\). 
    \item \textbf{Pre-Image Resistance}: Given \(H(x)\) it should be computationally infeasible to find \(x\).
-   \item \textbf{Second Pre-Image Resistance}: Given \(H(x)\) it should be computationally infeasible to find \(x'\) so that \(H(x') = H(x)\).
+   \item \textbf{Second Pre-Image Resistance}: Given \(H(x)\) it should be computationally infeasible to find \(x'\) so that \(H(x') = H(x)\). It should be noted that although similar, a second preimage attack on a hash function is significantly more difficult than a preimage attack due to the attacker being able to manipulate only one input of the problem. 
 \end{enumerate}
 
-Bitcoin uses the SHA-256 cryptographic hash function, while Ethereum uses KECCAK-256. Both functions' outputs are 256 bits long which is considered secure given the document's writing date standards.
+Bitcoin uses the SHA-256 cryptographic hash function, while Ethereum uses KECCAK-256. Both functions' outputs are 256 bits long which is considered secure given the document's writing date standards. Ethereum's KECCAK-256 is often referred to as SHA-3 which is inaccurate since SHA3-256 has different padding and thus different values\cite{sha3}
 
-It should be noted that although similar, a second preimage attack is significantly more difficult than a preimage attack due to the attacker being able to manipulate only one input in order to cause a collision.
-% A Second Preimage Attack is where you are given some data and your task is to find a second set of data which generates the same hash as the first. It’s very similar yet subtly different to a regular Preimage Attack in that you have a sample of data that you know leads to the target hash value. A Second Preimage is always more difficult to perform than a collision, as one input is outside of the attackers control.
+\subsection{Public Key Cryptography}
+Also refered to as Assymetric Cryptography, it is a system that uses a pair of keys to encrypt and decrypt data. The two keys are usually called \textbf{public} and \textbf{private}, due to the private key being known only to its owner while the public key is known to the public. The main advantage of Public Key Cryptography is the lack of need for a secure channel for the initial exchange of keys between any communicating parties.
+
+The security Public Key Cryptography is based on cryptographic algorithms which are not solvable efficiently due to certain mathematical problems, such as the factorization of large integer numbers for RSA or the discrete logarithm problem for ECDSA\footnote{Elliptic Curve Digital Signature Algorithm}, being hard.
+
+The three needed properties of secure communication are data integrity, confidentiality and authentication of the sender. We present ways to achieve each of these as follows:
+
+\begin{enumerate}
+    \item \textbf{Confidentiality:} By encrypting the plaintext with recipient's public key, the only way to decrypt it is by using the recipient's private key, which is only known to the recipient, thus achieving confidentiality of the message's transmission. This has the disadvantage that it does not achieve authentication and thus anyone can impersonate the sender.
+    \item \textbf{Authentication:} By encrypting the plaintext with sender's private key, the only valid decryption can be done with the sender's public key. This authenticates the identity of the sender of the message. This has the disadvantage that the message can be read by any middle-man as the sender's public key is known.
+\end{enumerate}
+
+Achieving both confidentiality and authentication is a two step process. The original message gets encrypted with the sender's private key and encrypted again with the recipient's public key. That way, a recipient decrypts the message firstly with their private key, achieving confidentiality, and then verifies the identity of the sender by decrypting with their private key.
+
+The last part for secure communication is achieving integrity. Digital signatures is a scheme which allows the recipient to both verify that the message was created by a sender and that the message has not been tampered with. 
+
+The process is as follows:
+\begin{enumerate}
+    \item The sender calculates the hash of the message that they are transmitting and concatenates the message with the hash
+    \item The sender encrypts the combined message with their private key and transmits the ciphertext to the receiver  
+    \item The receiver decrypts the content of the message with the sender's public key, achieving authentication
+    \item The receiver hashes the plaintext and compares the result to the transmitted hash
+    \item If the result matches the transmitted hash  then, given that the hashing function used is secure,
+    the message has not been tampered with
+\end{enumerate}
+
+If the sender wanted to also make sure of the confidentiality of the information, they'd also encrypt with the receiver's public key after step 2, and similarly the receiver would decrypt with their private key after step 3. 
+
+This process is often referred to as a sender broadcasting a \textit{signed} message, due to the usage of this technique.
+
+% Insert figure about authentication from the above scheme
 
 \section{Ethereum Blockchain}
+The Ethereum blockchain acts as a state machine. The first state is the `genesis' state referred to as the `genesis block'. After the execution of each transaction, the state changes. Due to the amount of transactions happening in Ethereum, transactions are collated into `blocks'. 
 
-\subsection{Transaction}
-The contents of a transaction in Ethereum are as follows:
-%TODO more beautiful
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{blockchain_transitions}
+    \caption{Ethereum can be seen as a chain of states \cite{visual}}
+    \label{worldstate_update}
+\end{figure}
 
+A valid state transition requires the appending of a new block to the existing list of blocks. Each block contains transactions and a reference to the previous block, forming a chain. In Ethereum, the only way for a block to be validated and appended to the list is through a validation process called mining. Mining involves a group of computers, known as miners, expending their computational resources to find the solution to a puzzle. The first miner to find a solution to the puzzle is rewarded with Ether\footnote{The Ethereum network's native currency} and is able to validate their block proposal. This is a process known as Proof-of-Work (PoW) \cite{pow}. 
+
+Due to having large numbers of miners competing to solve the PoW puzzle, sometimes a miner might solve the PoW at the same time with another miner, but for different block contents. This results in a \textit{fork} of the blockchain. Nodes will accept the first valid block that they receive\footnote{This depends on block propagation time based on bandwith, block-size, connectivity etc.}. Each blockchain implementation has a way to resolve forks and determine which chain is the `longest'. In Ethereum the longest chain is based on total difficulty\footnote{Difficulty is a measure of how difficult it was for a miner to solve a PoW puzzle. Total Difficulty is the sum of the difficulties of all blocks until the examined block'} which can be found in the blockheader. It should be noted that Ethereum is advertised to be using a modification of the GHOST Protocol\cite{GHOST} as its chain selection mechanism which uses uncle blocks\footnote{In Bitcoin a block with a valid PoW that arrived to a node after another valid block at the same height is called an orphan because it gets discarded by Bitcoin's algorithm. In Ethereum these blocks do not get discarded; instead they are added to the chain as `uncle blocks' and receive a reduced block reward}. This contradicts with reality since Ethereun's uncle blocks do not count towards difficulty and as a result, Ethereum does not actually use an adaptation of the GHOST protocol \cite{Gervais:2016:SPP:2976749.2978341}; the uncle reward is just used to reduce miner centralization.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{fork}
+    \caption{Blockchain forks: Ethereum's protocol chooses the canonical chain \cite{preethi}}
+    \label{forking}
+\end{figure}
+
+\section{Inside the EVM}
+% https://hudsonjameson.com/2017-06-27-accounts-transactions-gas-ethereum/
+The Ethereum Virtual Machine is the runtime environment for Ethereum. It is a Turing Complete State machine, allowing arbitrarily complex computations to be executed on it. Ethereum nodes validate blocks and also run the EVM, which means executing the code that is triggered by the transactions. \subsection{Accounts}
+
+\subsubsection{World State}
+Ethereum's global state is a mapping between addresses of accounts and their states. Full Ethereum nodes download the blockchain since genesis block and execute and verify the full result of every transaction. Users should run a full node if they need to execute every transaction in the blockchain or if they need to swiftly query historical data. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{world_state}
+    \caption{The world state of Ethereum}
+    \label{worldstate}
+\end{figure}
+
+A different kind of node called `light' node exists for cases where there is no need to store all the information. Instead, light nodes use efficient data structures called \textit{Merkle Trees} which allow them to verify the validity of the data of a tree, even if they don't store the entire tree. A merkle tree is a binary tree where each parent node is the hash of its two child nodes\footnote{Exception: Each leaf node represents thet hash of a transaction in a block}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{merkle_tree}
+    \caption{Node calculation in a Merkle Tree, from \cite{smartproperty}}
+    \label{merkletree}
+\end{figure}
+
+That way, instead of storing the whole tree of transactions, nodes can verify if a transaction was included in a block or not just by checking if the `merkle path' to the merkle root is valid. This is efficient as there are only $lg(n)$ checks needed to check the validity of a transaction, as shown in Figure \ref{merkleproof}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{merkle_proof}:
+    \caption{To prove that $H_{k}$ was included in the merkle root of $Block_{x}$ only the blue elements are needed, from \cite{smartproperty}}
+    \label{merkleproof}
+\end{figure}
+
+\subsubsection{Account State}
+An ethereum account is a mapping between an address and an account state. There are two kinds of accounts, Externally Owned Accounts (EOA) and Contract Accounts (CA).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{accounts}
+    \caption{EOA is controlled by a Private Key and cannot contain EVM code. CAs contain EVM code and are controlled by it \cite{visual}}
+    \label{accounts}
+\end{figure}
+
+An EOA is able to send a message to another EOA by signing a transaction with their private key. CAs can make transactions in response to transactions they receive from EOAs. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{result_tx}
+    \caption{EOA can make a transaction to another EOA. A Contract fires a transaction after receiving a transaction from an EOA\cite{visual}}
+    \label{tx_accounts}
+\end{figure}
+
+The public key of an EOA is derived from the private key through elliptic curve multiplication. The address of an EOA is calculated by calculating the KECCAK-256 hash of the public key and prefixing its last 20 bytes with `0x' \cite{ethereum}. The address of a CA is deterministically computed from the sender EOA account's address and their transaction count\footnote{Full explanation: https://ethereum.stackexchange.com/a/761}. 
+
+We describe the contents of the `Account State' shown in Figure \ref{accounts} as follows:
+\begin{enumerate}
+    \item \textbf{Nonce:} The number of transactions sent if it's an EOA, or the number of contracts created if it's a CA.
+    \item \textbf{Balance:} The account's balance denominated in `wei'\footnote{1 ether $= 10^{18}$ wei }
+    \item \textbf{Storage Hash:} The merkle root of the account's storage contents. This is empty for EOAs
+    \item \textbf{Code Hash:} The hash of the code of the account. For EOAs this field is the KECCAK-256 hash of `' while for CAs it is the KECCAK-256 of the bytecode that exists at the CAs address.
+\end{enumerate}
+
+\subsection{Transactions}
 \lstinputlisting{code/transaction_example.json}
 The fields blockHash, blockNumber, from, to, value, hash are all usual fields that can be found in blockchain transactions. Gas and gasPrice are used for performing computations on the Ethereum platform and will be analyzed in Section X. Ethereum uses an account model compared to Bitcoin's UTXO model [CITE]. In the account model, an attacker can replay a transaction by rebroadcasting it. This is mitigated by adding a nonce to each account's transactions which gets incremented after each transaction. The input field allows embedding extra data to a transaction. This can be used either to add a message or in the case of smart contracts, to have the contents of a function call. The v, r, s parameters are outputs from the Elliptic Curve Digital Signature Algorithms % https://bitcoin.stackexchange.com/questions/38351/ecdsa-v-r-s-what-is-v.
 
-\subsection{Block}
-A block is a data structure which is comprised of data forming the block header and transactions. The interesting field for the thesis is the gasLimit field which will be discussed like the transaction gasLimit in section X. 
-\lstinputlisting{code/block_example.json}
-
-\subsection{Blockchain}
-Blocks refer to the previous blocks recursively until the genesis block (first block in existence), forming a chain of blocks. The set of rules which allow an actor to add a valid block to the blockchain is called a \textit{consensus algorithm}. In order to have consensus in distributed systems, all participating nodes must have the same version (often called history) of the system (blockchain). A malicious node could create an arbitrary block crediting them with any amount of Ether. In order to avoid that, consensus algorithms elect a network participant to decide on the contents of the next block, in a fair manner. This process is often called mining, due to the popularity of the Proof of Work consensus algorithm which allows nodes called \textit{miners} to propose a new block if they solve a hard to compute problem. Consensus algorithms require their problem to be easy to verify however, as when somebody solves the problem and broadcasts it to the network, its solution must be verified swiftly in order to get accepted and propagated to the rest of the network, or rejected. The process of mining and how consensus is achieved is considered outside the scope of this Master Thesis.
-
-\subsection{Blockchain Types}
-Blockchains are inspectable and public. Any entity can setup a node, download the full blockchain history and view all the transactions caused by anyone participating in that netwokr. This is one of the main benefits of using a blockchain, transparency.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=1.0\textwidth]{blockchain}
-    \caption{Blockchain = chain of blocks}
-    \label{blockchain}
-\end{figure}
-
-We categorize blockchains in two kinds (different authors might have different classifications):
-\begin{enumerate}
-    \item Public or Permissionless: Low barrier to entry, transparent and immutable.
-    \item Private or Permissioned: Federated participation, can obscure certain pieces of data, ability to modify and revert past transactions if needed.
-\end{enumerate}
-
-Vitalik Buterin goes indepth in the advantages and disadvantages between private and public blockchains in ~\cite{publicprivate}. Due to the scalability and privacy restrictions of public blockchains, corporations that are looking to include blockchain technology in their processes are looking for a solution NOW, when the research and development is still not at that level. As a result, permissioned blockchains as JP Morgan's Quorum \cite{quorum}, Hyperledger or Corda have arised, with aims to solve these problems.
-
-\subsection{Transactions as State Transitions}
 In Bitcoin, the state is created through the Unspent Transaction Outputs set, which defines the amount of BTC  a user can spend. As Ethereum does not use UTXO but an account model, there needs to be a way to monitor the state. This is done through a data structure called Patricia State Trie \cite{Morrison:1968:PAR:321479.321481} which provides an efficient mapping of key and value pairs where the key is the address of the Ethereum account and the value is the Recursive Length Prefix encoding \cite{rlp} of the account's data. % TODO: Explain further or not? https://medium.com/cybermiles/diving-into-ethereums-world-state-c893102030ed
 
 Whenever a transaction gets successfully mined, the world state gets updated accordingly.
@@ -76,12 +147,18 @@ Whenever a transaction gets successfully mined, the world state gets updated acc
     \caption{After each transaction the state gets updated}
     \label{blockchain}
 \end{figure}
+\subsection{Blocks}
+A block is a data structure which is comprised of data forming the block header and transactions. The interesting field for the thesis is the gasLimit field which will be discussed like the transaction gasLimit in section X. 
+\lstinputlisting{code/block_example.json}
 
-\subsection{Ethereum Virtual Machine}
-% https://hudsonjameson.com/2017-06-27-accounts-transactions-gas-ethereum/
-The Ethereum Virtual Machine is the runtime environment for Ethereum. It is a Turing Complete State machine, allowing arbitrarily complex computations to be executed on it. Ethereum nodes validate blocks and also run the EVM, which means executing the code that is triggered by the transactions (discussed in Section X). Since all nodes redundantly process all transactions and contract executions this process, this can be used by an attacker to maliciously flood the network with transactions and cause multiple computers around the world to perform costly computations forever. There needs to be a computational cost. In Ethereum it is called gas and to the end user it manifests itself as the fees needed for a transaction (be it value transfer or contract call) to complete successfully.
+
+\subsection{Mining}
+Blocks refer to the previous blocks recursively until the genesis block (first block in existence), forming a chain of blocks. The set of rules which allow an actor to add a valid block to the blockchain is called a \textit{consensus algorithm}. In order to have consensus in distributed systems, all participating nodes must have the same version (often called history) of the system (blockchain). A malicious node could create an arbitrary block crediting them with any amount of Ether. In order to avoid that, consensus algorithms elect a network participant to decide on the contents of the next block, in a fair manner. This process is often called mining, due to the popularity of the Proof of Work consensus algorithm which allows nodes called \textit{miners} to propose a new block if they solve a hard to compute problem. Consensus algorithms require their problem to be easy to verify however, as when somebody solves the problem and broadcasts it to the network, its solution must be verified swiftly in order to get accepted and propagated to the rest of the network, or rejected. The process of mining and how consensus is achieved is considered outside the scope of this Master Thesis.
+
 
 \subsection{Gas}
+Since all nodes redundantly process all transactions and contract executions this process, this can be used by an attacker to maliciously flood the network with transactions and cause multiple computers around the world to perform costly computations forever. There needs to be a computational cost. In Ethereum it is called gas and to the end user it manifests itself as the fees needed for a transaction (be it value transfer or contract call) to complete successfully.
+
 Every computational step on Ethereum costs gas. The simplest transaction which involves transfering Ether from one account to another costs 21000 gas. Calling functions of a contract involves additional operations whose costs can be estimated through the costs described in~\cite{gas, ethereum}. 
 
 [INSERT GAS / WEI / ETHER denominations]
@@ -165,5 +242,12 @@ Web3 is the library used for interacting with an Ethereum node. The most feature
 \subsubsection{Truffle}
 Truffle is the industry standard framework for smart contract development framework written in Node.JS. It allows for easy deployment and initialization smart contracts along with writing test suites utilizing the Mocha testing framework. Latest versions come together with a debugger and a local testnet like ganache. 
 
-\subsubsection{Docker}
-Explain docker...
+\section{Blockchain Types}
+Blockchains are inspectable and public. Any entity can setup a node, download the full blockchain history and view all the transactions caused by anyone participating in that netwokr. This is one of the main benefits of using a blockchain, transparency.
+We categorize blockchains in two kinds (different authors might have different classifications):
+\begin{enumerate}
+    \item Public or Permissionless: Low barrier to entry, transparent and immutable.
+    \item Private or Permissioned: Federated participation, can obscure certain pieces of data, ability to modify and revert past transactions if needed.
+\end{enumerate}
+
+Vitalik Buterin goes indepth in the advantages and disadvantages between private and public blockchains in ~\cite{publicprivate}. Due to the scalability and privacy restrictions of public blockchains, corporations that are looking to include blockchain technology in their processes are looking for a solution NOW, when the research and development is still not at that level. As a result, permissioned blockchains as JP Morgan's Quorum \cite{quorum}, Hyperledger or Corda have arised, with aims to solve these problems.
