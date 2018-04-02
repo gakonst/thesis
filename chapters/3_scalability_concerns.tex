@@ -1,25 +1,58 @@
 \chapter{Blockchain Scalability}
 
 \section{Bottlenecks in Scalability}
-A blockchain's scalability is often measured in transactions per second. A block gets appended to the chain every 15 seconds on avereage in Ethereum, and can contain only a finite amount of transactions. As a result, transaction throughput is bound by the frequency of new blocks and by the number of transactions in them.
+A blockchain's ability to scale is often measured by the amount of transactions it can verify per second. A block gets appended to the Ethereum blockchain every 12.5 seconds on average, and can contain only a finite amount of transactions. As a result, transaction throughput is bound by the frequency of new blocks and by the number of transactions in them.
 
-Proof-of-Work has been the only consensus algorithm to date that has proven to be effective against attackers, while still relatively maintaining the decentralization of the network. Due to faster block times, it can handle ~7 transactions per second (tx/s), which is better than bitcoin's 3 tx/s however still not comparable to Visa's 2000 consistent tx/s or 60000 at peak. As a result, creating scalable blockchain architectures has been a topic of interest.
-
-We argue that there are two levels of scalability, scalability on contract and on network level. Better contract design can result in transactions which require less gas to execute, and thus allow for more transactions to fit in a block while also making it cheaper for the end user. It should be noted that as Ethereum's current blockGasLimit is set by the miners at 8003916, if all transactions in Ethereum were financial transactions (each costing 21000 gas), each block would be able to handle ~381 transactions per block, which is 25 tx/s, which is still not comparable to traditional payment operators. 
+We argue that there are two levels of scalability, scalability on contract and on network level. Better contract design can result in transactions which require less gas to execute, and thus allow for more transactions to fit in a block while also making it cheaper for the end user. It should be noted that as Ethereum's current blockGasLimit is set by the miners at 8003916; if all transactions in Ethereum were simple financial transactions\footnote{Not calls to smart contracts. Transactions without any extra data cost 21000 gas}, each block would be able to verify ~381 transactions - 25 transactions per second (tps) - which is still not comparable to traditional payment operators. 
 
 \section{Network Level Scalability}
-A naive solution in achieving scalability involves increasing the size of each block, or in Ethereum terms the \textit{blockGasLimit}. This solution is not sustainable as it compromises decentralization, due to increased network and hardware costs. Bigger blocks require more disk space for storing the blockchain, better bandwith for the block propagation and more processing power on a node to verify the computations in a block. This eventually requires computers with datacenter-level network connections and processing power which are not accessible to the average consumer, thus damaging decentralization which is the core value proposition of blockchain. The blockGasLimit can be voted on by miners\footnote{\url{https://www.etherchain.org/tools/gasLimitVoting}}. % In addition to the reasons stated above, increasing the gas limit also potentially damages the security of the network due to increased uncle rates, Ethereum's analog to Bitcoin's orphan blocks \footnote{\url{https://blockchain.info/orphaned-blocks}}. Longer propagation time implies that a miner will spend more time searching for a solution until they receive a valid block, and thus has more chances of finding a valid block in that time. As a result, 
+Scale should not be confused with scalability. While scale describes the size of a system and the amount of data being processed, scalability describes how the cost of running the system changes as scale increases. Existing blockchains scale poorly due to the costs associated with them increase faster than the rate at which data can be processed. 
 
-Long term solutions in Ethereum are categorized in:
-\begin{enumerate}
-    \item Sidechains: First described in \cite{sidechains}, sidechains (side-blockchains) are running in `parallel' to the mainchain, while using a sort of mechanism to benefit from the security of the main blockchain (mainchain). This allows them to implement consensus rules which are more flexible and customized to their use-case, allowing for potentially infinite scalability.
-    \item Proof of Stake: Proof of Work provides security at the cost of energy consumed by miners. Alternative consensus algorithms such as Proof of Stake (PoS), are more friendly to the environment than Proof of Work\cite{powenv}. Instead of consuming energy, PoS involves validators who are `staking' their ETH and by modeling their incentives and appropriately punishing malicious behavior, the network can have the same security as PoW. Ethereum is planning to transition to PoS, however there is no clear date when this is going to happen as this is still under heavy research.
-    \item Sharding: Due to the architecture of the EVM, it is not parallelizable. Sharding refers to having nodes which validate different parts of the blockchain, allowing for parallelizability on computations. 
-    \item State channels: In the case of micropayments which involve a number of transactions between parties, there is no need to make every transaction on the blokcchain. The proposed technique involves exchanging signed messages offchain and settling when the transactions are finished. As a result, a transaction is done to open the state channel, and another to settle it.
-\end{enumerate}
+First of all, transactions per second as a metric is innacurate. Solving scalability does not imply just increasing the transaction throughput. It is a constraint-satisfaction-problem; the goal is to maximize throughput while maintaining the network's decentralization and security. 
+
+\begin{figure}[H]
+\begin{quote}
+    \textbf{This sounds like there’s some kind of scalability trilemma at play. What is this trilemma and can we break through it?}
+
+    The trilemma claims that blockchain systems can only at most have two of the following three properties:
+
+    \begin{itemize}
+        \item Decentralization (defined as the system being able to run in a scenario where each participant only has access to $O(c)$ resources, ie. a regular laptop or small VPS)
+        \item Scalability (defined as being able to process $O(n) > O(c)$ transactions)
+        \item Security (defined as being secure against attackers with up to $O(n)$ resources)
+    \end{itemize}
+\end{quote}
+\label{fig:trilemma}
+\caption{The Scalability Trilemma, from Ethereum's Sharding documentation \cite{sharding}}
+\end{figure}
+
+As an example that trades decentralization for more transactions is the increase of block size. Increasing the size of each block, implies more disk space for storing the blockchain, better bandwith for propagating the blocks and more processing power on a node to verify any performed computations. This eventually requires computers with datacenter-level network connections and processing power which are not accessible to the average consumer, thus damaging decentralization which is the core value proposition of blockchain. % The blockGasLimit can be voted on by miners\footnote{\url{https://www.etherchain.org/tools/gasLimitVoting}}. % In addition to the reasons stated above, increasing the gas limit also potentially damages the security of the network due to increased uncle rates, Ethereum's analog to Bitcoin's orphan blocks \footnote{\url{https://blockchain.info/orphaned-blocks}}. Longer propagation time implies that a miner will spend more time searching for a solution until they receive a valid block, and thus has more chances of finding a valid block in that time. As a result, 
+
+As described in \cite{scaling-trustless-models}, Proof of Work is a consensus algorithm optimized for censorship-resistance while (in theory) maintain a low barrier to entry. In reality, due to economies of scale, PoW blockchains end up being centralized around small numbers of miners \cite{Gencer2018DecentralizationIB}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{scalability_triangle_pow}
+    \caption{Bitcoin and Ethereum's PoW networks have slow probabilistic time to finality and do not scale well. Mining capacity has high concentration in a small amount of entities, from \cite{scaling-trustless-models}}
+    \label{fig:scalability_triangle_pow}
+\end{figure}
+
+We proceed to discuss some network level solutions that can improve Ethereum's scalability.
+
+\subsubsection{Proof-of-Stake}
+Proof-of-Stake (PoS) is an alternative consensus algorithm where in the place of miners, there are validators who instead of expending computational resources to `mine' a valid block, they stake\footnote{Lock up for an amount of time} their ether and the probability for them to be elected to validate the next block is proportional to their stake. Designing a secure PoS protocol is still under heavy research. The Ethereum Foundation is working on `Casper the Friendly Finality Gadget'\cite{casperffg} which is a hybrid PoW/PoS consensus algorithm that provides block finality\footnote{A block that is finalized cannot be reverted. This is different to traditional PoW which achieves \textit{probabilistic finality}; a block is considered harder to revert the older it is} which combined with the `correct-by-construction Casper the Friendly GHOST'\footnote{Uses the GHOST protocol to choose a chain in the case of a fork.} \cite{caspertfg} will enable a full transition to Proof of Stake. 
+
+\subsubsection{Sidechains}
+A sidechain \cite{sidechains} is a blockchain defined by a custom `rule-set' and can be used to offload computations from another chain. Individual sidechains can follow different sets of rules from the mainchain, which means they can optimize for applications that require high speeds or heavy computation, while still relying on the mainchain for issues requiring the highest levels of security. Ethereum's sidechain solution is called `Plasma' \cite{plasma} and involves creating `child-chains' that run their own consensus algorithm with a two-way peg as described in \cite{sidechains}. \textit{Plasma chains} can have more adjustable parameters such as be less decentralized, however the protocol does not allow for the child-chain operator to abuse their power. A more recent Plasma construct is called `Plasma-Cash' \cite{plasmacash} and describes a more efficient way of executing fraud proofs, in the case of a malicious actor in a \textit{Plasma chain}.
+
+\subsubsection{Sharding}
+Due to the architecture of the EVM all transactions are executed sequentially on all ethereum nodes. Sharding refers to splitting the process across nodes, so that each full node is responsible only for a shard\footnote{A shard is a part of the blockchain's state} and acts as a light client to the other shards. Sharding is the most complex scaling solution and is still at research stages. It also requires a stable Proof of Stake consensus algorithm to function properly.
+
+\subsubsection{State channels}
+Contrary to the previous solutions which still record messages on a blockchain, state channels involves exchange of information `off-chain'. The primary use-case for state channels is micro-transactions between two or more parties. This technique involves exchanging signed messages through a secure communications channel and perform a transaction on the blockchain only when the process is done\footnote{Example: Instead of making 10 transactions worth 0.1 ether each, a transaction is made to open the channel, participants exchange off-chain messages transferring value, and settle or dispute the channel with one more transaction at the end.}.
     
 \section{Contract Level Scalability}
-In a recent study \cite{DBLP:journals/corr/ChenLLZ17}, after evaluating 4240 smart contracts, it is found that over 70\% of them are under-optimized with respect to gas from the compiler. In this section we explore how gas gets computed and ways we can save on gas and transaction costs.
+In a recent study \cite{DBLP:journals/corr/ChenLLZ17}, after evaluating 4240 smart contracts, it is found that over 70\% of them are under-optimized with respect to gas from the compiler. In this section we explore how gas gets computed in smart contracts and ways we can save on gas and transaction costs.
 
 
 \subsection{Gas Costs}
@@ -29,8 +62,8 @@ An Ethereum transaction's gas costs are split in: % https://ethereum.stackexchan
         \begin{enumerate}
             \item The base cost of a transaction (21000 gas)
             \item The cost of a contract deployment (32000 gas)
-            \item The cost for every zero byte of data or contracts for a transaction.
-            \item The cost of every non-zero byte of data or contracts for a transaction.
+            \item The cost for every zero byte of data in a transaction's input (4 gas per zero byte).
+            \item The cost of every non-zero byte of data in a transaction's input (68 gas per zero byte)
         \end{enumerate}
     \item \textbf{Execution Costs:} The cost of computational operations which are executed as a result of the the transaction, as described in detail in \cite{ethereum, gas} 
 \end{enumerate} 
@@ -41,24 +74,24 @@ An Ethereum transaction's gas costs are split in: % https://ethereum.stackexchan
 
 
 % \input{contracts/opcontracts_table.tex}
-Gas costs get translated to transaction fees. As a result, a contract should be designed to minimize its operational gas costs in order to minimize its transaction fees. In addition, as gas is a unit for computational costs, less gas consumed results in less burden on the nodes validating the smart contracts which can lead to increased scalability.
+Gas costs get translated to transaction fees. As a result, a contract should be designed to minimize its operational gas costs in order to minimize its transaction fees. In addition, as gas is a unit for computational costs, less gas consumed results in less burden on the nodes validating the smart contracts which can lead to better scalability.
 
-From the gas cost table, it can be seen that the most expensive operations involve SSTORE operations. The focus of this section will be to explore ways to decrease gas costs on Smart Contracts, either through better practices or by handcrafting optimizations for specific use cases.
+From the gas cost table, it can be seen that the most expensive operations involve CREATE\footnote{Used to create a new contract.} and SSTORE operations. The focus of this section will be to explore ways to decrease gas costs on Smart Contracts, either through better practices or by handcrafting optimizations for specific use cases.
 
-It should be noted, that non-standard methods have been proposed for reducing fees incurred by gas costs. A recent construction\cite{gastoken} describes a method for buying gas at low cost periods and saving it in order to spend it when prices are higher at times when the network is congested. The economic applications of gas arbitrage are outside the scope of this Master Thesis. 
+It should be noted, that non-standard methods have been proposed for reducing fees incurred by gas costs. A recent construction\cite{gastoken} describes a method of buying gas at low cost periods and saving it in order to spend it when gas prices are higher\footnote{When the network is congested}. The economic implications of gas arbitrage are outside the scope of this Master Thesis. 
 
 General rules that should be followed for saving gas costs:
 \begin{enumerate}
-    \item Enable compiler optimizations (although can lead to unexpected scenarios \cite{compiler})
-    \item Reuse contracts through libraries\cite{library}
-    \item Setting a variable back to zero refunds 15000 gas through SSTORE, so if a variable is going to be unused it is considered good practice to call delete on it. 
-    \item Use `bytes32' instead of `string' for strings that are of known size. `bytes32' always fit in an EVM word, while `string' types can be arbitrarily long and thus require more gas for saving their length. [NEEDSCITATION]
-    \item Do not save large amounts of data on a blockchain. Instead, save a hash to prove their existence at a lower point in time.
+    \item Enable compiler optimizations (although can lead to unexpected scenarios \cite{compiler}).
+    \item Reuse contracts through libraries\cite{library}.
+    \item Setting a variable back to zero refunds 15000 gas through SSTORE, so if a variable is going to be unused it is considered good practice to call `delete' on it. 
+    \item Use `bytes32' instead of `string' for strings that are of known size. `bytes32' always fit in an EVM word, while `string' types can be arbitrarily long and thus require more gas for saving their length.
+    \item Do not store large amounts of data on a blockchain. It is more efficient to store a hash which can be either proof of the existence of the data at a point in time, or it can be a hash pointing to the full data\footnote{This pattern has been used in combination with IPFS, \url{https://ipfs.io}}
 \end{enumerate}
 
 As described in \cite{DBLP:journals/corr/ChenLLZ17} there is a lot of room for further compiler optimizations. Future Solidity compiler versions are addressing some already\footnote{\url{https://github.com/ethereum/solidity/issues/3760}}\footnote{\url{https://github.com/ethereum/solidity/issues/3716}}\footnote{\url{https://github.com/ethereum/solidity/issues/3691}}
 
-The EVM operates on 32 byte words [CITE] implying that a SSTORE command is needed to store 32 bytes of data. The compiler is able to tightly pack data together, which means that 2 128 bit storage variables can be efficiently stored with 1 SSTORE command. The \textit{optimize} flag of the Solidity compiler needs to be activated to access this feature when programming in Solidity.
+The EVM operates on 32 byte words implying that a SSTORE command is needed to store 32 bytes of data. The compiler is able to `tightly pack' data together, which means that 2 128 bit storage variables can be efficiently stored with 1 SSTORE command. The \textit{optimize} flag of the Solidity compiler needs to be activated to access this feature when programming in Solidity.
 
 \begin{figure}[H]
   \begin{subfigure}[b]{\textwidth}
@@ -70,15 +103,20 @@ The EVM operates on 32 byte words [CITE] implying that a SSTORE command is neede
     \centering
     \lstinputlisting{code/solc.txt}
   \end{subfigure}
-  \label{struct_optimization}
+  \label{fig:struct_optimization}
   \caption{Running the optimizer in storage variables less than 256 bytes results in 2 SSTORE commands instead of 6 which a significant saving in gas costs}
 \end{figure}
 
 \subsection{Gas Savings Case Study}
-In order to illustrate our findings and compare accross different scenarios, we will perform a Solidity benchmarking test based on a use-case of a Solidity Smart Contract which describes a game. The contract must allows a user to register as a player if they are not already registered and allow them to create a character with some traits. Table X describes these traits:
+In order to illustrate our findings and compare across different scenarios, we will perform a Solidity benchmarking test based on a use-case of a Solidity Smart Contract which describes a game. The software requirements are: 
+\begin{itemize}
+    \item A user must be able to register.
+    \item A user must be able to create a character with characteristics as function arguments.
+    \item A user must be able to get the characteristics of a character.
+\end{itemize}% Table describing character characteristics.
 
-% Table describing character characteristics.
 \input{tables/character.tex} % Phrase this better
+
 The size of the variables is selected so that all the information required to describe a `Character' can fit in a 256 bit word.
 
 For each of the following implementations we will examine the deployment gas costs, as well as the gas costs for calling the `CreateCharacter' function:
@@ -96,9 +134,13 @@ For each test described, the optimizer was run 0, 1, 100, 500 and 50000 times.
 \subsubsection{GameTightlyPacked.sol}
 We're utilizing a structure here and by taking advantage of the optimizer packing everything in a word we can perform a full write to structure with only X gas 
 
+% STRUCT DEFINITION | CREATE CHARACTER | GET CHARACTER
+
 % \lstinputlisting[language=Solidity]{contracts/GameTightlyPacked.sol}
 
 \subsubsection{GameByteMasking.sol}
+
+% SHAPE WITH THE MASK HOW CAN IT BE DONE
 Here we create a new character by shifting variables. This concept can be though as a `virtualstruct'. Essentially instead of creating a `struct' as Soldiity expects it and let the compiler do the parsing, we do it ourselves. That way, we achieve gas costs which are substantially lower.
 % \lstinputlisting[language=Solidity]{contracts/GameByteMasking.sol}
 \input{tables/GameByteMasking.tex}:
