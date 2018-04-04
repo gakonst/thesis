@@ -1,5 +1,5 @@
 \chapter{Conclusion}
-\section{Results}
+\section{Results} \label{scresults}
 We are able to create blabla
 
 \section{Related Work}
@@ -21,6 +21,7 @@ MAIAN's features are useful and provide useful insight for creating detection me
     \item The only contract which is cited in the paper is one which never  received any ether \footnote{\url{https://etherscan.io/address/0x4671ebe586199456ca28ac050cc9473cbac829eb}}
     \item No peer-review in the paper
 \end{itemize}
+
 \subsubsection{Mythril}
 Mythril \cite{mythril} is a tool developed by ConsenSys\footnote{\url{https://new.consensys.net/}}. Its unique feature allows it to directly connect to Ethereum and evaluate a deployed contract at any ethereum network. It allows for direction inspection of contract storage which can be used to evaluate a contract's state. As an example, the aforementioned contract honeypot in Section X could be swiftly inspected and it would be immediately noticed that the `passHasBeenSet' variable is true.
 \lstinputlisting{code/myth_example.log}
@@ -29,7 +30,7 @@ Mythril \cite{mythril} is a tool developed by ConsenSys\footnote{\url{https://ne
 Solium \cite{solium} is a linter for Solidity. It performs static analysis on the code by analyzing its abstract syntax tree and is able to identify and fix styling and security issues according to preconfigured rules. The plugin for security\footnote{\url{https://github.com/duaraghav8/solium-plugin-security}} can be used to further identify security issues in smart contracts according to best-practices as set by the community and by leading companies.
 
 \subsection{Energy Billing and Accounting on Blockchain}
-An proposal for billing and accounting models is seen on\cite{billaccount}, however it is oriented towards a cloud-management use case and does not implement or go in-depth in a sophisticated smart contract architecture. 
+An proposal for billing and accounting models is seen on\cite{billaccount}, however it is oriented towards a cloud-management use case and does not implement or go in-depth in a sophisticated smart contract architecture. Attempts to 
 
 
 \section{Future Work}
