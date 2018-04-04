@@ -1,0 +1,19 @@
+\begin{table}[H]
+	\centering
+	\vspace*{-1ex}
+	\scriptsize
+	\vspace{-1ex}
+	\label{table:byte_masking_gas}
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		\textbf{Optimizer Runs} & \textbf{Register} & \textbf{CreateCharacter} & \textbf{Deployment} \\ \hline
+        0      &    70003 &           67581 &    754613.0 \\
+        1      &    69943 &           67414 &    508014.0 \\
+        100    &    69811 &           66904 &    538621.0 \\
+        500    &    69604 &           66835 &    556054.0 \\
+		500000 &    69598 &           66835 &    569032.0 \\
+		\hline
+    \end{tabular}
+	\vspace{-2ex}
+	\caption{Gas costs for deployment and for each function using the masking method on bytes32 utilizing Libraries.}
+\end{table}

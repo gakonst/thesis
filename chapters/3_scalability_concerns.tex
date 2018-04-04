@@ -68,22 +68,20 @@ An Ethereum transaction's gas costs are split in: % https://ethereum.stackexchan
     \item \textbf{Execution Costs:} The cost of computational operations which are executed as a result of the the transaction, as described in detail in \cite{ethereum, gas} 
 \end{enumerate} 
 
-[INSERT TABLE ON GAS COSTS SHOWING SSTORE ETC]
+Gas costs get translated to transaction fees. As a result, a contract should be designed to minimize its operational gas costs in order to minimize its transaction fees. In addition, as gas is a unit for computational costs, less gas consumed results in less burden on the nodes validating the smart contracts which can lead to better scalability.
+
+\input{tables/opcode_table.tex}
 
 % bytecontracts includes constructor and general initialisation contracts which is not needed anymore at runtime. The contracts that is sent during deployment (bytecontracts), even excluding the constructor arguments, is - in general - different from the contracts that is stored at that address (the runtimeBytecontracts).
 
+As seen in Table \ref{table:opcode_table}, the most expensive operations involve CREATE\footnote{Used to create a new contract.} and SSTORE operations. The focus of this section will be to explore ways to decrease gas costs on Smart Contracts, either through better practices or by handcrafting optimizations for specific use cases.
 
-% \input{contracts/opcontracts_table.tex}
-Gas costs get translated to transaction fees. As a result, a contract should be designed to minimize its operational gas costs in order to minimize its transaction fees. In addition, as gas is a unit for computational costs, less gas consumed results in less burden on the nodes validating the smart contracts which can lead to better scalability.
-
-From the gas cost table, it can be seen that the most expensive operations involve CREATE\footnote{Used to create a new contract.} and SSTORE operations. The focus of this section will be to explore ways to decrease gas costs on Smart Contracts, either through better practices or by handcrafting optimizations for specific use cases.
-
-It should be noted, that non-standard methods have been proposed for reducing fees incurred by gas costs. A recent construction\cite{gastoken} describes a method of buying gas at low cost periods and saving it in order to spend it when gas prices are higher\footnote{When the network is congested}. The economic implications of gas arbitrage are outside the scope of this Master Thesis. 
+It should be noted, that non-standard methods have been proposed for reducing fees incurred by gas costs. A recent construction \cite{gastoken} describes a method of buying gas at low cost periods and saving it in order to spend it when gas prices are higher\footnote{When the network is congested}. The economic implications of gas arbitrage are outside the scope of this Master Thesis. 
 
 General rules that should be followed for saving gas costs:
 \begin{enumerate}
-    \item Enable compiler optimizations (although can lead to unexpected scenarios \cite{compiler}).
-    \item Reuse contracts through libraries\cite{library}.
+    \item Enable compiler optimizations (although can lead to unexpected scenarios~\cite{compiler}).
+    \item Reuse code through libraries~\cite{library}.
     \item Setting a variable back to zero refunds 15000 gas through SSTORE, so if a variable is going to be unused it is considered good practice to call `delete' on it. 
     \item Use `bytes32' instead of `string' for strings that are of known size. `bytes32' always fit in an EVM word, while `string' types can be arbitrarily long and thus require more gas for saving their length.
     \item Do not store large amounts of data on a blockchain. It is more efficient to store a hash which can be either proof of the existence of the data at a point in time, or it can be a hash pointing to the full data\footnote{This pattern has been used in combination with IPFS, \url{https://ipfs.io}}
@@ -91,7 +89,7 @@ General rules that should be followed for saving gas costs:
 
 As described in \cite{DBLP:journals/corr/ChenLLZ17} there is a lot of room for further compiler optimizations. Future Solidity compiler versions are addressing some already\footnote{\url{https://github.com/ethereum/solidity/issues/3760}}\footnote{\url{https://github.com/ethereum/solidity/issues/3716}}\footnote{\url{https://github.com/ethereum/solidity/issues/3691}}
 
-The EVM operates on 32 byte words implying that a SSTORE command is needed to store 32 bytes of data. The compiler is able to `tightly pack' data together, which means that 2 128 bit storage variables can be efficiently stored with 1 SSTORE command. The \textit{optimize} flag of the Solidity compiler needs to be activated to access this feature when programming in Solidity.
+The EVM operates on 32 byte (256 bit) words. The compiler is able to `tightly pack' data together, which means that 2 128 bit storage variables can be efficiently stored with 1 SSTORE command. The \textit{optimize} flag of the Solidity compiler needs to be activated to access this feature when programming in Solidity.
 
 \begin{figure}[H]
   \begin{subfigure}[b]{\textwidth}
@@ -104,20 +102,28 @@ The EVM operates on 32 byte words implying that a SSTORE command is needed to st
     \lstinputlisting{code/solc.txt}
   \end{subfigure}
   \label{fig:struct_optimization}
-  \caption{Running the optimizer in storage variables less than 256 bytes results in 2 SSTORE commands instead of 6 which a significant saving in gas costs}
+  \caption{Running the optimizer in storage variables less than 256 bytes results in 2 SSTORE commands instead of 6 which reults in significant savings in gas costs}
 \end{figure}
 
 \subsection{Gas Savings Case Study}
-In order to illustrate our findings and compare across different scenarios, we will perform a Solidity benchmarking test based on a use-case of a Solidity Smart Contract which describes a game. The software requirements are: 
+In order to illustrate our findings and compare across different scenarios, we will perform a Solidity benchmarking test based on a use-case of a Solidity Smart Contract which describes a game. The contract-design requirements are: 
 \begin{itemize}
     \item A user must be able to register.
-    \item A user must be able to create a character with characteristics as function arguments.
-    \item A user must be able to get the characteristics of a character.
-\end{itemize}% Table describing character characteristics.
+    \item A user must be able to create a character with certain traits as function arguments.
+    \item A user must be able to retrieve the traits of a character.
+\end{itemize}
 
-\input{tables/character.tex} % Phrase this better
+\input{tables/character.tex}
 
-The size of the variables is selected so that all the information required to describe a `Character' can fit in a 256 bit word.
+The size of the variables is selected so that all the information required to describe a `Character' can fit in a 256 bit word.The interface that satisfies the requirements is:
+
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Solidity]{contracts/GameInterface.sol}
+    \label{fig:game_interface}
+    \caption{Interface for described use-case}
+\end{figure}
+
 
 For each of the following implementations we will examine the deployment gas costs, as well as the gas costs for calling the `CreateCharacter' function:
 
@@ -128,33 +134,94 @@ For each of the following implementations we will examine the deployment gas cos
 \end{enumerate}
 
 %% TODO Make contracts appear in some good way. 2 columns, each one for Create/Get character.
-The full contracts of each contract can be found in the Appendix. 
-For each test described, the optimizer was run 0, 1, 100, 500 and 50000 times.
-% \lstinputlisting[language=Solidity]{contracts/GameInterface.sol}
-\subsubsection{GameTightlyPacked.sol}
-We're utilizing a structure here and by taking advantage of the optimizer packing everything in a word we can perform a full write to structure with only X gas 
+The full contracts of each contract can be found in the Appendix. In this section we describe the implementation and in section \label{results} we go over the results and caveats of each method.
 
-% STRUCT DEFINITION | CREATE CHARACTER | GET CHARACTER
+\subsubsection{Method 1: Tight packing of variables through structs} \label{method1}
+We're using a solidity `struct'\footnote{\url{http://solidity.readthedocs.io/en/v0.4.21/types.html}} as a means to group all traits of a character as described in \ref{table:characteristics}. This allows for easy code readability since every variable of a struct object can be accessed by its name as seen in \ref{fig:struct_optimization:c}, like the property of an object. 
 
-% \lstinputlisting[language=Solidity]{contracts/GameTightlyPacked.sol}
+\begin{figure}[H]
+  % Struct Definition
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \lstinputlisting[language=Solidity, firstline=4, lastline=13]{contracts/GameTightlyPacked.sol}
+    \caption{Character structure definition}
+    \label{fig:struct_optimization:a}
+  \end{subfigure}
 
-\subsubsection{GameByteMasking.sol}
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \lstinputlisting[language=Solidity, firstline=38, lastline=66]{contracts/GameTightlyPacked.sol}
+    \caption{Create character simply sets values to each struct variable}
+    \label{fig:struct_optimization:b}
+  \end{subfigure}
+\end{figure}
 
-% SHAPE WITH THE MASK HOW CAN IT BE DONE
-Here we create a new character by shifting variables. This concept can be though as a `virtualstruct'. Essentially instead of creating a `struct' as Soldiity expects it and let the compiler do the parsing, we do it ourselves. That way, we achieve gas costs which are substantially lower.
-% \lstinputlisting[language=Solidity]{contracts/GameByteMasking.sol}
-\input{tables/GameByteMasking.tex}:
+\begin{figure}[H] \ContinuedFloat
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \lstinputlisting[language=Solidity, firstline=68, lastline=92]{contracts/GameTightlyPacked.sol}
+    \caption{Retrieve the character and save it in memory, then return all values.}
+    \label{fig:struct_optimization:c}
+  \end{subfigure}
+  \label{fig:struct_optimization}
+  \caption{Implementation requires a Solidity `struct' to pack all the variables together. CreateCharacter and GetCharacterStats  }
+\end{figure}
 
-In addition, as we essentially do the optimization ourselves, the deployed bytecode is smaller. 
-This is not exactly intuitive, as it'd be expected that the solidity compiler is able to pack everything perfectly. It turns out\footnote{https://github.com/figs999/Ethereum/blob/master/Solc.aComedyInOneAct} that the compiler is not very efficient and as a result this method is far more efficient. With this method we are able to store and fetch all the data in a very efficient way, which costs X\% gas less than the previous implementation. However, this method does not allow for a readable and maintainable interface. In order to export every functionality it is needed to convert the `uint' variables to bytes to perform the bit operations on functions. This creates undesired overhead and thus is avoided.
+In this case, assignment and retrieval of the variables is done in a very straightforward way. By utilizing Solidity's built-in structures and arrays, we can create an array of `Character' type structures and access their traits by their indexes, as done in \ref{fig:struct_optimization:c}
 
-\subsubsection{GameByteMaskingLib.sol}
-It is important to consider code reusability, in the case another developer wanted to develop on the same structure, they should not need to deploy the core functionality of the `Character' structure each time. Utilizing the `using X for Y' syntax, we can export the library's API in a format that is similar to calling functions on struct's in Golang \footnote{\url{ golangtutorials.blogspot.de/2011/06/methods-on-structs.html}}.
+The gas costs per function call with this method are: 
+\input{tables/GameTightlyPacked.sol_data.tex}
 
-The are two ways to export functions when creating Solidity APIs:
+
+\subsubsection{Method 2: Manually pack variables in a 256 bit uint with masking and shifting} \label{method2}
+In \ref{method1} we let the compiler perform optimizations in order to make storing the data more efficient. It turns out\footnote{\url{https://github.com/figs999/Ethereum/blob/master/Solc.aComedyInOneAct}} that even with the optimizer, a lot of redundant operations are done. In order to get better results, we create a `virtual struct' by encoding all the information needed in a `uint' variable 
+Here we create a new character by shifting variables. Essentially, instead of creating a `struct' as Solidity expects it and let the compiler do the parsing, we do it ourselves. That way, we achieve gas costs which are substantially lower.
+
+The encoding is done by shifting each of the described variables and then performing bitwise OR operations so that the data gets embedded in the uint variable, as shown in \ref{fig:uint_encoding}. This is implemented in \ref{fig:uint_encoding_code}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{uint_encoding}
+    \caption{Setting data requires shifting left $N$ times and performing bitwise OR with the target variable, where $N$ is the number of bits of the previous variable.}
+    \label{fig:uint_encoding}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Solidity, firstline=10, lastline=36]{contracts/GameByteMasking.sol}
+    \caption{Create Character by shifting variables}
+\label{fig:uint_encoding_code}
+\end{figure}
+
+Retrieving the data requires shifting the `Character' uint and performing bitwise `AND' operations in order to mask out the higher bits of the variable that are unused, as shown in \ref{fig:uint_decoding}, implementation in \ref{fig:uint_decoding_code}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{uint_decoding}
+    \caption{Decoding shift and}
+    \label{fig:uint_decoding}
+\end{figure}
+
+\begin{figure}[H] 
+    \centering
+    \lstinputlisting[language=Solidity, firstline=38, lastline=61]{contracts/GameByteMasking.sol}
+    \caption{Get the traits of a character by shifting and masking appropriately. Typecasting is the same as applying a mask of $N$ bits.}
+    \label{fig:uint_decoding_code}
+\end{figure}
+
+The gas costs per function call with this method are: 
+\input{tables/GameByteMasking.sol_data.tex}
+
+\subsubsection{Method 3: Manually pack variables in a 32 byte variable with masking and shifting, utilizing Solidity Libraries} \label{method3}
+
+Code reusability and readability should always be given high priority. In the previous method, although the data packing is very efficient compared to the `struct' method, the code is hardly readable and it is impossible to reuse parts of it. It would be possible to extract the logic into functions, however the overheads introduced by the additional operations made it inferior to the technique we describe in this section.
+
+We utilize Solidity's `Library' feature which allows us to define a set of methods which are possible to be applied on a datatype using the `using X for Y' syntax\footnote{This is similar to calling functions on struct's in Golang} 
+
+The are two ways to implement functions in a Library:
 \begin{enumerate}
     \item Internal: The library's bytecode is inlined to the main contract's code. This results in larger bytecode during deployment, however each of the contract's function are immediately jumping and returning to the Library's code, like any function. In this case, only the main contract gets deployed.
-    \item Public: This is a more complex process:
+    \item Public: 
         \begin{enumerate}
             \item The library contract gets compiled and deployed
             \item The main contract gets compiled and has placeholder slots in the bytecode.
@@ -163,13 +230,72 @@ The are two ways to export functions when creating Solidity APIs:
         \end{enumerate}
 \end{enumerate}
 
-The usage of the former can be done for separating the code and creating a more well done repository. The latter's usability cna be seen with more general purpose functions such as error-checked functions for mathematic operations. That way, instaed of everyone having to deploy their own version, they can use the already deployed one. The tradeoff comes between deployment costs and calling each function. When the bytecode is inlined, the jumping is done internally, while delegatecall requires additional resources. Finally there is a security gain, such as when everyone uses the same version of an audited library compared to everyone deploying their own. We opt for the internal approach, because cheaper and does not make sense to deploy, i.e. not enough people will care about it.
+We provide a minimal code snippet which illustrates the syntax to use libraries. 
 
-The final version is split in two files, a library file and a main file. [ EXPLAIN LIBRARIES ]. 
-% \lstinputlisting[language=Solidity]{contracts/GameByteMaskingLib.sol}
-%\footnote{\url{http://solidity.readthedocs.io/en/v0.4.21/contracts.html#using-for}}
+\begin{figure}[H]
+    \centering
+    \lstinputlisting[language=Solidity]{contracts/LibraryExample.sol}
+    \label{fig:library}
+    \caption{Example of `using X for Y' syntax to enhance operations done on datatypes}
+\end{figure}
+
+% Should insert placeholder and inlined bytecode? 
+
+Libraries with public functions are deployed as standalone contracts to be used by contracts made by other developers. They often include generic functionality such as math operations\footnote{A popular Solidity Library is SafeMath which contains error-checked math operations}. Depending on the complexity of the contracts, this can be more efficient compared to using \textit{internal} functions. When \textit{public} is used, the DELEGATECALL opcode is used\footnote{Relays the message to the library while allowing it to execute in the sender's state}. When \textit{internal} is used, a function call is interpreted as a jump and thus is more efficient than the DELEGATECALL. 
+
+That way, instead of having to deploy a new contract, developers can use an already deployed one. Due to the usage of DELEGATECALL, there is a tradeoff between the deployment cost of the contract and the extra costs when making function calls. We opt for the \textit{internal} approach because it requires less gas and since this is a specialized use-case it is not expected to be used by third-parties.
+
+The final version is split in two files, the library which includes the API for setting and retrieving the character's traits, and the main contract which uses the library's high-level functions.
+\begin{figure}[H]
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \lstinputlisting[firstline=35, lastline=41, language=Solidity]{contracts/GameByteMaskingLib.sol}
+    \caption{Getting and setting a property}
+  \end{subfigure}
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \lstinputlisting[linerange={21-21,26-26}, language=Solidity]{contracts/GameByteMaskingLib.sol}
+    \caption{Mask and shift offsets for CreationTime}
+  \end{subfigure}
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \lstinputlisting[linerange={44-44,53-53}, language=Solidity]{contracts/GameByteMaskingLib.sol}
+    \caption{Getting and Setting creation time API}
+  \end{subfigure}
+  \caption{Parts of the Library API for Character Creation}
+\end{figure}
+
+By utilizing the `using CharacterLib for bytes32' syntax we are able to write and retrieve the character's traits in a user-friendly manner.
+
+\begin{figure}[H]
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \lstinputlisting[language=Solidity, linerange={101-108}]{contracts/GameByteMaskingLib.sol}
+        \caption{Create Character by shifting variables}
+        \label{fig:bytes_encoding_code}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.5\textwidth}
+        \centering
+        \lstinputlisting[language=Solidity, linerange={129-139}]{contracts/GameByteMaskingLib.sol}
+        \caption{get character variables}
+        \label{fig:bytes_decoding_code}
+    \end{subfigure}
+    \caption{}
+\end{figure}
+
+The gas costs per function call with this method are: 
+\input{tables/GameByteMaskingLib.sol_data.tex}
 
 \subsection{Results}
-It can be seen that in all cases the optimizer's first iteration creates significant gas savings. However, the more optimizer-runs were done, the more gas cost was spent during deployment, however the cost of `CreateCharacter' went down. Code in Solidity is either optimized for size, and thus costs less to deploy, or for runtime costs, which costs more to deploy but each function costs less \cite{optimizer-tradeoff}.
+It can be seen that in all cases the optimizer's first iteration creates significant gas savings. However, the more optimizer-runs were done, the more gas was spent during deployment. On the other hand, the cost of calling functions went down. Code in Solidity is either optimized for size, and thus costs less to deploy, or for runtime costs\cite{optimizer-tradeoff}. We proceed to compare the gas costs from each implementation while considering the advantages and disadvantages of each method. 
 
-We described a technique which relies on the compiler's optimizer to pack the data in a struct and do the gas savings, however is simpler and more elegant. The second and third technique are more complex and allow for further gas optimizations. The second technique is more efficient however lacks reusability and is less maintanable. On the other hand, utilizing libraries however we can export a user-friendly API for reusing our code for anyone who has the same use case as us. This technique will be utilized in the Design and implementation section.
+In Method 1 (\ref{table:tightpacking}) the optimizer is able to cut down deployment costs by 42\%, due to being able to pack all variables in a storage slot. In Method 2 (\ref{table:uint_masking_gas}), the optimization is done manually and has significant results both in deployment and in function costs. In Method 3 (\ref{table:byte_masking_gas}), although we follow the same pattern as in Method 2, we introduce a more verbose API which results in more complex operations being done at a lower level. This introduces slightly bigger deployment costs, and a negligible difference in gas costss for function calls. We consider this overhead to be worth it, since we export an API that is usable.  
+
+Deciding how many times to run the optimizer requires estimating the expected usage of the smart contracts. Comparing the results from running the optimizer 1 and 500 times in Method 2, it can be seen that the deployment costs can increase by as much as 10\% while the savings for each function call are in the range of 0.7\%. When quantifying these percentages in gas, we conclude that if a function is going to be called \textit{enough}\footnote{Enough is not quantifiable and depends on the implementation. A developer should perform a similar analysis to the one we do in order to set their breakeven points.} times, then the contract which was compiled with more optimizer runs is more efficient in the long run. In addition, this shifts the costs towards the contract deployer rather than the users. Given the tradeoffs described above and the improved code readability and maintainability, we opt to use Method 3 in our implementations. 
+% Depending on how many times the optimizer is run, there is a different breakeven point for making it worth running more than one times. Running the optimizer 100 times requires the `CreateCharacter' function to be called at least 24 times to make it worth it. % EXPLAIN BETTER THE QUANTIFICATION OF THE TRADEOFF PER FUNCTION CALL COMPARED TO DEPLOYMENT COSTS. Also, the initial cost comes on deployment from the deployer side 
+% Even though 1300 gas at the price of 20gwei translates to 0.0000299 https://ethgasstation.info/calculatorTxV.php, this can be a considerable amount considering that a funciton call in a decentralized future might be called millions of times. 1 
+
+% In addition, as we essentially do the optimization ourselves, the deployed bytecode is smaller. 
+% This is not exactly intuitive, as it'd be expected that the solidity compiler is able to pack everything perfectly. this method is far more efficient. With this method we are able to store and fetch all the data in a very efficient way, which costs X\% gas less than the previous implementation. However, this method does not allow for a readable and maintainable interface. In order to export every functionality it is needed to convert the `uint' variables to bytes to perform the bit operations on functions. This creates undesired overhead and thus is avoided.
+
+%We described a technique which relies on the compiler's optimizer to pack the data in a struct and do the gas savings, however is simpler and more elegant. The second and third technique are more complex and allow for further gas optimizations. The second technique is more efficient however lacks reusability and is less maintanable. On the other hand, utilizing libraries however we can export a user-friendly API for reusing our code for anyone who has the same use case as us. This technique will be utilized in the Design and implementation section.

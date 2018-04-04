@@ -2,7 +2,6 @@
 	\centering
 	\vspace*{-1ex}
 	\scriptsize
-	\caption{Required variables and size. Sizes add up to 256 bits}
 	\vspace{-1ex}
     \label{table:characteristics}
 	\begin{tabular}{|c|c|c|}
@@ -15,7 +14,8 @@
         strength      & uint16         & Stats can be up to 65535\\
         agility       & uint16         & Stats can be up to 65535 \\
         wisdom        & uint16         & Stats can be up to 65535 \\
-        metadata      & bytes19        & Utilize the rest of the word for metadata \\
+        metadata      & bytes18        & Utilize the rest of the word for metadata \\
         \hline
     \end{tabular}
+	\caption{Required variables and size. Sizes add up to 248 bits which can be efficiently stored in a 256 bit word.}
 \end{table}

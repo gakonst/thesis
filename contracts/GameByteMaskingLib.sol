@@ -16,10 +16,10 @@ library CharacterLib {
 
     /**Here we create bit masks for all of our funky data sizes*/
     uint private constant mask1         =  1;                //binary 1
-    uint private constant mask4         = (1 << 4)  -1;     //binary 1111
-    uint private constant mask16        = (1 << 16) -1;     //binary 1111 1111 1111 1111
-    uint private constant mask32        = (1 << 32) -1;    
-    uint private constant mask152       = (1 << 152)-1;
+    uint private constant mask4         = (1 << 4)  - 1;     //binary 1111
+    uint private constant mask16        = (1 << 16) - 1;     //binary 1111 1111 1111 1111
+    uint private constant mask32        = (1 << 32) - 1;    
+    uint private constant mask152       = (1 << 152)- 1;
 
     /**Here we create shift indices for each property. It is simply 1 shifted left by the Index listed above.*/
     uint private constant _PlayerID     = 1 << 0;
@@ -34,12 +34,10 @@ library CharacterLib {
     /**Generic Getter/Setter which does the bit magic.*/
     function GetProperty(bytes32 Character, uint mask, uint shift) private pure returns (uint property) {
         property = mask&(uint(Character)/shift);
-        //                  ^ shift right and apply mask
     }
 
     function SetProperty(bytes32 Character, uint mask, uint shift, uint value) private pure returns (bytes32 updated) {
         updated = bytes32((~(mask*shift) & uint(Character)) | ((value & mask) * shift));
-        //                        ^ Clear area inside the mask  --> Fill it with the value (mask redundant)
     }
 
     function SetPlayerID(bytes32 Character, uint256 value) internal pure returns (bytes32)     { return SetProperty(Character, mask16,  _PlayerID,     value); }
@@ -100,14 +98,14 @@ contract GameByteMasking {
         uint16 playerID = player2ID[msg.sender];
         require(playerID != 0);
 
-        bytes32 c = c.SetPlayerID(playerID);
-        c = c.SetCreationTime(creationTime);
-        c = c.SetClass(class);
-        c = c.SetRace(race);
-        c = c.SetStrength(strength);
-        c = c.SetAgility(agility);
-        c = c.SetWisdom(wisdom);
-        c = c.SetMetadata(metadata);
+bytes32 c = c.SetPlayerID(playerID);
+c = c.SetCreationTime(creationTime);
+c = c.SetClass(class);
+c = c.SetRace(race);
+c = c.SetStrength(strength);
+c = c.SetAgility(agility);
+c = c.SetWisdom(wisdom);
+c = c.SetMetadata(metadata);
 
         uint CharacterId = Characters.length;
         emit CharacterCreated(c, CharacterId);
@@ -128,17 +126,17 @@ contract GameByteMasking {
             bytes18 metadata
         )
     {
-        bytes32 c = Characters[index];
-        return (
-            c.GetPlayerID(),
-            c.GetCreationTime(),
-            c.GetClass(),
-            c.GetRace(),
-            c.GetStrength(),
-            c.GetAgility(),
-            c.GetWisdom(),
-            c.GetMetadata()
-        );
+bytes32 c = Characters[index];
+return (
+    c.GetPlayerID(),
+    c.GetCreationTime(),
+    c.GetClass(),
+    c.GetRace(),
+    c.GetStrength(),
+    c.GetAgility(),
+    c.GetWisdom(),
+    c.GetMetadata()
+);
     }
 
 }
