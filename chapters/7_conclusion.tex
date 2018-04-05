@@ -1,37 +1,4 @@
 \chapter{Conclusion}
-\section{Results} \label{scresults}
-We are able to create blabla
-
-\section{Related Work}
-
-\subsection{Scalability}
-We do not provide contributions towards network level Scalability as it is a far more complex issue than what . To date, there have been proposals \cite{stateless} which illustrate smart contract techniques that consume less gas and let an application's backend do the heavy lifting. LINK TO PLASMA, TO COSMOS, TO LOOM TO ALL SCALING SOLUTIONS. There is also the case of permissioned blockchains which are able to function with a cryptocurrency that backs them such as Hyperledger Fabric\footnote{\url{https://www.hyperledger.org/projects/fabric}} \cite{Vukolic:2017:RPB:3055518.3055526}.
-
-\subsection{Security}
-Tools that are able to analyze and search for vulnerabilities only from contract bytecode have been developed\cite{Luu:2016:MSC:2976749.2978309, greedyprodigal, mythril}. The recent study\cite{tools} on the available tools that evaluate smart contract security\footnote{Oyente, Remix, SmartCheck, Securify} illustrates improvements that can be done to them, and provides an evaluation of each tool. Of these, Oyente and Securify are able to perform direct analysis on a contract's bytecode. Given the contract's source code, Smartcheck is able to vastly outperform other tools, detecting all vulnerabilities proposed in the given taxonomy as well as yielding the least false positives. We provide a rough summary of two tools that are not analyzed in the previous taxonomies or in our Automated Tools section.
-
-These tools utilize symbolic execution. Although useful, raw bytecode analysis is not sufficient here are often false positives and cases where analyzing bytecode is not enough \cite{zeus}. 
-
-\subsubsection{MAIAN}
-Maian \cite{maian} was developed for \cite{greedyprodigal} and is able to detect greedy, prodigal and suicidal contracts which either lock funds indefinitely, leak them to arbitrary users, or are killable by any user % REPHRASE.
-MAIAN's features are useful and provide useful insight for creating detection mechanisms that can be incorporated in other tools, however the results of the study are considered skewed for the following reasons\footnote{Opinions influenced by relevant critique on Twitter by TrailOfBits \url{https://twitter.com/dguido/status/966795086704062465}}:
-\begin{itemize}
-    \item All contracts compiled with solc versions earlier than 0.3.6 are considered `greedy' in absense of a `withdraw' function due to the fact that functions did not require the `payable' modifier in order to accept ether. 
-    \item Many smart contracts deployed on the Ethereum mainnet are used for testing. When ether was inexpensive, the main network was feasible to be used as its own testnet.
-    \item The only contract which is cited in the paper is one which never  received any ether \footnote{\url{https://etherscan.io/address/0x4671ebe586199456ca28ac050cc9473cbac829eb}}
-    \item No peer-review in the paper
-\end{itemize}
-
-\subsubsection{Mythril}
-Mythril \cite{mythril} is a tool developed by ConsenSys\footnote{\url{https://new.consensys.net/}}. Its unique feature allows it to directly connect to Ethereum and evaluate a deployed contract at any ethereum network. It allows for direction inspection of contract storage which can be used to evaluate a contract's state. As an example, the aforementioned contract honeypot in Section X could be swiftly inspected and it would be immediately noticed that the `passHasBeenSet' variable is true.
-\lstinputlisting{code/myth_example.log}
-
-\subsubsection{Solium}
-Solium \cite{solium} is a linter for Solidity. It performs static analysis on the code by analyzing its abstract syntax tree and is able to identify and fix styling and security issues according to preconfigured rules. The plugin for security\footnote{\url{https://github.com/duaraghav8/solium-plugin-security}} can be used to further identify security issues in smart contracts according to best-practices as set by the community and by leading companies.
-
-\subsection{Energy Billing and Accounting on Blockchain}
-An proposal for billing and accounting models is seen on\cite{billaccount}, however it is oriented towards a cloud-management use case and does not implement or go in-depth in a sophisticated smart contract architecture. Attempts to 
-
 
 \section{Future Work}
 The main issue with our curernt implementation is that instead of having a direct push from each meter (or any IoT device) to the blockchain, we need to pull the data from the aforementioned monitoring server, and then push it again. This introduces latencies and single points of failure, however, this was done due to our corporate setup. An improvement would be to setup a microcontroller on each that would be executing a binary that pings readings to the blockchain. even better, run a node on each IOt device, however requires too much power, maybe in the far future. We explore Ethereum platform due to its abundance in developers and stay in it. There are other smart contract platforms however they lack developer tools, are not battle tested and are potentially centralized. As there is a bigger issue with scaling, the whole infrastructure could be transferred to a permissioned in-house blockchain, however we wanted to stay within the scope of keeping it as transparent as possible.

@@ -1,12 +1,11 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Gas cost of different operations, a complete list can be found in Ethereum's yellow paper\nobreakspace {}\cite {gas}, from \cite {DBLP:journals/corr/ChenLLZ17}\relax }}{31}{table.caption.19}
-\contentsline {table}{\numberline {4.2}{\ignorespaces Required variables and size. Sizes add up to 248 bits which can be efficiently stored in a 256 bit word.\relax }}{33}{table.caption.21}
-\contentsline {table}{\numberline {4.3}{\ignorespaces Gas costs for deployment and for each function using Solidity's built-in structs\relax }}{36}{table.caption.25}
-\contentsline {table}{\numberline {4.4}{\ignorespaces Gas costs for deployment and for each function using the masking method on a uint.\relax }}{38}{table.caption.30}
-\contentsline {table}{\numberline {4.5}{\ignorespaces Gas costs for deployment and for each function using the masking method on bytes32 utilizing Libraries.\relax }}{41}{table.caption.34}
+\contentsline {table}{\numberline {3.1}{\ignorespaces Gas cost of different operations, a complete list can be found in Ethereum's yellow paper\nobreakspace {}\cite {gas}, from \cite {DBLP:journals/corr/ChenLLZ17}\relax }}{26}{table.caption.17}
+\contentsline {table}{\numberline {3.2}{\ignorespaces Required variables and size. Sizes add up to 248 bits which can be efficiently stored in a 256 bit word.\relax }}{28}{table.caption.19}
+\contentsline {table}{\numberline {3.3}{\ignorespaces Gas costs for deployment and for each function using Solidity's built-in structs\relax }}{31}{table.caption.23}
+\contentsline {table}{\numberline {3.4}{\ignorespaces Gas costs for deployment and for each function using the masking method on a uint.\relax }}{33}{table.caption.28}
+\contentsline {table}{\numberline {3.5}{\ignorespaces Gas costs for deployment and for each function using the masking method on bytes32 utilizing Libraries.\relax }}{36}{table.caption.32}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

@@ -1,0 +1,94 @@
+\chapter{Metering and Billing of Energy on Ethereum}
+
+\section{Energy Market inefficiencies}
+
+Having discussed how Ethereum works, and explained techniques to improve smart contracts' scalability and security, we proceed to discuss the topic of making energy markets more transparent and efficient by utilizing smart contracts. The use-case we describe can be used as a starting point for better tracking of energy usage inside a company, allowing better prediction of future needs.  
+The world is gradually shifting from nuclear and fossil fuels to Renewable Energy Sources (RES). RES have been taking a larger share of Germany's gross energy production and this has created a 
+Germany is on a rollout plan of installing smart meters in every household which incorporates RES.  
+
+The barrier to entry to become an energy producer\footnote{By installing solar panels for example} 
+% Chart for renewables: https://www.cleanenergywire.org/factsheets/germanys-energy-consumption-and-power-mix-charts
+
+In its current state, most consumers do not know what they are paying Business level take long time and are 
+
+Price of energy, consumer does not know always what they pay, or what they gain from their renewables
+ 
+\section{Advantages of an Energy-based Blockchain application}
+
+\subsection{Peer 2 Peer}
+In the most general cases, blockchains have the ability to provide transparency and immutability. When talking about energy and transparency, full history of meter readings, price calculation, billing of inhouse energy departments. This can be extended for EV car payment microtransactions and so on.
+
+\subsection{User Owned Data}
+% The blockchain is a particularly interesting technology for decentralized processes that require large networks and trust relationships between all parties. Therefore, it offers great benefits to the power & utilities market, with its large networks of power and utilities companies, (maintenance) subtractors, (local) suppliers and end users.
+
+% Smart meters Still, there are other applications that are ready for use in the near future. Smart meters for instance have already entered many homes. Up until now, sharing data through smart meters was a threat to the privacy of the owner of the meter. Again, the blockchain offers a potential solution. It can provide the accurate data to the supplier without requiring a direct link to the meter of specific users. When needed, the owner of the smart meter can prove to the supplier that the data are his, using his private key, and the cryptographic security of the blockchain proves that the information is accurate and hasn’t been tampered with. This puts the owner in control of his own data.
+
+\section{Business Logic}
+In collaboration with Honda R\&D Germany, we create a pilot suite of smart contracts for in-house use in order to track and bill the consumed energy of the company's headquarters as measured by a set of smart meters. 
+
+Describe meters, billing and so ona
+The purpose is to serve as a means of tracking the energy consumed by the company's smart meters and ensuring the data's validity and existence in a smart contract. In addition, due to the complex structure of the company, every smart meter's consumption can contribute with different coefficients to the total energy consumption of the rooms in a building. As a result, the developed smart contract are able to track the energy consumption of each room and assign it to a higher-order 
+We proceed to discuss the business logic of the use-case as described in \ref{usecase} and then implement it. We utilize the technique from \ref{method3} to optimize our smart contracts for gas efficiency and utilize Slither from \ref{slither} and the learned best-practices to ensure that the developed smart contracts are robust. Due to the intellectual property of Honda R\&D, all testing and verification of the contracts' functionality was done in a private in-house testnet.
+
+\subsection{Smart Meters and Rooms}
+
+A smart meter must be able to keep track of the current reading and timestamp of the reading as well as the last reading and timestamp in order to calculate the difference of the two. It also has a unique identifier which is used to retrieve it in the smart contract.
+
+A company building is split into rooms. Each smart meter contributes to a room's consumption with a real coefficient, according to Equation \ref{roomcost}
+\begin{equation}\label{roomcost}
+R = C * M
+\end{equation}
+\noindent where
+\begin{description}
+\item  \[C = 
+\begin{bmatrix}
+    c_{11} & \cdots & c_{1M} \\
+    \vdots & \ddots & \vdots \\ 
+    \vdots & \ddots & \vdots \\
+    c_{N1} & \cdots & c_{NM}
+  \end{bmatrix}\] ($c_{ij}$ is the coefficient of the $jth$ meter for the $ith$ room)
+
+\item  and \[M = 
+\begin{bmatrix}
+    m_{1} & \cdots & m_{M}
+\end{bmatrix}^T\] ($m_{i}$ is the kilowatthour reading of the $ith$ meter)
+\end{description}
+
+The coefficients are calculated throuhg an internal partner, INSERT DETAILS ON EASD.
+
+\subsection{Cost Centers and Billing}
+
+Rooms are grouped together in a structure called \textit{Cost Center} which does X. A room can belong only to one cost center. During the accounting stage, the accountant can retrieve the difference in energy consumption since the last clearing period and thus
+
+
+\section{Smart Contracts}
+
+In this section we go over the implementation and the rationale of each developed smart contract. We explain the inner workings and provide tests of their functionality. A thorough walkthrough on how they interact with each other can be found in \ref{scresults}
+\subsection{Contract Registry}
+Upgradable logic, call smart contract by name.
+
+\subsection{Meter Management}
+Meter manager utilizes \ref{method3}. Each meter has its own ID. We use the pattern. Deleting a meter sets the active status to false. We iterate over the array of meters. There are software engineering patterns \cite{crud} that allow more proper usage, however they cost a lot more gas. 
+
+\subsection{Cost - Profit Management}
+We follow the same pattern as with meters for storing cost centers. We define 
+Follow busienss logic
+
+\subsection{Access Control}
+Defining a proper access control policy is very important as discussed in Section \ref{security}. It is common to find Access Control Lists (ACL) in enterprise environments which allow access to resources only to selected participants. This does not exist by default in smart contracts. The Aragon Project\footnote{Project aimed at creating DAOs} provides an ACL contract, however it was not used in the final version due to the complexity it introduced to our code\footnote{Aragon's contracts are architected towards creating fully upgradable DAOs, which would introduce considerable overheads and complexity to our code}. Instead, the DSAUTH pattern is used.
+
+\section{Monitoring Server}
+Could be implemented without monitoring server if each meter was smarter. 
+Explain monitoring server
+
+\subsection{REST API} 
+Explain rest api usage 
+
+\subsection{Python Client}
+Explain python implementation of rest api
+
+\subsection{web3.py interaction}
+Explain how web3.py interacts with monitoring server and sends data to Smart Contracts
+
+\section{Network Topology}
+% INSERT GRAPH OF PULLING DATA FROM MONITORING SERVER TO CLIENT, CLIENT SIMULATES THE METERS AND SENDS THE DATA SIGNED WITH THEIR PRIVATE KEYS. TRANSACTIONS GET EXECUTED IN A 3-NODE POA BLOCKCHAIN. EXPLAIN DOCKER HERE. 
