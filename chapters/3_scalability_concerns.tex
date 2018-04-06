@@ -91,20 +91,6 @@ As described in \cite{DBLP:journals/corr/ChenLLZ17} there is a lot of room for f
 
 The EVM operates on 32 byte (256 bit) words. The compiler is able to `tightly pack' data together, which means that 2 128 bit storage variables can be efficiently stored with 1 SSTORE command. The \textit{optimize} flag of the Solidity compiler needs to be activated to access this feature when programming in Solidity.
 
-\begin{figure}[H]
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting[language=Solidity]{contracts/Packing.sol}
-  \end{subfigure}
-
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting{code/solc.txt}
-  \end{subfigure}
-  \label{fig:struct_optimization}
-  \caption{Running the optimizer in storage variables less than 256 bytes results in 2 SSTORE commands instead of 6 which reults in significant savings in gas costs}
-\end{figure}
-
 \subsection{Gas Savings Case Study}
 In order to illustrate our findings and compare across different scenarios, we will perform a Solidity benchmarking test based on a use-case of a Solidity Smart Contract which describes a game. The contract-design requirements are: 
 \begin{itemize}
@@ -115,15 +101,8 @@ In order to illustrate our findings and compare across different scenarios, we w
 
 \input{tables/character.tex}
 
-The size of the variables is selected so that all the information required to describe a `Character' can fit in a 256 bit word.The interface that satisfies the requirements is:
 
-\begin{figure}[H]
-    \centering
-    \lstinputlisting[language=Solidity]{contracts/GameInterface.sol}
-    \label{fig:game_interface}
-    \caption{Interface for described use-case}
-\end{figure}
-
+The size of the variables is selected so that all the information required to describe a `Character' can fit in a 256 bit word. The interface that satisfies the requirements is shown in~\ref{fig:game_interface}
 
 For each of the following implementations we will examine the deployment gas costs, as well as the gas costs for calling the `CreateCharacter' function:
 
@@ -139,39 +118,10 @@ The full contracts of each contract can be found in the Appendix. In this sectio
 \subsubsection{Method 1: Tight packing of variables through structs} \label{method1}
 We're using a solidity `struct'\footnote{\url{http://solidity.readthedocs.io/en/v0.4.21/types.html}} as a means to group all traits of a character as described in \ref{table:characteristics}. This allows for easy code readability since every variable of a struct object can be accessed by its name as seen in \ref{fig:struct_optimization:c}, like the property of an object. 
 
-\begin{figure}[H]
-  % Struct Definition
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting[language=Solidity, firstline=4, lastline=13]{contracts/GameTightlyPacked.sol}
-    \caption{Character structure definition}
-    \label{fig:struct_optimization:a}
-  \end{subfigure}
-
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting[language=Solidity, firstline=38, lastline=66]{contracts/GameTightlyPacked.sol}
-    \caption{Create character simply sets values to each struct variable}
-    \label{fig:struct_optimization:b}
-  \end{subfigure}
-\end{figure}
-
-\begin{figure}[H] \ContinuedFloat
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting[language=Solidity, firstline=68, lastline=92]{contracts/GameTightlyPacked.sol}
-    \caption{Retrieve the character and save it in memory, then return all values.}
-    \label{fig:struct_optimization:c}
-  \end{subfigure}
-  \label{fig:struct_optimization}
-  \caption{Implementation requires a Solidity `struct' to pack all the variables together. CreateCharacter and GetCharacterStats  }
-\end{figure}
-
 In this case, assignment and retrieval of the variables is done in a very straightforward way. By utilizing Solidity's built-in structures and arrays, we can create an array of `Character' type structures and access their traits by their indexes, as done in \ref{fig:struct_optimization:c}
 
 The gas costs per function call with this method are: 
 \input{tables/GameTightlyPacked.sol_data.tex}
-
 
 \subsubsection{Method 2: Manually pack variables in a 256 bit uint with masking and shifting} \label{method2}
 In \ref{method1} we let the compiler perform optimizations in order to make storing the data more efficient. It turns out\footnote{\url{https://github.com/figs999/Ethereum/blob/master/Solc.aComedyInOneAct}} that even with the optimizer, a lot of redundant operations are done. In order to get better results, we create a `virtual struct' by encoding all the information needed in a `uint' variable 
@@ -186,12 +136,6 @@ The encoding is done by shifting each of the described variables and then perfor
     \label{fig:uint_encoding}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \lstinputlisting[language=Solidity, firstline=10, lastline=36]{contracts/GameByteMasking.sol}
-    \caption{Create Character by shifting variables}
-\label{fig:uint_encoding_code}
-\end{figure}
 
 Retrieving the data requires shifting the `Character' uint and performing bitwise `AND' operations in order to mask out the higher bits of the variable that are unused, as shown in \ref{fig:uint_decoding}, implementation in \ref{fig:uint_decoding_code}.
 
@@ -202,12 +146,6 @@ Retrieving the data requires shifting the `Character' uint and performing bitwis
     \label{fig:uint_decoding}
 \end{figure}
 
-\begin{figure}[H] 
-    \centering
-    \lstinputlisting[language=Solidity, firstline=38, lastline=61]{contracts/GameByteMasking.sol}
-    \caption{Get the traits of a character by shifting and masking appropriately. Typecasting is the same as applying a mask of $N$ bits.}
-    \label{fig:uint_decoding_code}
-\end{figure}
 
 The gas costs per function call with this method are: 
 \input{tables/GameByteMasking.sol_data.tex}
@@ -246,42 +184,9 @@ Libraries with public functions are deployed as standalone contracts to be used 
 That way, instead of having to deploy a new contract, developers can use an already deployed one. Due to the usage of DELEGATECALL, there is a tradeoff between the deployment cost of the contract and the extra costs when making function calls. We opt for the \textit{internal} approach because it requires less gas and since this is a specialized use-case it is not expected to be used by third-parties.
 
 The final version is split in two files, the library which includes the API for setting and retrieving the character's traits, and the main contract which uses the library's high-level functions.
-\begin{figure}[H]
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting[firstline=35, lastline=41, language=Solidity]{contracts/GameByteMaskingLib.sol}
-    \caption{Getting and setting a property}
-  \end{subfigure}
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting[linerange={21-21,26-26}, language=Solidity]{contracts/GameByteMaskingLib.sol}
-    \caption{Mask and shift offsets for CreationTime}
-  \end{subfigure}
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting[linerange={44-44,53-53}, language=Solidity]{contracts/GameByteMaskingLib.sol}
-    \caption{Getting and Setting creation time API}
-  \end{subfigure}
-  \caption{Parts of the Library API for Character Creation}
-\end{figure}
 
 By utilizing the `using CharacterLib for bytes32' syntax we are able to write and retrieve the character's traits in a user-friendly manner.
 
-\begin{figure}[H]
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, linerange={101-108}]{contracts/GameByteMaskingLib.sol}
-        \caption{Create Character by shifting variables}
-        \label{fig:bytes_encoding_code}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, linerange={129-139}]{contracts/GameByteMaskingLib.sol}
-        \caption{get character variables}
-        \label{fig:bytes_decoding_code}
-    \end{subfigure}
-    \caption{}
-\end{figure}
 
 The gas costs per function call with this method are: 
 \input{tables/GameByteMaskingLib.sol_data.tex}

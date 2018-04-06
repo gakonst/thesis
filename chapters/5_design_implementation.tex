@@ -28,7 +28,9 @@ In collaboration with Honda R\&D Germany, we create a pilot suite of smart contr
 
 Describe meters, billing and so ona
 The purpose is to serve as a means of tracking the energy consumed by the company's smart meters and ensuring the data's validity and existence in a smart contract. In addition, due to the complex structure of the company, every smart meter's consumption can contribute with different coefficients to the total energy consumption of the rooms in a building. As a result, the developed smart contract are able to track the energy consumption of each room and assign it to a higher-order 
-We proceed to discuss the business logic of the use-case as described in \ref{usecase} and then implement it. We utilize the technique from \ref{method3} to optimize our smart contracts for gas efficiency and utilize Slither from \ref{slither} and the learned best-practices to ensure that the developed smart contracts are robust. Due to the intellectual property of Honda R\&D, all testing and verification of the contracts' functionality was done in a private in-house testnet.
+We proceed to discuss the business logic of the use-case and then implement it. We utilize the technique from \ref{method3} to optimize our smart contracts for gas efficiency and utilize Slither from \ref{slither} and the learned best-practices to ensure that the developed smart contracts are robust. Due to the intellectual property of Honda R\&D, all testing and verification of the contracts' functionality was done in a private in-house testnet.
+
+% INSERT GRAPH OF PULLING DATA FROM MONITORING SERVER TO CLIENT, CLIENT SIMULATES THE METERS AND SENDS THE DATA SIGNED WITH THEIR PRIVATE KEYS. TRANSACTIONS GET EXECUTED IN A 3-NODE POA BLOCKCHAIN. EXPLAIN DOCKER HERE. 
 
 \subsection{Smart Meters and Rooms}
 
@@ -90,5 +92,3 @@ Explain python implementation of rest api
 \subsection{web3.py interaction}
 Explain how web3.py interacts with monitoring server and sends data to Smart Contracts
 
-\section{Network Topology}
-% INSERT GRAPH OF PULLING DATA FROM MONITORING SERVER TO CLIENT, CLIENT SIMULATES THE METERS AND SENDS THE DATA SIGNED WITH THEIR PRIVATE KEYS. TRANSACTIONS GET EXECUTED IN A 3-NODE POA BLOCKCHAIN. EXPLAIN DOCKER HERE. 
