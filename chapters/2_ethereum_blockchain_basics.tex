@@ -1,4 +1,4 @@
-\chapter{Ethereum and Blockchain Basics}
+\chapter{Ethereum and Blockchain Basics}\label{ch:basics}
 
 \section{General Background}
 Before getting into the specifics of blockchains and Ethereum, the next section will be used to explain fundamental terms on cryptography (hash functions and public key cryptography) and blockchain.
@@ -53,6 +53,16 @@ This process is often referred to as a sender broadcasting a \textit{signed} mes
 
 \subsection{Advantages of Blockchains}
 INSERT ADVANTAGES
+
+\subsection{Blockchain Types}
+Blockchains are inspectable and public. Any entity can setup a node, download the full blockchain history and view all the transactions caused by anyone participating in that netwokr. This is one of the main benefits of using a blockchain, transparency.
+We categorize blockchains in two kinds (different authors might have different classifications):
+\begin{enumerate}
+    \item Public or Permissionless: Low barrier to entry, transparent and immutable.
+    \item Private or Permissioned: Federated participation, can obscure certain pieces of data, ability to modify and revert past transactions if needed.
+\end{enumerate}
+
+Vitalik Buterin goes indepth in the advantages and disadvantages between private and public blockchains in ~\cite{publicprivate}. Due to the scalability and privacy restrictions of public blockchains, corporations that are looking to include blockchain technology in their processes are looking for a solution NOW, when the research and development is still not at that level. As a result, permissioned blockchains as JP Morgan's Quorum \cite{quorum}, Hyperledger or Corda have arised, with aims to solve these problems.
 
 \section{Ethereum Blockchain}
 The Ethereum blockchain acts as a state machine. The first state is the `genesis' state referred to as the `genesis block'. After the execution of each transaction, the state changes. Due to the amount of transactions happening in Ethereum, transactions are collated into `blocks'. 
@@ -267,13 +277,3 @@ Web3 is the library used for interacting with an Ethereum node. The most feature
 
 \subsubsection{Truffle}
 Truffle is the industry standard framework for smart contract development framework written in Node.JS. It allows for easy deployment and initialization smart contracts along with writing test suites utilizing the Mocha testing framework. Latest versions come together with a debugger and a local testnet like ganache. 
-
-\section{Blockchain Types}
-Blockchains are inspectable and public. Any entity can setup a node, download the full blockchain history and view all the transactions caused by anyone participating in that netwokr. This is one of the main benefits of using a blockchain, transparency.
-We categorize blockchains in two kinds (different authors might have different classifications):
-\begin{enumerate}
-    \item Public or Permissionless: Low barrier to entry, transparent and immutable.
-    \item Private or Permissioned: Federated participation, can obscure certain pieces of data, ability to modify and revert past transactions if needed.
-\end{enumerate}
-
-Vitalik Buterin goes indepth in the advantages and disadvantages between private and public blockchains in ~\cite{publicprivate}. Due to the scalability and privacy restrictions of public blockchains, corporations that are looking to include blockchain technology in their processes are looking for a solution NOW, when the research and development is still not at that level. As a result, permissioned blockchains as JP Morgan's Quorum \cite{quorum}, Hyperledger or Corda have arised, with aims to solve these problems.

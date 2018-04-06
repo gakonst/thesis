@@ -1,47 +1,36 @@
 \chapter{Introduction}
 
 \section{Problem Statement}
-The problem this Master Thesis solves is:
+We aim to answer the following research questions in this thesis:
 
-\begin{quotation}\label{problem}
-How an organization can manage the energy consumed by a set of energy meters. The system should be able to bill and perform accounting on the metering data, based on a specified accounting model. The system must be transparent, decentralized, and secure. Anyone in the network should be able to verify the validity transactions. Finally, the system needs to scalable at reasonable cost.
-\end{quotation}
-%TODO Rephrase
+\begin{enumerate}
+    \item How can the scalability of smart contracts be improved?
+    \item How can the security of smart contracts be improved?
+    \item How can a system that is able to measure and bill the energy consumed by a set of energy meters be modeled? The system must be able to perform accounting on the measured energy based on a pre-specified accounting model. The system must be transparent, decentralized, and secure. Anyone in the network should be able to verify the validity transactions. Finally, the system needs to scalable at reasonable cost.
+\end{enumerate}
 
 \section{Scope}
-The Master Thesis explores the fundamental terms needed to understand blockchain terminology. The contributions to scalability are limited to optimizing smart-contracts with respect to not stressing the network. Larger scale scalability solutions such as alternative consensus algorithms, payment channels or sidechains are out of scope. On security, the industry's best practices are applied, while also utilizing tools used by smart contract auditing firms, along with a proprietary tool that was provided for furter analysis.
+The Master Thesis explores the fundamental terms needed to understand blockchain terminology. The contributions to scalability are limited to optimizing smart contracts. Other scalability solutions are mentioned but in depth analysis is considered out of scope. On security we limit ourselves to the industry's best practices, as per the literature and utilize a tool provided by an auditing firm.
 
-\section{Related Work}
+The technology used includes but is not limited to the Solidity programming language\footnote{Ethereum's most popular language for writing smart contracts}, the Truffle Framework for streamlining the compilation, testing and deployment process, Javascript for unit testing the smart contracts and the Python programming language for automating tasks, performing plotting and analyzing of data.
 
-\subsection{Scalability}
-We do not provide contributions towards network level Scalability as it is a far more complex issue than what . To date, there have been proposals \cite{stateless} which illustrate smart contract techniques that consume less gas and let an application's backend do the heavy lifting. LINK TO PLASMA, TO COSMOS, TO LOOM TO ALL SCALING SOLUTIONS. There is also the case of permissioned blockchains which are able to function with a cryptocurrency that backs them such as Hyperledger Fabric\footnote{\url{https://www.hyperledger.org/projects/fabric}} \cite{Vukolic:2017:RPB:3055518.3055526}.
+\section{Relative Work}
+Techniques which illustrate more efficient smart contracts by storing less data on a blockchain are described in~\cite{stateless}. \cite{DBLP:journals/corr/ChenLLZ17} makes it clear that compiler optimizations in smart contracts still need improvements in order to avoid unnecessary expenses. On network level scalability there are various approaches such as executing transactions `off-chain'\footnote{An exchange of cryptographically signed messages that does not happen on a blockchain.}~\cite{raiden, funfair, counterfactual} and use a blockchain only for the final settling of a series of transactions. Other approaches exist which involve creating `sidechains' which can be used to offload the computational effort from the `mainchain' \cite{sidechains, loom, cosmos, plasmacash, plasma}. Finally, another approach to achieving scalability is via permissioned blockchains which trade decentralization and transparency for efficiency~\cite{hyperledger, Vukolic:2017:RPB:3055518.3055526}.
 
-\subsection{Security}
-Tools that are able to analyze and search for vulnerabilities only from contract bytecode have been developed\cite{Luu:2016:MSC:2976749.2978309, greedyprodigal, mythril}. The recent study\cite{tools} on the available tools that evaluate smart contract security\footnote{Oyente, Remix, SmartCheck, Securify} illustrates improvements that can be done to them, and provides an evaluation of each tool. Of these, Oyente and Securify are able to perform direct analysis on a contract's bytecode. Given the contract's source code, Smartcheck is able to vastly outperform other tools, detecting all vulnerabilities proposed in the given taxonomy as well as yielding the least false positives. We provide a rough summary of two tools that are not analyzed in the previous taxonomies or in our Automated Tools section.
+Extensive analyses have been performed on the security of blockchains as networks~\cite{Gervais:2016:SPP:2976749.2978341, cryptoeprint:2018:236} and specifically on the security of Ethereum smart contracts~\cite{Atzei:2017:SAE:3080353.3080363} which have proven to be insufficiently secure for the amounts of funds that they hold. As a result, tools that are able to analyze both source code and compiled bytecode for vulnerabilities have been developed~\cite{Luu:2016:MSC:2976749.2978309, mythril, echidna, smartcheck, securify, zeus}. A recent study \cite{greedyprodigal} illustrates how smart contracts that can freeze or cause loss of funds can be detected \cite{maian}.
 
-These tools utilize symbolic execution. Although useful, raw bytecode analysis is not sufficient here are often false positives and cases where analyzing bytecode is not enough \cite{zeus}. 
-
-\subsubsection{MAIAN}
-Maian \cite{maian} was developed for \cite{greedyprodigal} and is able to detect greedy, prodigal and suicidal contracts which either lock funds indefinitely, leak them to arbitrary users, or are killable by any user % REPHRASE.
-MAIAN's features are useful and provide useful insight for creating detection mechanisms that can be incorporated in other tools, however the results of the study are considered skewed for the following reasons\footnote{Opinions influenced by relevant critique on Twitter by TrailOfBits \url{https://twitter.com/dguido/status/966795086704062465}}:
-\begin{itemize}
-    \item All contracts compiled with solc versions earlier than 0.3.6 are considered `greedy' in absense of a `withdraw' function due to the fact that functions did not require the `payable' modifier in order to accept ether. 
-    \item Many smart contracts deployed on the Ethereum mainnet are used for testing. When ether was inexpensive, the main network was feasible to be used as its own testnet.
-    \item The only contract which is cited in the paper is one which never  received any ether \footnote{\url{https://etherscan.io/address/0x4671ebe586199456ca28ac050cc9473cbac829eb}}
-    \item No peer-review in the paper
-\end{itemize}
-
-\subsubsection{Mythril}
-Mythril \cite{mythril} is a tool developed by ConsenSys\footnote{\url{https://new.consensys.net/}}. Its unique feature allows it to directly connect to Ethereum and evaluate a deployed contract at any ethereum network. It allows for direction inspection of contract storage which can be used to evaluate a contract's state. As an example, the aforementioned contract honeypot in Section X could be swiftly inspected and it would be immediately noticed that the `passHasBeenSet' variable is true.
-\lstinputlisting{code/myth_example.log}
-
-\subsubsection{Solium}
-Solium \cite{solium} is a linter for Solidity. It performs static analysis on the code by analyzing its abstract syntax tree and is able to identify and fix styling and security issues according to preconfigured rules. The plugin for security\footnote{\url{https://github.com/duaraghav8/solium-plugin-security}} can be used to further identify security issues in smart contracts according to best-practices as set by the community and by leading companies.
-
-\subsection{Energy Billing and Accounting on Blockchain}
-An proposal for billing and accounting models is seen on\cite{billaccount}, however it is oriented towards a cloud-management use case and does not implement or go in-depth in a sophisticated smart contract architecture. Attempts to 
-
-
+Utilizing blockchain for Internet of Things is explored in \cite{iot, integrationiot}, while a model for billing and accounting with smart contracts is proposed in~\cite{billaccount}. Energy market use-cases are being piloted by~\cite{gridplus, powerledger} and prototypes are being tested such as \cite{brooklyn, DBLP:journals/ife/MengelkampNBDW18}
 
 \section{Outline}
-Chapter X describes Y
+
+In Chapter~\ref{ch:basics} introduces terminology required for understanding blockchain fundamentals. We then proceed to explain how Ethereum works at a lower level, along with the programming techniques and tooling necessary to author smart contracts.
+
+In Chapter~\ref{ch:scalability} we refer to the scalability issues that plague today's blockchain systems and provide a brief description of the known possible solutions that can be implemented to solve these problems. We make a contribution on scaling smart contracts which allows for more optimized writes to the Ethereum blockchain.
+
+In Chapter~\ref{ch:security} we go over the 
+
+In Chapter~\ref{ch:implementation} we implement the thing
+
+In Chapter~\ref{ch:results} we explain our results from the thing
+
+We conclude at~\ref{ch:conclusion}, summarize and give future work indications. 

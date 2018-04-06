@@ -24,7 +24,11 @@
 \fancyfoot[C]{Chapter \thechapter}
 \fancyfoot[RE,LO]{Georgios Konstantopoulos}
 \usepackage{etoolbox}
+
+% \usepackage{glossaries}
 \patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Setup Title format per chapter: "ChapterNumber: ChapterTitle" %
@@ -45,7 +49,10 @@
 \author{Georgios Konstantopoulos}
 \date{}
 \setcounter{secnumdepth}{3} % default value for 'report' class is "2"
-% \setcounter{tocdepth}{3} % default value for 'report' class is "2"
+
+
+% \loadglsentries{glossary}
+
 \begin{document}
 \maketitle
 \tableofcontents
@@ -60,12 +67,15 @@
 \input{chapters/7_conclusion.tex}
 
 
-\bibliographystyle{plain}
+
+\bibliographystyle{ieeetr}
 \bibliography{references}
 
+% \printglossaries
 \listoffigures
 \listoftables
 
 \input{chapters/appendix.tex}
+
 
 \end{document}
