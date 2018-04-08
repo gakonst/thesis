@@ -52,17 +52,17 @@ Due to the architecture of the EVM all transactions are executed sequentially on
 Contrary to the previous solutions which still record messages on a blockchain, state channels involves exchange of information `off-chain'. The primary use-case for state channels is micro-transactions between two or more parties. This technique involves exchanging signed messages through a secure communications channel and perform a transaction on the blockchain only when the process is done\footnote{Example: Instead of making 10 transactions worth 0.1 ether each, a transaction is made to open the channel, participants exchange off-chain messages transferring value, and settle or dispute the channel with one more transaction at the end.}.
 
 \section{Contract Level Scalability}
-In a recent study \cite{DBLP:journals/corr/ChenLLZ17}, after evaluating 4240 smart contracts, it is found that over 70\% of them are cost more gas than they should due to the compiler failing to properly optimize the Solidity code during compilation. In this section we explore how gas gets computed in smart contracts and ways we can save on gas and transaction costs.
+In a recent study \cite{DBLP:journals/corr/ChenLLZ17}, after evaluating 4240 smart contracts, it is found that over 70\% of them cost more gas than they should due to the compiler failing to properly optimize the Solidity code during compilation. In this section we explore how gas gets computed in smart contracts and potential ways we can save on gas and transaction costs.
 
 \subsection{Gas Costs}
-An Ethereum transaction's gas costs are split in: % https://ethereum.stackexchange.com/a/29560
+An Ethereum transaction total gas costs are split in two: % https://ethereum.stackexchange.com/a/29560
 \begin{enumerate}
     \item \textbf{Transaction Costs:} The cost of sending data to the blockchain. There are 4 items which make up the full transaction cost:
         \begin{enumerate}
-            \item The base cost of a transaction (21000 gas).
+            \item The base cost of a transaction (21000 gas). % hereafter gas units will be refered to as gas
             \item The cost of deploying a contract (32000 gas).
-            \item The cost for every zero byte of data in a transaction's input (4 gas per zero byte).
-            \item The cost of every non-zero byte of data in a transaction's input (68 gas per non-zero byte).
+            \item The cost for every zero byte of data in a transaction input (4 gas per zero byte).
+            \item The cost of every non-zero byte of data in a transaction input (68 gas per non-zero byte).
         \end{enumerate}
     \item \textbf{Execution Costs:} The cost of computational operations which are executed as a result of the the transaction, as described in detail in \cite{ethereum, gas}.
 \end{enumerate} 
