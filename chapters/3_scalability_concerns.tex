@@ -59,7 +59,7 @@ An Ethereum transaction total gas costs are split in two: % https://ethereum.sta
 \begin{enumerate}
     \item \textbf{Transaction Costs:} The cost of sending data to the blockchain. There are 4 items which make up the full transaction cost:
         \begin{enumerate}
-            \item The base cost of a transaction (21000 gas). % hereafter gas units will be refered to as gas
+            \item The base cost of a transaction (21000 gas). % hereafter gas units will be referred to as gas
             \item The cost of deploying a contract (32000 gas).
             \item The cost for every zero byte of data in a transaction input (4 gas per zero byte).
             \item The cost of every non-zero byte of data in a transaction input (68 gas per non-zero byte).
@@ -295,4 +295,4 @@ Taking the above into consideration, we choose to use Method 3 in order to make 
 % In addition, as we essentially do the optimization ourselves, the deployed bytecode is smaller. 
 % This is not exactly intuitive, as it'd be expected that the solidity compiler is able to pack everything perfectly. this method is far more efficient. With this method we are able to store and fetch all the data in a very efficient way, which costs X\% gas less than the previous implementation. However, this method does not allow for a readable and maintainable interface. In order to export every functionality it is needed to convert the `uint' variables to bytes to perform the bit operations on functions. This creates undesired overhead and thus is avoided.
 
-%We described a technique which relies on the compiler's optimizer to pack the data in a struct and do the gas savings, however is simpler and more elegant. The second and third technique are more complex and allow for further gas optimizations. The second technique is more efficient however lacks reusability and is less maintanable. On the other hand, utilizing libraries however we can export a user-friendly API for reusing our code for anyone who has the same use case as us. This technique will be utilized in the Design and implementation section.
+%We described a technique which relies on the compiler's optimizer to pack the data in a struct and do the gas savings, however is simpler and more elegant. The second and third technique are more complex and allow for further gas optimizations. The second technique is more efficient however lacks reusability and is less maintaneable. On the other hand, utilizing libraries however we can export a user-friendly API for reusing our code for anyone who has the same use case as us. This technique will be utilized in the Design and implementation section.

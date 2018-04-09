@@ -1,5 +1,10 @@
 \chapter{Ethereum and Blockchain Basics}\label{ch:basics}
 
+In 2009 Satoshi Nakamoto published the Bitcoin whitepaper~\cite{bitcoin} where he described `a purely peer-to-peer version of electronic cash' which `would allow online payments to be sent directly from one party to another without going through a financial institution'. 
+
+Bitcoin was primarily used for fast and low-cost financial transactions which were routed without any bank interference. It was soon realized that its underlying technology, blockchain, could be used for more than transferring financial value. A blockchain is a database that can be shared between a group of non-trusting individuals, without needing a central party to maintain the state of the database. The data in a blockchain is transparent and secured via cryptography. As more advanced blockchain platforms were built on top of Bitcoin~\cite{colored}, in the end of 2014 a blockchain platform which was capable of executing smart contracts was released, called Ethereum~\cite{vitalik}. A smart contract, first referred to as a term by Szabo in \cite{szabo}, is software that is executed on a blockchain and can be used as a framework for secure and trustless computation. 
+
+
 \section{General Background}
 Before getting into the specifics of blockchains and Ethereum, the next section will be used to explain fundamental terms on cryptography (hash functions and public key cryptography) and blockchain.
 
@@ -221,7 +226,7 @@ In the case of a successful transaction, the consumed gas from \textit{gasLimit}
 \end{figure}
 
 \subsubsection{Failed Transaction}
-A transaction can fail for reasons such as not being given enough gas for its computations, or some exception occuring during its execution. In this case, any gas consumed goes to the miners and any state changes that would happen are reverted. This is similar to the SQL transaction commit-rollback pattern.
+A transaction can fail for reasons such as not being given enough gas for its computations, or some exception occurring during its execution. In this case, any gas consumed goes to the miners and any state changes that would happen are reverted. This is similar to the SQL transaction commit-rollback pattern.
 
 \begin{figure}[H]
     \centering
@@ -254,7 +259,7 @@ Solidity is the most popular language in the ecosystem and although often compar
     \label{fig:smart_contract}
 \end{figure}
 
-Due to the nascence of these languages and the security mistakes that have occured due to them providing programmers with powerful state-changing functions, active research is being done towards safer languages~\cite{bamboo}.
+Due to the nascence of these languages and the security mistakes that have occurred due to them providing programmers with powerful state-changing functions, active research is being done towards safer languages~\cite{bamboo}.
 
 \subsection{Tooling}
 The following section describes tools and software that are often used by Ethereum users and developers to interact with the network.
@@ -262,7 +267,7 @@ The following section describes tools and software that are often used by Ethere
 \subsubsection{Client (Node) Implementations and Testnets}
 Ethereum's official implementations are Geth (golang) and cpp-ethereum (C++). Third party implementations such as Parity (Rust), Pyethereum (Python) and EthereumJ (Java) also exist. The most used kind of node implementations are Geth (compatible with Rinkeby testnet) and Parity (compatible with Kovan testnet). 
 
-Smart contracts are immutable once deployed which means that their deployed bytecode (and thus their functionality) cannot change. As a result, if a flaw is found on a deployed cotnract, the only way to fix it is by deploying a new contract. In addition, the deployment costs can be expensive, so development and iterative testing can be costly. For that, public test networks (testnets) exist which allow for testing free of charge. Kovan and Rinkeby are functioning with the Proof of Authority \cite{poa} consensus algorithm, while Ropsten is running Ethash \cite{ethash} with less difficulty.
+Smart contracts are immutable once deployed which means that their deployed bytecode (and thus their functionality) cannot change. As a result, if a flaw is found on a deployed contract, the only way to fix it is by deploying a new contract. In addition, the deployment costs can be expensive, so development and iterative testing can be costly. For that, public test networks (testnets) exist which allow for testing free of charge. Kovan and Rinkeby are functioning with the Proof of Authority \cite{poa} consensus algorithm, while Ropsten is running Ethash \cite{ethash} with less difficulty.
 
 We provide a comparison between test networks:
 \begin{enumerate}
@@ -282,3 +287,10 @@ Web3 is the library used for interacting with an Ethereum node. The most feature
 
 \subsubsection{Truffle Framework}
 The Truffle Framework is a development framework for smart contract development written in NodeJS. It is currently the industry standard for developers. It allows for automating the smart contract deployment pipeline through \textit{migration} scripts and scripting test suites for scenarios using the Mocha Testing suite. Finally, it includes a debugger for stepping through transaction execution and can internally launch a ganache testnet.
+
+\section{Relative Work}
+Techniques which illustrate more efficient smart contracts by storing less data on a blockchain are described in~\cite{stateless}. \cite{DBLP:journals/corr/ChenLLZ17} makes it clear that compiler optimizations in smart contracts still need improvements in order to avoid unnecessary expenses. On network level scalability there are various approaches such as executing transactions `off-chain'\footnote{An exchange of cryptographically signed messages that does not happen on a blockchain.}~\cite{raiden, funfair, counterfactual} and use a blockchain only for the final settling of a series of transactions. Other approaches exist which involve creating `sidechains' which can be used to offload the computational effort from the `mainchain' \cite{sidechains, loom, cosmos, plasmacash, plasma}. Finally, another approach to achieving scalability is via permissioned blockchains which trade decentralization and transparency for efficiency~\cite{hyperledger, Vukolic:2017:RPB:3055518.3055526}.
+
+Extensive analyses have been performed on the security of blockchains as networks~\cite{Gervais:2016:SPP:2976749.2978341, cryptoeprint:2018:236} and specifically on the security of Ethereum smart contracts~\cite{Atzei:2017:SAE:3080353.3080363} which have proven to be insufficiently secure for the amounts of funds that they hold. As a result, tools that are able to analyze both source code and compiled bytecode for vulnerabilities have been developed~\cite{Luu:2016:MSC:2976749.2978309, mythril, echidna, smartcheck, securify, zeus}. A recent study \cite{greedyprodigal} illustrates how smart contracts that can freeze or cause loss of funds can be detected \cite{maian}.
+
+Utilizing blockchain for Internet of Things is explored in \cite{iot, integrationiot}, while a model for billing and accounting with smart contracts is proposed in~\cite{billaccount}. Energy market use-cases are being piloted by~\cite{gridplus, powerledger} and prototypes are being tested such as \cite{brooklyn, DBLP:journals/ife/MengelkampNBDW18}

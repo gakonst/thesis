@@ -1,6 +1,6 @@
 \chapter{Introduction}
 
-\section{Problem Statement}
+\section{Research Questions}
 We aim to answer the following research questions in this thesis:
 
 \begin{enumerate}\label{statement}
@@ -10,16 +10,10 @@ We aim to answer the following research questions in this thesis:
 \end{enumerate}
 
 \section{Scope}
-The Master Thesis explores the fundamental terms needed to understand blockchain terminology. The contributions to scalability are limited to optimizing smart contracts. Other scalability solutions are mentioned but in depth analysis is considered out of scope. On security we limit ourselves to the industry's best practices, as per the literature and utilize a tool provided by an auditing firm.
+The Master Thesis explores the fundamental terms needed to understand blockchain terminology. The contributions to scalability are limited to optimizing smart contracts. Other scalability solutions are mentioned but in depth analysis is considered out of scope. On security we limit ourselves to the industry's best practices, as per the literature and utilize a tool provided by an auditing firm. The architecture of the metering and billing model of energy consumed by the set of energy meters mentioned in \ref{statement} is implemented based on a specific use-case set by Honda Research and Development Germany, hereafter referred to as HREG, with which we collaborate for the purpose of the Master Thesis.
 
 The technology used includes but is not limited to the Solidity programming language\footnote{Ethereum's most popular language for writing smart contracts}, the Truffle Framework for streamlining the compilation, testing and deployment process, Javascript for unit testing the smart contracts and the Python programming language for automating tasks, performing plotting and analyzing of data.
 
-\section{Relative Work}
-Techniques which illustrate more efficient smart contracts by storing less data on a blockchain are described in~\cite{stateless}. \cite{DBLP:journals/corr/ChenLLZ17} makes it clear that compiler optimizations in smart contracts still need improvements in order to avoid unnecessary expenses. On network level scalability there are various approaches such as executing transactions `off-chain'\footnote{An exchange of cryptographically signed messages that does not happen on a blockchain.}~\cite{raiden, funfair, counterfactual} and use a blockchain only for the final settling of a series of transactions. Other approaches exist which involve creating `sidechains' which can be used to offload the computational effort from the `mainchain' \cite{sidechains, loom, cosmos, plasmacash, plasma}. Finally, another approach to achieving scalability is via permissioned blockchains which trade decentralization and transparency for efficiency~\cite{hyperledger, Vukolic:2017:RPB:3055518.3055526}.
-
-Extensive analyses have been performed on the security of blockchains as networks~\cite{Gervais:2016:SPP:2976749.2978341, cryptoeprint:2018:236} and specifically on the security of Ethereum smart contracts~\cite{Atzei:2017:SAE:3080353.3080363} which have proven to be insufficiently secure for the amounts of funds that they hold. As a result, tools that are able to analyze both source code and compiled bytecode for vulnerabilities have been developed~\cite{Luu:2016:MSC:2976749.2978309, mythril, echidna, smartcheck, securify, zeus}. A recent study \cite{greedyprodigal} illustrates how smart contracts that can freeze or cause loss of funds can be detected \cite{maian}.
-
-Utilizing blockchain for Internet of Things is explored in \cite{iot, integrationiot}, while a model for billing and accounting with smart contracts is proposed in~\cite{billaccount}. Energy market use-cases are being piloted by~\cite{gridplus, powerledger} and prototypes are being tested such as \cite{brooklyn, DBLP:journals/ife/MengelkampNBDW18}
 
 \section{Outline}
 
@@ -27,15 +21,13 @@ In Chapter~\ref{ch:basics} introduces terminology required for understanding blo
 
 In Chapter~\ref{ch:scalability} we refer to the scalability issues that plague today's blockchain systems and provide a brief description of the known possible solutions that can be implemented to solve these problems. We make a contribution on scaling smart contracts which allows for more optimized writes to the Ethereum blockchain.
 
-In Chapter~\ref{ch:security} we go over the most significant security issues found in Ethereum and its smart contracts. Havin understood these, we evaluate and augment the auditing tool \textit{Slither}'s ability to detect and identify vulnerabilities and compare it to taxonomy of tools described in \cite{tools}. Finally, we analyze smart contracts \textit{honeypots} as a meta-hacking pattern. % REPHRASE
+In Chapter~\ref{ch:security} we go over the most significant security issues found in Ethereum and its smart contracts. Having understood these, we evaluate and augment the auditing tool \textit{Slither}'s ability to detect and identify vulnerabilities and compare it to taxonomy of tools described in \cite{tools}. Finally, we analyze smart contracts \textit{honeypots} as a technique used by adversaries to profit from existing and well known smart contract flaws.
 
-In Chapter~\ref{ch:implementation} we present ways in which smart contracts can address the energy market's inefficiencies. We create a suite of smart contracts which is able to answer research question 3 \ref{statement}, while taking the lessons learned from~\ref{ch:scalability} and~\ref{ch:security} into account.
+In Chapter~\ref{ch:implementation} we present ways in which smart contracts can address the energy market's inefficiencies and create a suite of smart contracts which are able to answer research question 3 from~\ref{statement}, while taking the lessons learned from~\ref{ch:scalability} and~\ref{ch:security} into account.
 
-In Chapter~\ref{ch:results} we evaluate the performance and the extent at which the smart contracts from \ref{ch:implementation} achieve their goal. 
+In Chapter~\ref{ch:results} we evaluate the performance and the extent at which the smart contracts from Chapter \ref{ch:implementation} achieve their goal. 
 
-In Chapter~\ref{ch:conclusion} we reiterate on the findings from the previous chapters, summarize our findings and highlight future work that can be done to further improve both the design of the described smart contracts but also the security and scalability of Ethereum.
+In Chapter~\ref{ch:conclusion} we reiterate and summarize on the findings from the previous chapters, highlight future work that can be done to further improve both the design of the described smart contracts but also the security and scalability of Ethereum.
 
 \section{Writing Conventions}
-A glossary can be found at the end of the document for all terminology used (written in italics). 
-
-Limited code snippets can be found across the document when needed for explanatory reasons, full code with explanations can be found in the Appendices and in the accompanying GitHub URL\@. 
+A glossary can be found at the end of the document for all terminology used (written in italics). Limited code snippets can be found across the document when needed for explanatory reasons, full code with explanations can be found in the Appendices and in the accompanying GitHub URL\@. Minimal parts of Chapter \ref{ch:implementation} are redacted due to the inclusion of intellectual property of HREG.
