@@ -14,11 +14,8 @@ In its current state, most consumers do not know what they are paying Business l
 Price of energy, consumer does not know always what they pay, or what they gain from their renewables
  
 \section{Advantages of an Energy-based Blockchain application}
-
-\subsection{Peer 2 Peer}
 In the most general cases, blockchains have the ability to provide transparency and immutability. When talking about energy and transparency, full history of meter readings, price calculation, billing of inhouse energy departments. This can be extended for EV car payment microtransactions and so on.
 
-\subsection{User Owned Data}
 % The blockchain is a particularly interesting technology for decentralized processes that require large networks and trust relationships between all parties. Therefore, it offers great benefits to the power & utilities market, with its large networks of power and utilities companies, (maintenance) subtractors, (local) suppliers and end users.
 
 % Smart meters Still, there are other applications that are ready for use in the near future. Smart meters for instance have already entered many homes. Up until now, sharing data through smart meters was a threat to the privacy of the owner of the meter. Again, the blockchain offers a potential solution. It can provide the accurate data to the supplier without requiring a direct link to the meter of specific users. When needed, the owner of the smart meter can prove to the supplier that the data are his, using his private key, and the cryptographic security of the blockchain proves that the information is accurate and hasn’t been tampered with. This puts the owner in control of his own data.
@@ -32,13 +29,13 @@ We proceed to discuss the business logic of the use-case and then implement it. 
 
 % INSERT GRAPH OF PULLING DATA FROM MONITORING SERVER TO CLIENT, CLIENT SIMULATES THE METERS AND SENDS THE DATA SIGNED WITH THEIR PRIVATE KEYS. TRANSACTIONS GET EXECUTED IN A 3-NODE POA BLOCKCHAIN. EXPLAIN DOCKER HERE. 
 
-\subsection{Smart Meters and Rooms}
+\subsection{Metering in Smart Meters and Virtual Meters}
 
 A smart meter must be able to keep track of the current reading and timestamp of the reading as well as the last reading and timestamp in order to calculate the difference of the two. It also has a unique identifier which is used to retrieve it in the smart contract.
 
-A company building is split into rooms. Each smart meter contributes to a room's consumption with a real coefficient, according to Equation \ref{roomcost}
+Smart meters get grouped in \textit{Virtual Meters}. The consumption of each \textit{Virtual Meter} is equal to a function of the Each smart meter contributes to a room's consumption with a real coefficient, according to Equation \ref{roomcost}
 \begin{equation}\label{roomcost}
-R = C * M
+R = C * M + U
 \end{equation}
 \noindent where
 \begin{description}
@@ -49,46 +46,70 @@ R = C * M
     \vdots & \ddots & \vdots \\
     c_{N1} & \cdots & c_{NM}
   \end{bmatrix}\] ($c_{ij}$ is the coefficient of the $jth$ meter for the $ith$ room)
-
-\item  and \[M = 
+\item  \[M = 
 \begin{bmatrix}
     m_{1} & \cdots & m_{M}
 \end{bmatrix}^T\] ($m_{i}$ is the kilowatthour reading of the $ith$ meter)
+\item  and \[U=
+\begin{bmatrix}
+    u_{1} & \cdots & u_{M}
+\end{bmatrix}^T\] (each $u_{i}$ is a constant)
 \end{description}
 
-The coefficients are calculated throuhg an internal partner, INSERT DETAILS ON EASD.
+The coefficients along with the constants are calculated through Honda R\&D's and are considered known. 
 
-\subsection{Cost Centers and Billing}
+\subsection{Cost Centers, Departments and Business Units}
+Virtual Meters are grouped into \textit{Cost Centers}, where the consumption of each \textit{Cost Center} is the sum of the consumptions of its included Virtual Meters.
 
-Rooms are grouped together in a structure called \textit{Cost Center} which does X. A room can belong only to one cost center. During the accounting stage, the accountant can retrieve the difference in energy consumption since the last clearing period and thus
+FURTHER EXPLAIN DEPARTMENTS - FORWARDING LOGIC.
 
+\section{Smart Contracts} \label{ch:implementation:sc}
+In this section we go over the implementation and the rationale of each developed smart contract. We explain the inner workings and provide tests of their functionality. A thorough explanation how they interact with each other can be found in \ref{scresults}.
 
-\section{Smart Contracts}
+INSERT GRAPH SHOWING:
 
-In this section we go over the implementation and the rationale of each developed smart contract. We explain the inner workings and provide tests of their functionality. A thorough walkthrough on how they interact with each other can be found in \ref{scresults}
+EACH METER PULLING FROM MONITORING SERVER, PUSHING TO BLOCKCHAIN
+
+EACH VIRTUAL METER PULLING FROM BLOCKCHAIN, PERFORMING OPERATIONS THEN PUSHING TO BLOCKCHAIN Again
+
+EACH COST CENTER PULLING DATA
+
+EACH DEPARTMENT/CC FUNDING THE BUSINESS UNIT BY FORWARDING.
+
+\subsection{Access Control}
+Defining a proper access control policy is very important as discussed in Section \ref{ch:security}. It is common to find Access Control Lists (ACL) in enterprise environments which allow access to resources only to selected participants. This does not exist by default in smart contracts. The Aragon Project\footnote{Project aimed at creating DAOs} provides an ACL contract, however it was not used in the final version due to the complexity it introduced to our code\footnote{Aragon's contracts are architected towards creating fully upgradable DAOs, which would introduce considerable overheads and complexity to our code}. Instead, the DSAUTH pattern is used.
+
 \subsection{Contract Registry}
-Upgradable logic, call smart contract by name.
+Upgradable logic, call smart contract by name, versioning
 
-\subsection{Meter Management}
-Meter manager utilizes \ref{method3}. Each meter has its own ID. We use the pattern. Deleting a meter sets the active status to false. We iterate over the array of meters. There are software engineering patterns \cite{crud} that allow more proper usage, however they cost a lot more gas. 
+\subsection{MeterDB}
+MeterDB utilizes \ref{method3} to create a smart contract that keeps track of the last two consumed values and logged timestamps of a smart meter or a virtual meter. A meter must be approved by an entity who has been given access to the \texttt{activateMeter} through the ACL. 
+
+EXPLAIN ASSUMPTIONS FOR DESIGN, NON ITERABLE BUT ITS OK. 
+
+Each meter has its own ID. We use the pattern. Deleting a meter sets the active status to false. We iterate over the array of meters. There are software engineering patterns \cite{crud} that allow more proper usage, however they cost a lot more gas. 
+
 
 \subsection{Cost - Profit Management}
 We follow the same pattern as with meters for storing cost centers. We define 
-Follow busienss logic
 
-\subsection{Access Control}
-Defining a proper access control policy is very important as discussed in Section \ref{security}. It is common to find Access Control Lists (ACL) in enterprise environments which allow access to resources only to selected participants. This does not exist by default in smart contracts. The Aragon Project\footnote{Project aimed at creating DAOs} provides an ACL contract, however it was not used in the final version due to the complexity it introduced to our code\footnote{Aragon's contracts are architected towards creating fully upgradable DAOs, which would introduce considerable overheads and complexity to our code}. Instead, the DSAUTH pattern is used.
+\section{Client Side}
 
-\section{Monitoring Server}
+We utilize Python to interact with the smart contracts and push data to them. We implement multiple command line interfaces which can be used for abstracting the complexity to an operator. Due to design, it can be dockerized and run on multiple blabla.
+
+\subsection{Monitoring Server and REST API}
+Due to having dumb meters, we cannot get dirctly. There is a monitoring server which has all the data. A rest api allows us to pull data on demand. API explanation in appendix.k
+
 Could be implemented without monitoring server if each meter was smarter. 
-Explain monitoring server
-
-\subsection{REST API} 
-Explain rest api usage 
-
-\subsection{Python Client}
-Explain python implementation of rest api
+Explain monitoring server.
 
 \subsection{web3.py interaction}
 Explain how web3.py interacts with monitoring server and sends data to Smart Contracts
+
+\subsection{Python Bindings and Clients for all functionalities}
+Explain python implementation
+
+using pool to launch multiple meter instances.
+
+
 
