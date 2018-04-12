@@ -26,7 +26,7 @@ First of all, transactions per second as a metric is inaccurate. Solving scalabi
 \caption{The Scalability Trilemma, from Ethereum's Sharding documentation \cite{sharding}}
 \end{figure}
 
-As an example that trades decentralization for more transactions is increasing the block size so that more transactions can fit inside a block and thus increase throughput. Increasing the size of each block, implies more disk space for storing the blockchain, better bandwith for propagating the blocks and more processing power on a node to verify any performed computations. This eventually requires computers with datacenter-level network connections and processing power which are not accessible to the average consumer, thus damaging decentralization which is the core value proposition of blockchain. % The blockGasLimit can be voted on by miners\footnote{\url{https://www.etherchain.org/tools/gasLimitVoting}}. % In addition to the reasons stated above, increasing the gas limit also potentially damages the security of the network due to increased uncle rates, Ethereum's analog to Bitcoin's orphan blocks \footnote{\url{https://blockchain.info/orphaned-blocks}}. Longer propagation time implies that a miner will spend more time searching for a solution until they receive a valid block, and thus has more chances of finding a valid block in that time. As a result, 
+An example that trades decentralization for more transactions is increasing the block size so that more transactions can fit inside a block and thus increase throughput. Increasing the size of each block, implies more disk space for storing the blockchain, better bandwith for propagating the blocks and more processing power on a node to verify any performed computations. This eventually requires computers with datacenter-level network connections and processing power which are not accessible to the average consumer, thus damaging decentralization which is the core value proposition of blockchain. % The blockGasLimit can be voted on by miners\footnote{\url{https://www.etherchain.org/tools/gasLimitVoting}}. % In addition to the reasons stated above, increasing the gas limit also potentially damages the security of the network due to increased uncle rates, Ethereum's analog to Bitcoin's orphan blocks \footnote{\url{https://blockchain.info/orphaned-blocks}}. Longer propagation time implies that a miner will spend more time searching for a solution until they receive a valid block, and thus has more chances of finding a valid block in that time. As a result, 
 
 As described in \cite{scaling-trustless-models}, Proof of Work is a consensus algorithm optimized for censorship-resistance while (in theory) maintain a low barrier to entry, as shown in Figure \ref{fig:scalability_triangle_pow}. In reality, due to economies of scale, PoW blockchains end up being centralized around small numbers of miners \cite{Gencer2018DecentralizationIB}. 
 
@@ -81,9 +81,9 @@ General rules that should be followed for saving gas costs:
 \begin{enumerate}
     \item Enable compiler optimizations (although can lead to unexpected scenarios~\cite{compiler}).
     \item Reuse code through libraries~\cite{library}.
-    \item Setting a variable back to zero refunds 15000 gas through SSTORE, so if a variable is going to be unused it is considered good practice to call \textit{delete} on it. 
+    \item Setting a variable back to zero refunds 15000 gas through SSTORE, so if a variable is going to be unused it is considered good practice to call \texttt{delete} on it. 
     \item When iterating through an array, if the break condition involves the array's length set it as a stack variable the loop. This way, it doesn't get loaded during each loop and allows for saving 200 gas per iteration \cite{DBLP:journals/corr/ChenLLZ17}.
-    \item Use `bytes32' instead of `string' for strings that are of known size. `bytes32' always fit in an EVM word, while `string' types can be arbitrarily long and thus require more gas for saving their length.
+    \item Use \texttt{bytes32} instead of \texttt{string} for strings that are of known size. \texttt{bytes32} always fit in an EVM word, while \texttt{string} types can be arbitrarily long and thus require more gas for saving their length.
     \item Do not store large amounts of data on a blockchain. It is more efficient to store a hash which can be either proof of the existence of the data at a point in time, or it can be a hash pointing to the full data\footnote{This pattern has been used in combination with IPFS, \url{https://ipfs.io}}
 \end{enumerate}
 
@@ -103,7 +103,7 @@ We proceed to compare the gas efficiency of 3 methods for storing data in a smar
 \input{tables/character.tex}
 
 
-The choice of variables is made to represent what the traits of a character would be in a game built on a smart contract. The size of the variables is selected so that all the information required to describe a \textit{Character} can fit in a 256 bit word. The interface that satisfies the requirements is shown in~\ref{fig:game_interface}.
+The choice of variables is made to represent what the traits of a character would be in a game built on a smart contract. The size of the variables is selected so that all the information required to describe a \texttt{Character} can fit in a 256 bit word. The interface that satisfies the requirements is shown in~\ref{fig:game_interface}.
 
 For each of the following implementations we will examine the deployment gas costs, as well as the gas costs for calling each function:
 
@@ -115,18 +115,18 @@ For each of the following implementations we will examine the deployment gas cos
 We use \texttt{bytes32} in Method 3 because the bit operations done in Solidity when extracted in functions do not function as expected with \texttt{uint256} variables. The full contract implementations for each method can be found in Appendix \ref{apx:scalability}. A side-by-side comparison of each method is shown in \ref{ch:scalability:results}% In this section we describe the methods and in section \label{results} we go over the results and caveats of each method.
 
 \subsubsection{Method 1: Packing of traits through structs relying on the optimizer} \label{method1}
-We use Solidity's built-in \textit{struct}\footnote{\url{http://solidity.readthedocs.io/en/v0.4.21/types.html}} keyword as means to group all traits of a \textit{Character} as described in \ref{table:characteristics}. This allows for easy code readability since every variable of a \textit{struct} can be accessed by its name as seen in \ref{fig:struct_optimization:c}, like the property of an object. 
+We use Solidity's built-in \texttt{struct}\footnote{\url{http://solidity.readthedocs.io/en/v0.4.21/types.html}} keyword as means to group all traits of a \texttt{Character} as described in \ref{table:characteristics}. This allows for easy code readability since every variable of a \texttt{struct} can be accessed by its name as seen in \ref{fig:struct_optimization:c}, like the property of an object. 
 
-In this case, assignment and retrieval of the variables is done in a very straightforward way. By utilizing Solidity's built-in structures and arrays, we can create an array of `Character' type structures and access their traits by their indexes, as done in \ref{fig:struct_optimization:c}
+In this case, assignment and retrieval of the variables is done in a very straightforward way. By utilizing Solidity's built-in structures and arrays, we can create an array of \texttt{Character} type structures and access their traits by their indexes, as done in \ref{fig:struct_optimization:c}
 
 The gas costs per function call with this method are: 
 \input{tables/GameTightlyPacked.sol_data.tex}
 
-\subsubsection{Method 2: Manually pack traits in a uint256 variable with masking and shifting} \label{method2}
+\subsubsection{Method 2: Manually pack traits in a \texttt{uint256} variable with masking and shifting} \label{method2}
     
-In \ref{method1} we rely on the optimizer to make storing a character's traits more efficient. It turns out\footnote{\url{https://github.com/figs999/Ethereum/blob/master/Solc.aComedyInOneAct}} that the optimizer is not able to remove all unnecessary operations and there is still room for improvement. In order to get better results, we create a local stack variable\footnote{The data is 248 bits long, so we create a uint256 variable} which is large enough to store all the traits from \ref{table:characteristics}. Instead of creating a \texttt{struct}, we manually encode each trait in the said variable, essentially we act as the optimizer, which results in much less gas spent as both the contract's bytecode is smaller and the \texttt{text}{CreateCharacter} function is more efficient. We proceed to describe the encoding process.
+In \ref{method1} we rely on the optimizer to make storing a character's traits more efficient. It turns out\footnote{\url{https://github.com/figs999/Ethereum/blob/master/Solc.aComedyInOneAct}} that the optimizer is not able to remove all unnecessary operations and there is still room for improvement. In order to get better results, we create a local stack variable\footnote{The data is 248 bits long, so we create a \texttt{uint256} variable} which is large enough to store all the traits from \ref{table:characteristics}. Instead of creating a \texttt{struct}, we manually encode each trait in the said variable, essentially we act as the optimizer, which results in much less gas spent as both the contract's bytecode is smaller and the \texttt{text}{CreateCharacter} function is more efficient. We proceed to describe the encoding process.
 
-By left shifting a trait's value by the sum of the size of all variables to its right and then performing a bitwise OR operation with the uint256, the trait gets encoded in the uint256, as shown in~\ref{fig:uint_encoding}. This is implemented in \ref{fig:uint_encoding_code}
+By left shifting a trait's value by the sum of the size of all variables to its right and then performing a bitwise OR operation with the \texttt{uint256}, the trait gets encoded in the \texttt{uint256}, as shown in~\ref{fig:uint_encoding}. This is implemented in \ref{fig:uint_encoding_code}
 
 \begin{figure}[H]
     \centering
@@ -135,7 +135,7 @@ By left shifting a trait's value by the sum of the size of all variables to its 
     \label{fig:uint_encoding}
 \end{figure}
 
-By right shifting the uint256 by the sum of the size of all variables to the right of a trait and then performing a bitwise AND operations with the trait's size retrieves the value of the trait. Figure \ref{fig:uint_decoding} illustrates retrieving the \texttt{creationTime} trait from the uint256 by shifting right 16 times and performing bitwise AND with $2^32-1$ since \texttt{creationTime} is a 32 bit variable. This is implemented in \ref{fig:uint_decoding_code}.
+By right shifting the \texttt{uint256} by the sum of the size of all variables to the right of a trait and then performing a bitwise AND operations with the trait's size retrieves the value of the trait. Figure \ref{fig:uint_decoding} illustrates retrieving the \texttt{creationTime} trait from the \texttt{uint256} by shifting right 16 times and performing bitwise AND with $2^32-1$ since \texttt{creationTime} is a 32 bit variable. This is implemented in \ref{fig:uint_decoding_code}.
 
 \begin{figure}[H]
     \centering
@@ -179,11 +179,8 @@ The gas costs per function call with this method are:
 \input{tables/GameByteMaskingLib.sol_data.tex}
 
 \subsection{Results}\label{ch:scalability:results}
-Observing \ref{table:tightpacking}, \ref{table:uint_masking_gas} and \ref{table:byte_masking_gas},  it is seen that in all cases the optimizer's first iteration creates significant gas savings. Further optimizer runs result in more gas expenditure during deployment but less per function call. This happens because \texttt{solc} optimizes either for size or for runtime costs\cite{optimizer-tradeoff}. 
+Observing \ref{table:tightpacking}, \ref{table:uint_masking_gas} and \ref{table:byte_masking_gas},  it is seen that in all cases the optimizer's first iteration creates significant gas savings. Further optimizer runs result in more gas expenditure during deployment but less per function call. This happens because \texttt{solc} optimizes either for size or for runtime costs\cite{optimizer-tradeoff}. In this section we compare the gas costs for calling the \texttt{CraeteCharacter} function and for deploying the contract for 1 optimizer run, for each method.
 
-We proceed to compare the gas costs for deployment and for calling the \texttt{CreateCharacter} function for 1 optimizer run.
-
-% Insert graph. Y axis -> gas, X axis -> 2 bins with CreateCharacter and Deployment as labels. Each bin has 3 bars, depending on the amount of gas consumed for X optimizer runs.
 \begin{figure}[ht!]
     % HOW TO MAKE CAPTIONS APPEAR ON THE SAME HEIGHT?
     \makebox[\linewidth][c]{%
@@ -207,32 +204,9 @@ We proceed to compare the gas costs for deployment and for calling the \texttt{C
 
 It is clear that the biggest savings are achieved through Method 2. Deploying a contract with Method 2 is 29\% more efficient than Method 1, while Method 3 is only 4\% more efficient than Method 1. Calling \texttt{CreateCharacter} is approximately 36\% more efficient in both methods compared to Method 1. 
 
-Method 2 is the most efficient in terms of gas, however the coding style used for it is extremely compact and non-verbose, which makes difficult to maintain and modify the code, in case software requirements change, as seen in \ref{fig:method2:comparison}
+Method 2 is the most efficient in terms of gas, however the coding style used for it is extremely compact and non-verbose, which makes difficult to maintain and modify the code, in case software requirements change, as seen in \ref{fig:method2}. In addition, there is no measure taken for overflows, so in case the \texttt{CreateCharacter} function gets called with an argument that is larger than the designed size, the result is miscalculated. 
 
-\begin{figure}[ht!]
-    % HOW TO MAKE CAPTIONS APPEAR ON THE SAME HEIGHT?
-    \makebox[\linewidth][c]{%
-    \begin{subfigure}[t]{0.58\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, firstline=11, lastline=18]{contracts/CreateCharacter.sol}
-        \caption{Method 2: CreateCharacter}
-        \label{fig:method2:createcharacter}
-    \end{subfigure}
-
-    \hspace{1cm}
-
-    \begin{subfigure}[t]{0.58\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, firstline=41, lastline=50]{contracts/CreateCharacter.sol}
-        \caption{Method 2: GetCharacterStats}
-        \label{fig:method2:getcharacterstats}
-    \end{subfigure}
-    }
-    \caption{Method 2 is the most efficient but also least readable implementation.}
-    \label{fig:method2:comparison}
-\end{figure}
-
-On the other hand, comparing Method 3 with Method 1, it has very similar syntax and has similar gas efficiency when it comes to calling \texttt{CreateCharacter}. The increased deployment costs happen because it utilizes the \texttt{CharacterLib}, described in \ref{apx:scalability:lib}
+In an attempt to improve the readability and maintainability of the method by extracting the bit shifting logic to functions the deployment gains over Method 3 are in the range of 5\%, and the function costs differ in the range of 0.001\%, thus negating most of the gas efficiency advantages.
 
 \begin{figure}[ht!]
     \makebox[\linewidth][c]{%
@@ -245,22 +219,29 @@ On the other hand, comparing Method 3 with Method 1, it has very similar syntax 
 
     \hspace{1cm}
 
-    \begin{subfigure}[b]{0.58\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, firstline=20, lastline=27]{contracts/CreateCharacter.sol}
-        \caption{Method 3: CreateCharacter}
-        \label{fig:method3:createcharacter}
-    \end{subfigure}
-    }
-
-    \vspace{1cm}
-
-    \makebox[\linewidth][c]{%
     \begin{subfigure}[b]{0.6\textwidth}
         \centering
         \lstinputlisting[language=Solidity, firstline=29, lastline=39]{contracts/CreateCharacter.sol}
         \caption{Method 1: GetCharacterStats}
         \label{fig:method1:getcharacterstats}
+    \end{subfigure}
+    }
+    \caption{Method 1 \texttt{CreateCharacter} and \texttt{GetCharacterStats} API}
+    \label{fig:method1}
+\end{figure}
+
+On the other hand, comparing Method 3 (Figure \ref{fig:method3}) with Method 1 (Figure \ref{fig:method1}), they have very similar syntax, with Method 1 being much more efficient in terms of gas. In addition, the bit shifting logic is extracted in a library which makes the code fully portable. Finally, there is more flexibility when performing bit operations due to the usage of \texttt{bytes32} in the library and as a result there is no risk of variables overflowing, contrary to Method 2.
+
+% similar gas efficiency when it comes to calling \texttt{CreateCharacter}. The increased deployment costs happen because it utilizes the \texttt{CharacterLib}, described in \ref{apx:scalability:lib}
+
+
+\begin{figure}[ht!]
+    \makebox[\linewidth][c]{%
+    \begin{subfigure}[b]{0.58\textwidth}
+        \centering
+        \lstinputlisting[language=Solidity, firstline=20, lastline=27]{contracts/CreateCharacter.sol}
+        \caption{Method 3: CreateCharacter}
+        \label{fig:method3:createcharacter}
     \end{subfigure}
 
     \hspace{1cm}
@@ -272,10 +253,57 @@ On the other hand, comparing Method 3 with Method 1, it has very similar syntax 
         \label{fig:method3:getcharacterstats}
     \end{subfigure}
     }
-    \caption{Method 1 and 3's look very similar. Method 3 is 36\% more efficient than Method 1.}
-    \label{fig:method13:comparison}
+    \caption{Method 3, although similar in coding style, is 36\% more efficient than Method 1.}
+    \label{fig:method3}
 
 \end{figure}
+
+In order to effectively compare and evaluate which method is the most effective for the described use case, we evaluate on a weighted score based on \textit{Code Readability}, \textit{Portability}, \textit{Gas Efficiency} o\textit{Security}, as illustrated in Table \ref{table:weights}.
+
+\begin{table}[H]
+	\centering
+	\vspace*{-1ex}
+	\scriptsize
+	\vspace{-1ex}
+	\begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Name} & \textbf{Weight}  & \textbf{Description}\\ \hline 
+        Readability/Maintainability & 0.25 & How readable is the codes\\
+        Portability & 0.2 & How easy is it to use the code in another smart contract? \\
+        Gas Efficiency & 0.3 & How gas efficient is the code? \\
+        Security & 0.25 & How robust and secure is the code? \\
+        \hline
+    \end{tabular}
+	\caption{Selected weights for evaluation criteria on picking the most effective method.}
+    \label{table:weights}
+\end{table}
+
+The result of the evaluation is shown in Table \ref{table:evaluation}:
+
+\begin{table}[H]
+	\centering
+	\vspace*{-1ex}
+	\scriptsize
+	\vspace{-1ex}
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \textbf{Name} & \textbf{Weight}  
+      & \textbf{M1} & \textbf{M1 (W)}
+      & \textbf{M2} & \textbf{M2 (W)} 
+      & \textbf{M3} & \textbf{M3 (W)}\\ 
+        \hline 
+        \textbf{Readability/Maintainability} & 0.3 & 5 & 0.15 & 2 & 0.2 & 3 & 0.3\\
+        \textbf{Portability} & 0.3 & 5 & 0.15 & 2 & 0.2 & 3 & 0.3\\
+        \textbf{Gas Efficiency} & 0.3 & 5 & 0.15 & 2 & 0.2 & 3 & 0.3\\
+        \textbf{Security} & 0.3 & 5 & 0.15 & 2 & 0.2 & 3 & 0.3\\
+        \hline
+        \textbf{Total} & 0.3 & 5 & 0.15 & 2 & 0.2 & 3 & 0.3\\
+        \hline
+    \end{tabular}
+	\caption{Evaluation for each method based on the criteria from Table \ref{table:weights}. Columns with (W) contain the weighted score for each criterion.}
+    \label{table:evaluation}
+\end{table}
+
 
 Taking the above into consideration, we choose to use Method 3 in order to make the implementation described in Chapter \ref{ch:implementation} more gas efficient while retaining its readability and maintainability.
 

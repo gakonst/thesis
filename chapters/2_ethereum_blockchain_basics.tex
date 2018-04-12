@@ -73,7 +73,7 @@ Vitalik Buterin goes indepth in the advantages and disadvantages between private
 \section{Ethereum Blockchain}
 The Ethereum blockchain acts as a transactional state machine. The first state is the \textit{genesis} state referred to as the \textit{genesis block}. After the execution of each transaction, the state changes. Transactions are collated together in \textit{blocks}. 
 
-\begin{figure}[H]
+\begin{figure}[ht!]
     \centering
     \includegraphics[width=1.0\textwidth]{blockchain_transitions}
     \caption{Ethereum can be seen as a chain of states, from~\cite{visual}}
@@ -164,7 +164,7 @@ Specifically:
     \item \textbf{blockHash:} The hash of the block that included the transaction.
     \item \textbf{blockNumber:} The number of the block that included the transaction.
     \item \textbf{from:} The transaction's sender\footnote{This field does not actually exist in a transaction however it is recovered from the v,r,s values of the signing algorithm (through \textit{ecrecover})}.
-    \item \textbf{gas:} The maximum amount of gas that the sender will supply for the execution of the transaction (see \ref{gas}).
+    \item \textbf{gas:} The maximum amount of gas units (hereafter referred to as \textit{gas}) that the sender will supply for the execution of the transaction (see \ref{gas}).
     \item \textbf{gasLimit:} The amount of Wei paid by the sender per unit of gas.
     \item \textbf{hash:} The transaction hash.
     \item \textbf{input:} Contains the data which is given as input to a smart contract in order to execute a function. Can also be used to embed a message in the transaction. Contains the value `0x0' in the case of simple transactions of ether.
@@ -209,7 +209,7 @@ Every unit of gas costs a certain amount of \textit{gasPrice} which is set by th
 \end{equation}
 \begin{quote}
     \noindent
-    where $gasUsed$ is the amount of gas consumed by the transaction
+    where $gasUsed$ is the amount of gas consumed by the transaction.
 \end{quote}
 
 Miners are considered to be rational players who are looking to maximize their profit. As a result, they are expected to include transactions with transaction costs before transactions with low transaction costs. This effectively creates a `fee market'  where users are willing to pay more by increasing the \textit{gasPrice} to have their transactions confirmed faster. In the times of network congestion such as popular Initial Coin Offerings\footnote{Crowdfunding for cryptocurrency projects which allow investors to buy tokens in a platform}\cite{batico} or mass-driven games such as CryptoKitties\footnote{\url{https://cryptokitties.co}}\cite{cryptokitties} transactions become very expensive and can take long times to confirm.
