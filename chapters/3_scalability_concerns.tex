@@ -230,10 +230,9 @@ In an attempt to improve the readability and maintainability of the method by ex
     \label{fig:method1}
 \end{figure}
 
-On the other hand, comparing Method 3 (Figure \ref{fig:method3}) with Method 1 (Figure \ref{fig:method1}), they have very similar syntax, with Method 1 being much more efficient in terms of gas. In addition, the bit shifting logic is extracted in a library which makes the code fully portable. Finally, there is more flexibility when performing bit operations due to the usage of \texttt{bytes32} in the library and as a result there is no risk of variables overflowing, contrary to Method 2.
+On the other hand, by comparing Method 1 (Figure \ref{fig:method1}) with Method 3 (Figure \ref{fig:method1}) it is seen that they have very similar syntax, with Method 1 being much more efficient in terms of gas. In addition, the bit shifting logic is extracted to a library which makes the code fully portable. Finally, there is more flexibility when performing bit operations due to the usage of \texttt{bytes32} in the library and as a result there is no risk of variables overflowing, contrary to Method 2.
 
 % similar gas efficiency when it comes to calling \texttt{CreateCharacter}. The increased deployment costs happen because it utilizes the \texttt{CharacterLib}, described in \ref{apx:scalability:lib}
-
 
 \begin{figure}[ht!]
     \makebox[\linewidth][c]{%
@@ -278,7 +277,7 @@ In order to effectively compare and evaluate which method is the most effective 
     \label{table:weights}
 \end{table}
 
-The result of the evaluation is shown in Table \ref{table:evaluation}:
+Taking the above into consideration, we choose to use Method 3 in order to make the implementation described in Chapter \ref{ch:implementation} more gas efficient while retaining its readability and maintainability. The results of the evaluation are shown in Table \ref{table:evaluation}:
 
 \begin{table}[H]
 	\centering
@@ -292,12 +291,17 @@ The result of the evaluation is shown in Table \ref{table:evaluation}:
       & \textbf{M2} & \textbf{M2 (W)} 
       & \textbf{M3} & \textbf{M3 (W)}\\ 
         \hline 
-        \textbf{Readability/Maintainability} & 0.3 & 5 & 0.15 & 2 & 0.2 & 3 & 0.3\\
-        \textbf{Portability} & 0.3 & 5 & 0.15 & 2 & 0.2 & 3 & 0.3\\
-        \textbf{Gas Efficiency} & 0.3 & 5 & 0.15 & 2 & 0.2 & 3 & 0.3\\
-        \textbf{Security} & 0.3 & 5 & 0.15 & 2 & 0.2 & 3 & 0.3\\
+        \textbf{Readability/Maintainability} 
+            & 0.25 & 5  & 1.25 & 3 & 0.75 & 4 & 1\\
+        \textbf{Portability} 
+            & 0.2  & 5  & 0.8  & 3 & 0.6  & 4 & 0.8\\
+        \textbf{Gas Efficiency} 
+            & 0.3  & 1  & 0.3  & 5 & 1.5  & 4 & 1.2\\
+        \textbf{Security} 
+            & 0.25 & 5  & 1.25 & 4 & 1    & 4 & 1\\
         \hline
-        \textbf{Total} & 0.3 & 5 & 0.15 & 2 & 0.2 & 3 & 0.3\\
+        \textbf{Total} 
+            & 1    & 16 & 3.8  & 15 & 3.85 & 16 & 4\\
         \hline
     \end{tabular}
 	\caption{Evaluation for each method based on the criteria from Table \ref{table:weights}. Columns with (W) contain the weighted score for each criterion.}
@@ -305,13 +309,9 @@ The result of the evaluation is shown in Table \ref{table:evaluation}:
 \end{table}
 
 
-Taking the above into consideration, we choose to use Method 3 in order to make the implementation described in Chapter \ref{ch:implementation} more gas efficient while retaining its readability and maintainability.
-
 % In Method 1 (\ref{table:tightpacking}) the optimizer is able to cut down deployment costs by 42\%, due to being able to pack all variables in a storage slot. 
 
 % In Method 2 (\ref{table:uint_masking_gas}), the optimization is done manually and has significant results both in deployment and in function costs. In Method 3 (\ref{table:byte_masking_gas}), although we follow the same pattern as in Method 2, we introduce a more verbose API which results in more complex operations being done at a lower level. This introduces slightly bigger deployment costs, and a negligible difference in gas costs for function calls. We consider this overhead to be worth it, since we export an API that is usable.
-
-
 
 % Deciding how many times to run the optimizer requires estimating the expected usage of the smart contracts. Comparing the results from running the optimizer 1 and 500 times in Method 2, it can be seen that the deployment costs can increase by as much as 10\% while the savings for each function call are in the range of 0.7\%. When quantifying these percentages in gas, we conclude that if a function is going to be called \textit{enough}\footnote{Enough is not quantifiable and depends on the implementation. A developer should perform a similar analysis to the one we do in order to set their breakeven points.} times, then the contract which was compiled with more optimizer runs is more efficient in the long run. In addition, this shifts the costs towards the contract deployer rather than the users. Given the tradeoffs described above and the improved code readability and maintainability, we opt to use Method 3 in our implementations. 
 
