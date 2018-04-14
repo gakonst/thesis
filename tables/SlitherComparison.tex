@@ -1,5 +1,5 @@
 \begin{table}[H]
-	\caption{Comparison of vulnerabilities each tool is able to find. Slither is able to detect the most significant of the already exploited vulnerabilities along with more subtle ones which are not detectable by other tools.}
+	\caption{Comparison of vulnerabilities each tool is able to find. Slither is able to detect the most significant of the already exploited vulnerabilities along with more subtle ones which are not detectable by other tools. It is not able to recognize Time Order Dependency (TOD) or High Gas cost patterns because they require symbolic execution.}
 	\centering
 	\setlength\LTleft{-1in}
 	\setlength\LTright{-1in}
@@ -53,7 +53,7 @@
 			\\ \hline
 
 		\textbf{Slither} &
-			Y & Y & N & 
+			Y & N & N & 
 			Y & Y & Y & 
 			Y & Y & Y 
 			\\ \hline

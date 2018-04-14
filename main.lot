@@ -9,7 +9,7 @@
 \contentsline {table}{\numberline {3.6}{\ignorespaces Selected weights for evaluation criteria on picking the most effective method.\relax }}{29}{table.caption.25}
 \contentsline {table}{\numberline {3.7}{\ignorespaces Evaluation for each method based on the criteria from Table \ref {table:weights}. Columns with (W) contain the weighted score for each criterion.\relax }}{29}{table.caption.26}
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Comparison of vulnerabilities each tool is able to find. Slither is able to detect the most significant of the already exploited vulnerabilities along with more subtle ones which are not detectable by other tools.\relax }}{34}{table.caption.27}
+\contentsline {table}{\numberline {4.1}{\ignorespaces Comparison of vulnerabilities each tool is able to find. Slither is able to detect the most significant of the already exploited vulnerabilities along with more subtle ones which are not detectable by other tools. It is not able to recognize Time Order Dependency (TOD) or High Gas cost patterns because they require symbolic execution.\relax }}{34}{table.caption.27}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
