@@ -74,27 +74,36 @@ Slither can be used both for finding known vulnerabilities, but also to avoid co
 
 \input{tables/SlitherComparison.tex}
 
-
-
 \subsection{Honeypot Smart Contracts} \label{honeypots}
-Since the second Parity bug and as of March 2018, no novel critical vulnerabilities have been identified in smart contracts. However, smart contracts that are architected to look vulnerable to known exploits started surfacing, when their true purpose is stealing the funds of aspiring hackers. These contract honeypots are funded with an initial small amount of ether (0.5 to 2 ether). Hackers who attempt to exploit them need to first deposit some amount (depending on the honeypot's implementation) before trying to drain the contract. Each honeypot has a well-hidden mechanism to prevent the attacker from draining the funds, essentially locking up any funds that get deposited by individuals other than the contracts deployer. 
+Since the second Parity bug and as of March 2018, no novel critical vulnerabilities have been identified in smart contracts. However, smart contracts that are architected to look vulnerable to known exploits started surfacing, when their true purpose is stealing the funds of aspiring hackers. These contract honeypots are funded with an initial small amount of ether (0.5 to 2 ether). Hackers who attempt to exploit them need to first deposit some amount before trying to drain the contract. Each honeypot has a mechanism to prevent the attacker from draining any funds. As a result, only the contract owner is able to withdraw the balance of the contract, including any stolen amounts. % An extensive analysis of smart contracts as honeypots is made in \cite{honeypots} which was released to accompany the research of this Master Thesis. 
+We proceed to describe the functionality of a honeypot which takes advantage of `Variable Shadowing' in Solidity. 
 
-The above contract was initialized with 1 ether at its balance. An attack can drain the contract by calling the $GetGift$ function with the correct password. Due to the attacker not knowing the password, they proceed to change it, using the $SetPass$ function, which requires at least a 1 ether deposit, which is acceptable since the attacker will get that back. This also requires that the `passHasBeenSet' variable is false, or that the PassHasBeenSet function has not been called yet.
-
-A naive attacker would inspect the contract's transactions in Etherscan\footnote{https://etherscan.io/address/0xd8993f49f372bb014fb088eabec95cfdc795cbf6} and after notice that no transaction referring to `PassHasBeenSet' has been made, and thus proceed to attack the contract and change the password, only to find that the password did not get changed. A transaction where a contract calls another contract's function is called a `Message Call'. Etherscan shows this kind of calls as `Internal Transactions', only when they include values of more than 0 ether. In this case, `PassHasBeenSet' does not accept Ether and thus cannot be detected in Etherscan. The contract's owner called `PassHasBeenSet' from another contract and as a result the password is not changeable. Detecting that the `passHasBeenSet' variable had been set to true can be done by inspecting the storage of the smart contract, which is always public as shown in \ref{fig:storage}
-
-An extensive analysis of smart contracts as honeypots is made in \cite{honeypots} which was released to accompany the research of this Master Thesis.
-
+The contract in Figure \ref{fig:owner_honeypot} was deployed with an initial amount of 0.1 ether as a balance. At first, it seems that the \texttt{owner} variable can be manipulated by an adversary, by sending ether to the contract with an amount larger than the value of \texttt{jackpot}. After that, the adversary should be able to call \texttt{takeAll} and withdraw the funds from the contract.
 
 \begin{figure}[ht!]
     \centering
-    \lstinputlisting[language=Solidity]{code/Gift_1_ETH.sol}
-    \caption{Example honeypot}
-    \label{smart_contract}
+    \lstinputlisting[language=Solidity]{contracts/var_shadow.sol}
+    \caption{A honeypot which takes advantage of Variable Shadowing.}
+    \label{fig:owner_honeypot}
 \end{figure}
 
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\textwidth]{honeypot}
+    \caption{Transactions trying to get ownership of the honeypot contract}
+    \label{fig:honeypot_tx}
+\end{figure}
+
+Users tried to exploit it by depositing funds and expecting the ownership to change to their address so that they would be able to withdraw the contract's funds. Contrary to what is expected, after sending enough ether to the contract, the \texttt{owner} variable which gets changed belongs to \texttt{KingOfTheHill} contract. The \texttt{takeAll} function, is decorated by the \texttt{onlyOwner} modifier\footnote{A modifier is a special function which gets executed before or after the function it \textit{modifies}. They are primarily used to enforce access control in functions.} which looks for the value of \texttt{owner} in the \texttt{Owned} contract. As a result, the `real' \texttt{owner} of the contract is unchanged, and the attacker is unable to claim ownership, effectively losing their funds. Running Slither on the contract can reveal the variable shadowing as shown in \ref{fig:slither_shadowing}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{slither_shadowing}
+    \caption{Slither is able to detect the variable shadowing in \texttt{owner}}
+    \label{fig:slither_shadowing}
+\end{figure}
+
+
 \subsection{Towards more secure smart contracts}
-It is apparent that since smart contracts being unmodifiable after deployment, there is no way of patching any vulnerabilities. Testing platforms have been setup so that developers can practice and test their skills. A developer should keep their code as simple as possible, while providing test coverage for as many scenarios as possible. Using audited and tested code for parts of contracts that have already been implemented (eg. an $ERC20$ token contract) ensures that these parts of the code are going to be secured. Following the best practices as described by the industry\'s most sophisticated auditors\footnote{\url{https://consensys.github.io/smart-contract-best-practices/known_attacks/}}. Finally, developers should be looking for confluence between the results of different automated analyzers in order to filter out false-positives and find false-negatives.
-% % https://ethernaut.zeppelin.solutions/
-% % http://hackthiscontract.io/
-% http://solidity.readthedocs.io/en/v0.4.21/security-considerations.html#recommendations
+
+Trustless smart contracts are impossible to modify after deployment. If a vulnerability is found, it is impossible to patch it. Developers should keep their code as simple as possible, while providing test coverage for as many scenarios as possible. Using audited and tested code for parts of contracts that have already been implemented (e.g. an \texttt{ERC20} token contract) ensures that these parts of the code are going to be secured. Developers must be familiar with the security best practices as described by the industry\'s most sophisticated auditors\footnote{\url{https://consensys.github.io/smart-contract-best-practices/known_attacks/}}, and should look for confluence between the results of different automated analyzers in order to filter out false-positives and find false-negatives. They should also be testing and improving their skills on platforms that have been set up with intentionally vulnerable contracts \cite{ethernaut, hackthiscontract, capturetheether}. Finally, if compromises in the trustless nature of the contracts can be made, they can be made to be upgradeable, however that increases code complexity, gas costs and potentially introduces new attack vectors.
