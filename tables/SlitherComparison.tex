@@ -1,0 +1,62 @@
+\begin{table}[H]
+	\caption{Comparison of vulnerabilities each tool is able to find. Slither is able to detect the most significant of the already exploited vulnerabilities along with more subtle ones which are not detectable by other tools.}
+	\centering
+	\setlength\LTleft{-1in}
+	\setlength\LTright{-1in}
+	\begin{longtable}{C{0.12\textwidth}
+					  C{0.10\textwidth} C{0.10\textwidth}
+					  C{0.10\textwidth} C{0.10\textwidth}
+					  C{0.10\textwidth} C{0.11\textwidth}
+					  C{0.10\textwidth} C{0.10\textwidth}
+					  C{0.10\textwidth}}
+		\hline
+		\textbf{Security Tool} & 
+		\textbf{Re Entrancy} & 
+		\textbf{TOD} &  
+		\textbf{High Gas} &
+		\textbf{Unprot. Function} & 
+		\textbf{No Constructor} & 
+		\textbf{tx.origin} & 
+		\textbf{blockhash} & 
+		\textbf{Var. Shadowing} &
+		\textbf{Mapping in struct}
+		\\
+		\hline
+		\textbf{Oyente} &
+			Y & Y & N & 
+			? & ? & N & 
+			N & N & N
+			\\ \hline
+
+		\textbf{Remix} &
+			Y & Y & Y & 
+			? & ? & Y & 
+			Y & N & N 
+			\\ \hline
+
+		\textbf{Securify} &
+			Y & Y & N & 
+			? & ? & Y & 
+			N & N & N 
+			\\ \hline
+
+		\textbf{SmartCheck} &
+			Y & Y & Y & 
+			? & ? & Y & 
+			N & N & N 
+			\\ \hline
+
+		\textbf{Mythril} &
+			Y & Y & N & 
+			? & ? & Y & 
+			N & N & N 
+			\\ \hline
+
+		\textbf{Slither} &
+			Y & Y & N & 
+			Y & Y & Y & 
+			Y & Y & Y 
+			\\ \hline
+	\end{longtable}
+	\label{table:slither}
+\end{table}

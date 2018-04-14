@@ -29,6 +29,12 @@
 % \usepackage{glossaries}
 \patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{fancy}}{}{}
 
+%%%%%%%%%%%% Table setup
+\usepackage{tabularx,ragged2e}
+% \newcolumntype{Y}{>{\RaggedRight\arraybackslash\hspace{0pt}}X}
+% \newcolumntype{C}{>{\Centering\arraybackslash\hspace{0pt}}X}
+\usepackage{longtable}
+\newcolumntype{C}{>{\centering\arraybackslash}p}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
