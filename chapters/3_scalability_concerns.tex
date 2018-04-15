@@ -105,7 +105,7 @@ We will examine the gas costs for deployment and for calling each function for t
 \end{enumerate}
 We use \texttt{bytes32} in Method 3 because the bit operations done in Solidity when extracted in functions do not function as expected with \texttt{uint256} variables. The full contract implementations for each method can be found in Appendix \ref{apx:scalability}. A comparison of the performance for each method is shown in \ref{ch:scalability:results}% In this section we describe the methods and in section \label{results} we go over the results and caveats of each method.
 
-\subsubsection{Method 1: Packing of traits by utilizing Solidity's optimizer and \texttt{struct} variables} \label{method1}
+\subsubsection{Packing of traits by utilizing Solidity's optimizer and \texttt{struct} variables} \label{method1}
 We use Solidity's built-in \texttt{struct}\footnote{\url{http://solidity.readthedocs.io/en/v0.4.21/types.html}} keyword as means to group all traits of a \texttt{Character} as described in \ref{table:characteristics}. This allows for easy code readability since every variable of a \texttt{struct} can be accessed by its name as seen in \ref{fig:struct_optimization:c}, like the property of an object. 
 
 \input{figures/ch3/method1-code.tex}
@@ -114,7 +114,7 @@ In this case, assignment and retrieval of the variables is done in a very straig
 
 \input{tables/GameTightlyPacked.sol_data.tex}
 
-\subsubsection{Method 2: Manually pack traits in a uint256 variable with masking and shifting} \label{method2}
+\subsubsection{Manually pack traits in a uint256 variable with masking and shifting} \label{method2}
     
 In \ref{method1} we rely on the optimizer to make storing a character's traits more efficient. It turns out\footnote{\url{https://github.com/figs999/Ethereum/blob/master/Solc.aComedyInOneAct}} that the optimizer is not able to remove all unnecessary operations and there is still room for improvement. In order to get better results, we create a local stack variable\footnote{The data is 248 bits long, so we create a \texttt{uint256} variable} which is large enough to store all the traits from \ref{table:characteristics}. Instead of creating a \texttt{struct}, we manually encode each trait in the said variable, essentially we act as the optimizer, which results in much less gas spent as both the contract's bytecode is smaller and the \texttt{CreateCharacter} function is more efficient. We proceed to describe the encoding process.
 
@@ -135,7 +135,7 @@ Retrieving data requires shifting right $N$ times and performing bitwise AND wit
 The gas costs per function call with this method are: 
 \input{tables/GameByteMasking.sol_data.tex}
 
-\subsubsection{Method 3: Manually pack traits in a bytes32 variable with masking and shifting, utilizing Solidity Libraries} \label{method3}
+\subsubsection{Manually pack traits in a bytes32 variable with masking and shifting, utilizing Solidity Libraries} \label{method3}
 
 Code reusability and readability should always be given high priority. Although data packing is very efficient in~\ref{method2} compared to~\ref{method1}, the code is hardly readable and it is impossible to reuse parts of it. % It is possible to extract the logic into functions, however the overheads introduced by the additional operations make it inferior to the technique we describe in this section.
 We utilize Solidity's \texttt{Library} built-in which allows us to define a set of methods which can be applied on a datatype using the \texttt{using X for Y} syntax\footnote{This is similar to calling functions on struct's in Golang}. A simple example is shown in \ref{fig:library}.

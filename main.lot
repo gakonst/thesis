@@ -9,7 +9,7 @@
 \contentsline {table}{\numberline {3.6}{\ignorespaces Selected weights for evaluation criteria.\relax }}{30}{table.caption.26}
 \contentsline {table}{\numberline {3.7}{\ignorespaces Evaluation of each method\relax }}{30}{table.caption.27}
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Comparison of vulnerabilities each tool is able to find. Slither is able to detect well known issues along with more subtle ones which are not detectable by other tools. It is not able to recognize Time Order Dependency (TOD) or High Gas cost patterns because they require symbolic execution.\relax }}{35}{table.caption.28}
+\contentsline {table}{\numberline {4.1}{\ignorespaces Slither is able to detect more vulnerabilities compared to other tools.\relax }}{35}{table.caption.28}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
