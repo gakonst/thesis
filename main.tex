@@ -46,6 +46,20 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\let\oldquote\quote
+\let\endoldquote\endquote
+\renewenvironment{quote}[2][]
+  {\if\relax\detokenize{#1}\relax
+     \def\quoteauthor{#2}%
+   \else
+     \def\quoteauthor{#2~---~#1}%
+   \fi
+   \oldquote}
+  {\par\nobreak\smallskip\hfill(\quoteauthor)%
+   \endoldquote\addvspace{\bigskipamount}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \graphicspath{ {images/} }
 
 \title{
@@ -63,6 +77,9 @@
 \begin{document}
 \maketitle
 \tableofcontents
+% \printglossaries
+\listoffigures
+\listoftables
 
 \input{chapters/0_abstract}
 \input{chapters/1_introduction}
@@ -78,9 +95,6 @@
 \bibliographystyle{ieeetr}
 \bibliography{references}
 
-% \printglossaries
-\listoffigures
-\listoftables
 
 \input{chapters/appendix.tex}
 

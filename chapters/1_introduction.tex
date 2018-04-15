@@ -1,16 +1,25 @@
 \chapter{Introduction}
 
+\section{Motivation}
+In 2009 Satoshi Nakamoto published the Bitcoin whitepaper~\cite{bitcoin} where he described `a purely peer-to-peer version of electronic cash' which `would allow online payments to be sent directly from one party to another without going through a financial institution'. 
+
+Bitcoin was primarily used for fast and low-cost financial transactions which were routed without any bank interference. It was soon realized that its underlying technology, blockchain, could be used for more than transferring financial value. A blockchain is a database that can be shared between a group of non-trusting individuals, without needing a central party to maintain the state of the database. The data in a blockchain is transparent and secured via cryptography. As more advanced blockchain platforms were built on top of Bitcoin~\cite{colored}, in the end of 2014 a blockchain platform which was capable of executing smart contracts was released, called Ethereum~\cite{vitalik}. A smart contract, first referred to as a term by Szabo in \cite{szabo}, is software that is executed on a blockchain and can be used as a framework for secure and trustless computation. 
+
+Due to the distributed nature of blockchains there are challenges towards achieving scalability and high transaction throughput, which traditional centralized payment processors or server architectures provide. Smart contract security has been a pressing issue as large financial amounts have been stolen from smart contracts.
+
 \section{Research Questions}
 We aim to answer the following research questions in this thesis:
 
 \begin{enumerate}\label{statement}
     \item How can the scalability of smart contracts be improved?
     \item How can the security of smart contracts be improved?
-    \item How can a system that is able to measure and bill the energy consumed by a set of energy meters be modeled? The system must be able to perform accounting on the measured energy based on a pre-specified accounting model. The system must be transparent, decentralized, and secure. Anyone in the network should be able to verify the validity transactions. Finally, the system needs to scalable at reasonable cost.
+    \item How can a system that is able to measure and bill the energy consumed by a set of energy meters be modeled? 
+    
+    The system must be able to perform accounting on the measured energy based on a pre-specified accounting model. The system must be transparent, decentralized, and secure. Anyone in the network should be able to verify the validity transactions. Finally, the system needs to scalable at reasonable cost.
 \end{enumerate}
 
 \section{Scope}
-The Master Thesis explores the fundamental terms needed to understand blockchain terminology. The contributions to scalability are limited to optimizing smart contracts. Other scalability solutions are mentioned but in depth analysis is considered out of scope. On security we limit ourselves to the industry's best practices, as per the literature and utilize a tool provided by an auditing firm. The architecture of the metering and billing model of energy consumed by the set of energy meters mentioned in \ref{statement} is implemented based on a specific use-case set by Honda Research and Development Germany, hereafter referred to as HREG, with which we collaborate for the purpose of the Master Thesis.
+This Master Thesis explores the fundamental terms needed to understand blockchain terminology. The contributions to scalability are limited to optimizing smart contracts. Other scalability solutions are mentioned but in depth analysis is considered out of scope. On security we limit ourselves to the industry's best practices, as per the literature and utilize a tool provided by an auditing firm. The architecture of the metering and billing model of energy consumed by the set of energy meters mentioned in Section \ref{statement} is implemented based on a specific use-case set by Honda Research and Development Germany, hereafter referred to as HREG, with which we collaborate for the purpose of the Master Thesis.
 
 The technology used includes but is not limited to the Solidity programming language\footnote{Ethereum's most popular language for writing smart contracts}, the Truffle Framework for streamlining the compilation, testing and deployment process, Javascript for unit testing the smart contracts and the Python programming language for automating tasks, performing plotting and analyzing of data.
 

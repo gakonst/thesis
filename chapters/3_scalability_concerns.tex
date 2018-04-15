@@ -8,10 +8,9 @@ We argue that there are two levels of scalability, scalability on contract and o
 \section{Network Level Scalability}
 Scale should not be confused with scalability. While scale describes the size of a system and the amount of data being processed, scalability describes how the cost of running the system changes as scale increases. Existing blockchains scale poorly because the costs associated with them increase faster than the rate at which data can be processed. 
 
-First of all, transactions per second as a metric is inaccurate. Solving scalability does not imply just increasing the transaction throughput. It is a constraint-satisfaction-problem; the goal is to maximize throughput while maintaining the network's decentralization and security. 
+First of all, transactions per second as a metric is inaccurate. Solving scalability does not imply just increasing the transaction throughput. It is a constraint-satisfaction-problem; the goal is to maximize throughput while maintaining the network's decentralization and security. In the Ethereum Github, this is described as the \textit{Scalability Trilemma}.
 
-\begin{figure}[H]
-\begin{quote}
+\begin{quote}{Scalability Trilemma, Sharding FAQ}
     \textbf{This sounds like there’s some kind of scalability trilemma at play. What is this trilemma and can we break through it?}
 
     The trilemma claims that blockchain systems can only at most have two of the following three properties:
@@ -22,20 +21,12 @@ First of all, transactions per second as a metric is inaccurate. Solving scalabi
         \item Security (defined as being secure against attackers with up to $O(n)$ resources)
     \end{itemize}
 \end{quote}
-\label{fig:trilemma}
-\caption{The Scalability Trilemma, from Ethereum's Sharding documentation \cite{sharding}}
-\end{figure}
 
 An example that trades decentralization for more transactions is increasing the block size so that more transactions can fit inside a block and thus increase throughput. Increasing the size of each block, implies more disk space for storing the blockchain, better bandwith for propagating the blocks and more processing power on a node to verify any performed computations. This eventually requires computers with datacenter-level network connections and processing power which are not accessible to the average consumer, thus damaging decentralization which is the core value proposition of blockchain. % The blockGasLimit can be voted on by miners\footnote{\url{https://www.etherchain.org/tools/gasLimitVoting}}. % In addition to the reasons stated above, increasing the gas limit also potentially damages the security of the network due to increased uncle rates, Ethereum's analog to Bitcoin's orphan blocks \footnote{\url{https://blockchain.info/orphaned-blocks}}. Longer propagation time implies that a miner will spend more time searching for a solution until they receive a valid block, and thus has more chances of finding a valid block in that time. As a result, 
 
-As described in \cite{scaling-trustless-models}, Proof of Work is a consensus algorithm optimized for censorship-resistance while (in theory) maintain a low barrier to entry, as shown in Figure \ref{fig:scalability_triangle_pow}. In reality, due to economies of scale, PoW blockchains end up being centralized around small numbers of miners \cite{Gencer2018DecentralizationIB}. 
+As described in \cite{scaling-trustless-models}, Proof of Work is a consensus algorithm optimized for censorship-resistance while (in theory) maintaining a low barrier to entry, as shown in Figure \ref{fig:scalability_triangle_pow}. Bitcoin and Ethereum's PoW networks have slow probabilistic time to finality and do not scale well. However, due to economies of scale, PoW blockchains end up being centralized around small numbers of miners \cite{Gencer2018DecentralizationIB}. 
 
-\begin{figure}[ht!]
-    \centering
-    \includegraphics[width=0.5\textwidth]{scalability_triangle_pow}
-    \caption{Bitcoin and Ethereum's PoW networks have slow probabilistic time to finality and do not scale well. Mining capacity has high concentration in a small amount of entities, from \cite{scaling-trustless-models}}
-    \label{fig:scalability_triangle_pow}
-\end{figure}
+\input{figures/ch3/scalability-triangle.tex}
 
 We proceed to discuss some network level solutions that can improve Ethereum's scalability.
 
@@ -117,75 +108,29 @@ We use \texttt{bytes32} in Method 3 because the bit operations done in Solidity 
 \subsubsection{Method 1: Packing of traits by utilizing Solidity's optimizer and \texttt{struct} variables} \label{method1}
 We use Solidity's built-in \texttt{struct}\footnote{\url{http://solidity.readthedocs.io/en/v0.4.21/types.html}} keyword as means to group all traits of a \texttt{Character} as described in \ref{table:characteristics}. This allows for easy code readability since every variable of a \texttt{struct} can be accessed by its name as seen in \ref{fig:struct_optimization:c}, like the property of an object. 
 
-\begin{figure}[ht!]
-    \makebox[\linewidth][c]{%
-    \begin{subfigure}[b]{0.58\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, firstline=1, lastline=9]{contracts/CreateCharacter.sol}
-        \caption{Method 1: CreateCharacter}
-        \label{fig:method1:createcharacter}
-    \end{subfigure}
-
-    \hspace{1cm}
-
-    \begin{subfigure}[b]{0.6\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, firstline=29, lastline=39]{contracts/CreateCharacter.sol}
-        \caption{Method 1: GetCharacterStats}
-        \label{fig:method1:getcharacterstats}
-    \end{subfigure}
-    }
-    \caption{Method 1 \texttt{CreateCharacter} and \texttt{GetCharacterStats} API}
-    \label{fig:method1}
-\end{figure}
+\input{figures/ch3/method1-code.tex}
 
 In this case, assignment and retrieval of the variables is done in a very straightforward way. By utilizing Solidity's built-in structures and arrays, we can create an array of \texttt{Character} type structures and access their traits by their indexes, as done in \ref{fig:struct_optimization:c}. The gas costs per function call with this method are shown in \ref{table:tightpacking}.
+
 \input{tables/GameTightlyPacked.sol_data.tex}
 
 \subsubsection{Method 2: Manually pack traits in a uint256 variable with masking and shifting} \label{method2}
     
 In \ref{method1} we rely on the optimizer to make storing a character's traits more efficient. It turns out\footnote{\url{https://github.com/figs999/Ethereum/blob/master/Solc.aComedyInOneAct}} that the optimizer is not able to remove all unnecessary operations and there is still room for improvement. In order to get better results, we create a local stack variable\footnote{The data is 248 bits long, so we create a \texttt{uint256} variable} which is large enough to store all the traits from \ref{table:characteristics}. Instead of creating a \texttt{struct}, we manually encode each trait in the said variable, essentially we act as the optimizer, which results in much less gas spent as both the contract's bytecode is smaller and the \texttt{CreateCharacter} function is more efficient. We proceed to describe the encoding process.
 
-By left shifting a trait's value by the sum of the size of all variables to its right and then performing a bitwise OR operation with the \texttt{uint256}, the trait gets encoded in the \texttt{uint256}, as shown in~\ref{fig:uint_encoding}. This is implemented in \ref{fig:uint_encoding_code}
+\input{figures/ch3/method2-code.tex}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{uint_encoding}
-    \caption{Setting data requires shifting left $N$ times and performing bitwise OR with the target variable, where $N$ is the sum of the number of bits of all variables to the right of the target variable.}
-    \label{fig:uint_encoding}
-\end{figure}
+% By left shifting a trait's value by the sum of the size of all variables to its right and then performing a bitwise OR operation with the \texttt{uint256}, the trait gets encoded in the \texttt{uint256}, as shown in~\ref{fig:uint_encoding}. 
 
-By right shifting the \texttt{uint256} by the sum of the size of all variables to the right of a trait and then performing a bitwise AND operations with the trait's size retrieves the value of the trait. Figure \ref{fig:uint_decoding} illustrates retrieving the \texttt{creationTime} trait from the \texttt{uint256} by shifting right 16 times and performing bitwise AND with $2^32-1$ since \texttt{creationTime} is a 32 bit variable. This is implemented in \ref{fig:uint_decoding_code}.
+Setting data requires shifting left $N$ times and performing bitwise OR with the target variable, where $N$ is the sum of the number of bits of all variables to the right of the target variable, as shown in Figure \ref{fig:uint_encoding}. This is implemented in \ref{fig:uint_encoding_code}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{uint_decoding}
-    \caption{Retrieving data requires shifting right $N$: times and performing bitwise AND with the target variable's size, where $N$ is the sum of the number of bits of all variables to the right of the target variable.}
-    \label{fig:uint_decoding}
-\end{figure}
+\input{figures/ch3/uint-encoding.tex}
 
-\begin{figure}[ht!]
-    \makebox[\linewidth][c]{%
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, firstline=11, lastline=18]{contracts/CreateCharacter.sol}
-        \caption{Method 2: CreateCharacter}
-        \label{fig:method2:createcharacter}
-    \end{subfigure}
+% By right shifting the \texttt{uint256} by the sum of the size of all variables to the right of a trait and then performing a bitwise AND operations with the trait's size retrieves the value of the trait. 
 
-    \hspace{1cm}
+Retrieving data requires shifting right $N$ times and performing bitwise AND with the target variable's size, where $N$ is the sum of the number of bits of all variables to the right of the target variable. Figure \ref{fig:uint_decoding} illustrates retrieving the \texttt{creationTime} trait from the \texttt{uint256} by shifting right 16 times and performing bitwise AND with $2^{32}-1$ since \texttt{creationTime} is a 32 bit variable. This is implemented in \ref{fig:uint_decoding_code}.
 
-    \begin{subfigure}[b]{0.58\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, firstline=41, lastline=50]{contracts/CreateCharacter.sol}
-        \caption{Method 2: GetCharacterStats}
-        \label{fig:method2:getcharacterstats}
-    \end{subfigure}
-    }
-    \caption{Although Method 2 is the least readable, it is the most efficient in terms of gas.}
-    \label{fig:method2}
-
-\end{figure}
+\input{figures/ch3/uint-decoding.tex}
 
 The gas costs per function call with this method are: 
 \input{tables/GameByteMasking.sol_data.tex}
@@ -194,29 +139,6 @@ The gas costs per function call with this method are:
 
 Code reusability and readability should always be given high priority. Although data packing is very efficient in~\ref{method2} compared to~\ref{method1}, the code is hardly readable and it is impossible to reuse parts of it. % It is possible to extract the logic into functions, however the overheads introduced by the additional operations make it inferior to the technique we describe in this section.
 We utilize Solidity's \texttt{Library} built-in which allows us to define a set of methods which can be applied on a datatype using the \texttt{using X for Y} syntax\footnote{This is similar to calling functions on struct's in Golang}. A simple example is shown in \ref{fig:library}.
-
-\begin{figure}[ht!]
-    \makebox[\linewidth][c]{%
-    \begin{subfigure}[b]{0.58\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, firstline=20, lastline=27]{contracts/CreateCharacter.sol}
-        \caption{Method 3: CreateCharacter}
-        \label{fig:method3:createcharacter}
-    \end{subfigure}
-
-    \hspace{1cm}
-
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, firstline=52, lastline=62]{contracts/CreateCharacter.sol}
-        \caption{Method 3: GetCharacterStats}
-        \label{fig:method3:getcharacterstats}
-    \end{subfigure}
-    }
-    \caption{Method 3, although similar in coding style, is 36\% more efficient than Method 1.}
-    \label{fig:method3}
-
-\end{figure}
 
 
 The visibility of a Library's exported functions can be: 
@@ -231,9 +153,10 @@ The visibility of a Library's exported functions can be:
 
 Libraries with public functions are deployed as standalone contracts to be used by contracts made by other developers. This process is further described in \ref{apx:scalability:lib}. They often include generic functionality such as math operations\footnote{A popular Solidity Library is \texttt{SafeMath} which contains error-checked math operations}. Depending on the complexity of the contracts, this can be more efficient compared to using \texttt{internal} functions. % When \textit{public} is used, the DELEGATECALL opcode is used\footnote{Relays the message to the library while allowing it to execute in the sender's state}. When \textit{internal} is used, a function call is interpreted as a jump and thus is more efficient than the DELEGATECALL. 
 
-That way, instead of having to deploy a new contract, developers can use an already deployed one. Due to the usage of \texttt{DELEGATECALL}, there is a tradeoff between contract deployment costs and the extra costs incurred when making function calls. We use \texttt{internal} because it requires less gas and since this is a specialized use-case it is not expected to be used by third-parties.
-
 The final version is split in two files, the library which includes the API for setting and retrieving the character's traits, and the main contract which uses the library's high-level functions. By utilizing the \texttt{using CharacterLib for bytes32} syntax we are able to store and retrieve a character's traits in a user-friendly manner.
+
+\input{figures/ch3/method3-code.tex}
+That way, instead of having to deploy a new contract, developers can use an already deployed one. Due to the usage of \texttt{DELEGATECALL}, there is a tradeoff between contract deployment costs and the extra costs incurred when making function calls. We use \texttt{internal} because it requires less gas and since this is a specialized use-case it is not expected to be used by third-parties.
 
 The gas costs per function call with this method are: 
 \input{tables/GameByteMaskingLib.sol_data.tex}
@@ -241,26 +164,7 @@ The gas costs per function call with this method are:
 \subsection{Results}\label{ch:scalability:results}
 Observing \ref{table:tightpacking}, \ref{table:uint_masking_gas} and \ref{table:byte_masking_gas},  it is seen that in all cases the optimizer's first iteration creates significant gas savings. Further optimizer runs result in more gas expenditure during deployment but less per function call. This happens because \texttt{solc} optimizes either for size or for runtime costs\cite{optimizer-tradeoff}. In this section we compare the gas costs for calling the \texttt{CreateCharacter} function and for deploying the contract for 1 optimizer run\footnote{We do not compare \texttt{Register} because the implementation is the same across all 3 methods and \texttt{GetCharacterStats} does not cost gas to call externally because it is a \texttt{view} method which does not modify the state.}. 
 
-\begin{figure}[ht!]
-    % HOW TO MAKE CAPTIONS APPEAR ON THE SAME HEIGHT?
-    \makebox[\linewidth][c]{%
-    \begin{subfigure}[c]{0.58\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{comparison_methods}
-        \label{fig:gascomp:absolute}
-    \end{subfigure}
-
-    \hspace{1cm}
-
-    \begin{subfigure}[c]{0.58\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{comparison_methods_pct}
-        \label{fig:gascomp:pct}
-    \end{subfigure}
-    }
-    \caption{Gas cost comparison between the 3 proposed methods.}
-    \label{fig:gascomp}
-\end{figure}
+\input{figures/ch3/comparison.tex}
 
 It is clear that the biggest savings are achieved through Method 2. Deploying a contract with Method 2 is 29\% more efficient than Method 1, while Method 3 is only 4\% more efficient than Method 1. Calling \texttt{CreateCharacter} is approximately 36\% more efficient in both methods compared to Method 1. 
 
@@ -276,55 +180,11 @@ On the other hand, by comparing Method 1 (Figure \ref{fig:method1}) with Method 
 
 In order to effectively compare and evaluate which method is the most effective for the described use case, we evaluate on a weighted score based on \textit{Readability}, \textit{Portability}, \textit{Gas Efficiency} and \textit{Security}, as illustrated in Table \ref{table:weights}.
 
-\begin{table}[H]
-	\centering
-	\vspace*{-1ex}
-	\scriptsize
-	\vspace{-1ex}
-	\begin{tabular}{|c|c|c|}
-        \hline
-        \textbf{Name} & \textbf{Weight}  & \textbf{Description}\\ \hline 
-        \textbf{Readability} & 0.25 & How readable is the codes\\
-        \textbf{Portability} & 0.2 & How easy is it to use the code in another smart contract? \\
-        \textbf{Gas Efficiency} & 0.3 & How gas efficient is the code? \\
-        \textbf{Security} & 0.25 & How robust and secure is the code? \\
-        \hline
-    \end{tabular}
-	\caption{Selected weights for evaluation criteria on picking the most effective method.}
-    \label{table:weights}
-\end{table}
+\input{tables/weights.tex}
 
 Taking the above into consideration, we choose to use Method 3 in order to make the implementation described in Chapter \ref{ch:implementation} more gas efficient while retaining its readability and maintainability. The results of the evaluation are shown in Table \ref{table:evaluation}:
 
-\begin{table}[H]
-	\centering
-	\vspace*{-1ex}
-	\scriptsize
-	\vspace{-1ex}
-	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-        \hline
-        \textbf{Name} & \textbf{Weight}  
-      & \textbf{M1} & \textbf{M1 (W)}
-      & \textbf{M2} & \textbf{M2 (W)} 
-      & \textbf{M3} & \textbf{M3 (W)}\\ 
-        \hline 
-        \textbf{Readability/Maintainability} 
-            & 0.25 & 5  & 1.25 & 3 & 0.75 & 4 & 1\\
-        \textbf{Portability} 
-            & 0.2  & 5  & 0.8  & 3 & 0.6  & 4 & 0.8\\
-        \textbf{Gas Efficiency} 
-            & 0.3  & 1  & 0.3  & 5 & 1.5  & 4 & 1.2\\
-        \textbf{Security} 
-            & 0.25 & 5  & 1.25 & 4 & 1    & 4 & 1\\
-        \hline
-        \textbf{Total} 
-            & 1    & 16 & 3.8  & 15 & 3.85 & 16 & 4\\
-        \hline
-    \end{tabular}
-	\caption{Evaluation for each method based on the criteria from Table \ref{table:weights}. Columns with (W) contain the weighted score for each criterion.}
-    \label{table:evaluation}
-\end{table}
-
+\input{tables/evaluation.tex}
 
 % In Method 1 (\ref{table:tightpacking}) the optimizer is able to cut down deployment costs by 42\%, due to being able to pack all variables in a storage slot. 
 
