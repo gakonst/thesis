@@ -4,13 +4,13 @@ Smart contracts can be transformative for the energy industry. In this chapter w
 
 \section{Energy Market inefficiencies}
 
-The global energy market is gradually transitioning to clean and renewable energy. Regulations encourage usage of distributed energy resources (DERs). The grid is becoming digitalized and the expectations and behaviors of the consumers are changing. With the integration of DERs, consumers transform into prosumers who store their energy surplus or sell it to their peers, effectively distributing the generation of energy, contrary to existing power systems which were designed to accomodate central points of energy generation.
+The global energy market is gradually transitioning to clean and renewable energy. Regulations encourage usage of distributed energy resources (DERs). The grid is becoming digitalized and the expectations and behaviors of the consumers are changing. With the integration of DERs, consumers are gradually transforming to prosumers who store their energy surplus or sell it to their peers, effectively distributing the generation of energy, contrary to existing power systems which were designed to accomodate central points of energy generation.
 
 There are numerous inefficiencies which need to be resolved in today's energy markets \cite{ey-inefficiencies}:
 \begin{enumerate}
     \item \textbf{Transaction complexity:} More participants in the networks result in more complex transactions.
     \item \textbf{Predictability and Reliability:} Availability of DERs is less predictable compared to traditional energy resources like coal. 
-    \item \textbf{Empowered prosumer:} There need be monitoring tools and infrastructure to allow prosumers to have flexibility in their energy distribution.
+    \item \textbf{Empowered prosumer:} There need be monitoring tools and infrastructure that allow prosumers to manage their energy production and consumption.
     \item \textbf{Geographic mismatches:} Locations that fully utilize DERs are usually far from key points of energy demand. Transmitting energy over long distances is inefficient.
     \item \textbf{Trust and Security:} New participants will only choose the system if it is able to be trusted and is properly secured.
 \end{enumerate}
@@ -28,7 +28,7 @@ There are numerous inefficiencies which need to be resolved in today's energy ma
  
 \section{Energy Market use-cases for Blockchain}
 
-A number of use-cases for smart contracts have been identified in the energy market. We proceed to describe applications that derive from the advantages of blockchain (transparency, trustlessness, efficiency, security) as discussed in Section \ref{advantages}.
+A number of use-cases for smart contracts have been identified in the energy market. We proceed to describe applications that derive from the advantages of blockchain (transparency, trustlessness, security) as discussed in Section \ref{advantages}.
 
 \begin{enumerate}
     \item \textbf{Supply chain tracking and optimization:} This is a broad blockchain use case which allows for optimization on logistics and tracking the location of products, reducing fraud and ensuring the validity of an event.
@@ -54,64 +54,72 @@ A number of use-cases for smart contracts have been identified in the energy mar
 \section{Business Logic} \label{business-logic}
 In collaboration with Honda R\&D Germany, we create a pilot suite of smart contracts for in-house use in order to track and bill the consumed energy of the company's headquarters as measured by a set of smart meters. 
 
-Describe meters, billing and so ona
-The purpose is to serve as a means of tracking the energy consumed by the company's smart meters and ensuring the data's validity and existence in a smart contract. In addition, due to the complex structure of the company, every smart meter's consumption can contribute with different coefficients to the total energy consumption of the rooms in a building. As a result, the developed smart contract are able to track the energy consumption of each room and assign it to a higher-order 
-We proceed to discuss the business logic of the use-case and then implement it. We utilize the technique from \ref{method3} to optimize our smart contracts for gas efficiency and utilize Slither from \ref{slither} and the learned best-practices to ensure that the developed smart contracts are robust. Due to the intellectual property of Honda R\&D, all testing and verification of the contracts' functionality was done in a private in-house testnet.
+We proceed to discuss the business logic of the use-case and then implement it. We utilize the technique from \ref{method3} to optimize our smart contracts for gas efficiency and utilize Slither from \ref{slither} and the learned best-practices to ensure that the developed smart contracts are robust. Due to the intellectual property of Honda R\&D, the contracts were tested and deployed on a private local blockchain, however it is possible to deploy the implementation to the Ethereum mainnet.
+
+%The purpose is to serve as a means of tracking the energy consumed by the company's smart meters and ensuring the data's validity and existence in a smart contract. In addition, due to the complex structure of the company, every smart meter's consumption can contribute with different coefficients to the total energy consumption of the rooms in a building. As a result, the developed smart contract are able to track the energy consumption of each room and assign it to a higher-order 
 
 % INSERT GRAPH OF PULLING DATA FROM MONITORING SERVER TO CLIENT, CLIENT SIMULATES THE METERS AND SENDS THE DATA SIGNED WITH THEIR PRIVATE KEYS. TRANSACTIONS GET EXECUTED IN A 3-NODE POA BLOCKCHAIN. EXPLAIN DOCKER HERE. 
 
-\subsection{Metering in Smart Meters and Virtual Meters}
+\subsection{Metering of Energy} \label{metering}
 
-A smart meter must be able to keep track of the current reading and timestamp of the reading as well as the last reading and timestamp in order to calculate the difference of the two. It also has a unique identifier which is used to retrieve it in the smart contract.
+\paragraph{Smart Meters}
 
-Smart meters get grouped in \textit{Virtual Meters}. The consumption of each \textit{Virtual Meter} is equal to a function of the Each smart meter contributes to a room's consumption with a real coefficient, according to Equation \ref{roomcost}
-\begin{equation}\label{roomcost}
-R = CM + U,
+A smart meter is an energy meter which sends its measured values to a monitoring server for logging. A smart contract must track each smart meter by a unique identifier and store each meter's power readings in kWh, along with the time of measurement. Due to the meter not being able to \textit{ping}\footnote{When we refer to ping hereafter, it is implied that a kWh,timestamp tuple is stored to the blockchain.} its reading directly to the blockchain, we create a pull-push mechanism, where for each meter its reading and timestamp is pulled from the monitoring server and then pushed to the blockchain. 
+
+\input{figures/ch5/meters_monitoringserver.tex}
+% must be able to keep track of the current reading and timestamp of the reading as well as the last reading and timestamp in order to calculate the difference of the two. It also has a unique identifier which is used to retrieve it in the smart contract.
+
+\paragraph{Virtual Meters}
+
+Smart meters get grouped in \textit{Virtual Meters}. The purpose of a Virtual Meter (VM) is to track the consumption of multiple Smart Meters across various rooms of a company building. As a result, the power consumption of each VM is a function of the power consumptions of its linked smart meters. % contributes to a room's consumption with a real coefficient, according to Equation \ref{roomcost}
+\input{figures/ch5/virtual_meters.tex}
+
+The formula that describes each Virtual Meter is supplied from an internal partner and is considered to be known. An example formula can be seen in Equation \ref{eq:formula}. $VM$ is a Virtual Meter, $ELT$ and $KMZ$ represent Smart Meters and $F$ are constants.
+
+\begin{equation} \label{eq:formula}
+    \begin{aligned}
+        VM15= \\
+        & (ELT46-(ELT31+ELT16+ELT17+ELT35+ELT36))*F57
+        \\
+        + & (ELT35+ELT36-ELT18)*F27*F66
+        \\
+        + & (KMZ6-KMZ5)*(ELT16+ELT17+ELT18+ELT19+ELT20)\\
+        & /KMZ2*F27*F66 
+    \end{aligned}
 \end{equation}
-\noindent where
-\begin{description}
-\item  \[C = 
-\begin{bmatrix}
-    c_{11} & \cdots & c_{1M} \\
-    \vdots & \ddots & \vdots \\ 
-    \vdots & \ddots & \vdots \\
-    c_{N1} & \cdots & c_{NM}
-  \end{bmatrix},\]
-\noindent $c_{ij}$ is the coefficient of the $jth$ meter for the $ith$ room
-\item  \[M = 
-\begin{bmatrix}
-    m_{1} & \cdots & m_{M}
-\end{bmatrix}^T,\]
-\noindent $m_{i}$ is the kilowatthour reading of the $ith$ meter
-\item  \[U=
-\begin{bmatrix}
-    u_{1} & \cdots & u_{M}
-\end{bmatrix}^T,\]
-\noindent $u_{i}$ is a constant
-\end{description}
 
-The coefficients along with the constants are calculated through Honda R\&D's and are considered known. 
+Due to the amount of involved complexity, each Virtual Meter pulls the values for all of its associated Smart Meters, it applies its corresponding formula to the readings off-chain and pushes back the value to the smart contract.
 
-\subsection{Cost Centers, Departments and Business Units}
-Virtual Meters are grouped into \textit{Cost Centers}, where the consumption of each \textit{Cost Center} is the sum of the consumptions of its included Virtual Meters.
+\subsection{Accounting Logic} \label{billing}
 
-FURTHER EXPLAIN DEPARTMENTS - FORWARDING LOGIC.
+\textit{Business Units} and \textit{Departments} are terms used to describe the hierarchy for the accounting business logic of the company. Business Units are used for external accounting, while departments and their subdepartments are used for internal monitoring. In implementation terms, a Business Unit is equivalent to a Department.
+
+A Department is composed of Virtual Meters, other Departments and Delegates. Virtual Meters get grouped in Departments. A Department can include other subdepartments of a lower tier. Finally, a Department may forward its consumption to other Departments called Delegates. A department's consumption is the sum of energy consumed by its Virtual Meters, its Departments and its Delegates. 
+
+\input{figures/ch5/hierarchy.tex}
+
+Higher tier departments have the \texttt{headcount} property which defines the number of staff included in that Department. Delegation can be either through a headcount split or a fixed split. In headcount split, the amount that gets sent to each Delegate of the Department is proportional to their headcount percentage. Fixed split can only involve two Delegates, the first one receiving $X\%$ and the second one receiving $(100-X)\%$ of the Departments consumption, where $0<X<100$. As an example, in \ref{fig:hierarchy} Department 1.1 and 1.2 are fixed split delegates of Business Unit 2 and as a result their consumption is increased also by the consumption of Business Unit 2. After delegation, Business Unit 2 has its consumption cleared and will not be calculated towards the total Energy Billing.
+
+\input{figures/ch5/flowchart.tex}
+
+Due to the possibility of having multiple players of departments, in order to correctly calculate the final bill, the billing process starts from the inner-most tier of departments and iteratively moves outwards until the top-tier departments are reached.
 
 \section{Smart Contracts} \label{ch:implementation:sc}
-In this section we go over the implementation and the rationale of each developed smart contract. We explain the inner workings and provide tests of their functionality. A thorough explanation how they interact with each other can be found in \ref{scresults}.
-
-INSERT GRAPH SHOWING:
-
-EACH METER PULLING FROM MONITORING SERVER, PUSHING TO BLOCKCHAIN
-
-EACH VIRTUAL METER PULLING FROM BLOCKCHAIN, PERFORMING OPERATIONS THEN PUSHING TO BLOCKCHAIN Again
-
-EACH COST CENTER PULLING DATA
-
-EACH DEPARTMENT/CC FUNDING THE BUSINESS UNIT BY FORWARDING.
+In this section we go over the implementation and the rationale of each developed smart contract. We explain the inner workings and provide tests of their functionality. % A thorough explanation how they interact with each other can be found in \ref{ch:results}.
 
 \subsection{Access Control}
-Defining a proper access control policy is very important as discussed in Section \ref{ch:security}. It is common to find Access Control Lists (ACL) in enterprise environments which allow access to resources only to selected participants. This does not exist by default in smart contracts. The Aragon Project\footnote{Project aimed at creating DAOs} provides an ACL contract, however it was not used in the final version due to the complexity it introduced to our code\footnote{Aragon's contracts are architected towards creating fully upgradable DAOs, which would introduce considerable overheads and complexity to our code}. Instead, the DSAUTH pattern is used.
+As discussed in Chapter \ref{ch:security} enforcing proper access control on critical functions of a smart contract is very important. It is common to find Access Control Lists (ACL) in enterprise environments which allow only selected participants to have to resources of various levels. This functionality does not exist by default in smart contracts. We proceed to describe the functionality of each of the mentioned roles for our smart contracts:
+\begin{enumerate}
+    \item Admin: Has full access to all contract functions
+    \item Meter Manager: Can enable or disable a Meter at \texttt{MeterDB}.
+    \item Meter: Can call the \texttt{ping} function of \texttt{MeterDB}
+    \item Accountant: Can call the billing functions of \texttt{AccountingDB}
+\end{enumerate}
+
+
+% We utilize the base contract implementation of by DappSys \cite{dappsys} to create an access control list 
+
+% The Aragon Project\footnote{Project aimed at creating DAOs} provides an ACL contract, however it was not used in the final version due to the complexity it introduced to our code\footnote{Aragon's contracts are architected towards creating fully upgradable DAOs, which would introduce considerable overheads and complexity to our code}. Instead, the DSAUTH pattern is used.
 
 \subsection{Contract Registry}
 Upgradable logic, call smart contract by name, versioning
