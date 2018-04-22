@@ -1,0 +1,18 @@
+\begin{table}[H]
+	\centering
+	\vspace*{-1ex}
+	\scriptsize
+	\vspace{-1ex}
+	\caption{Required variables and size to describe a Meter.}
+	\begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Name} & \textbf{Type}  & \textbf{Comment}\\ \hline 
+        active      & bool         & Department activated?\\
+        headcount      & uint7         & Headcount percentage, between 0 and 100\\
+        power         & uint32          & Power readings can reach up to 2**32, which is enough to store 1TWh readings \\
+        delegatedPower         & uint32          & Power readings can reach up to 2**32, which is enough to store 1TWh readings \\
+        clearedPower         & uint32          & Power readings can reach up to 2**32, which is enough to store 1TWh readings \\
+        \hline
+    \end{tabular}
+    \label{table:department}
+\end{table}

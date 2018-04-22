@@ -1,0 +1,16 @@
+\begin{table}[H]
+	\centering
+	\vspace*{-1ex}
+	\scriptsize
+	\vspace{-1ex}
+	\caption{Required variables and size to describe a Meter.}
+	\begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Name} & \textbf{Type}  & \textbf{Comment}\\ \hline 
+        meterID      & bytes8         & IDs can be encoded in 8 bytes, can be optimized but hurts UX\\
+        creationTime  & uint32         & Meter supports timestamps up to 2**32 = 02/07/2106 @ 6:28am (UTC) \\
+        power         & uint32          & Power readings can reach up to 2**32, which is enough to store 1TWh readings \\
+        \hline
+    \end{tabular}
+    \label{table:meter}
+\end{table}
