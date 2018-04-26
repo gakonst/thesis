@@ -179,14 +179,11 @@ Every computational step on Ethereum costs gas. The simplest transaction which i
 
 When referring to blocks, the \textit{gasLimit} is the maximum gas that can be included in a block. Since each transaction consumes a certain amount of gas, the cumulative gas used by all transactions in a block needs to be less than \textit{gasLimit}. There is a similarity between the block gasLimit and the block size in Bitcoin in that they are both used to limit the amount of transactions that can be included in a block. The difference in Ethereum is that miners can `vote' on the block gasLimit.
 
-Every unit of gas costs a certain amount of \textit{gasPrice} which is set by the sender of the transaction. The cost of a transaction in wei is calculated from the following formula:
+Every unit of gas costs a certain amount of \textit{gasPrice} which is set by the sender of the transaction. The cost of a transaction in wei is calculated from the formula
 \begin{equation}\label{}
     totalTransactionCost = gasPrice * gasUsed
 \end{equation}
-\begin{quote}
-    \noindent
-    where $gasUsed$ is the amount of gas consumed by the transaction.
-\end{quote}
+where $gasUsed$ is the amount of gas consumed by the transaction.
 
 Miners are considered to be rational players who are looking to maximize their profit. As a result, they are expected to include transactions with transaction costs before transactions with low transaction costs. This effectively creates a `fee market'  where users are willing to pay more by increasing the \textit{gasPrice} to have their transactions confirmed faster. In the times of network congestion such as popular Initial Coin Offerings\footnote{Crowdfunding for cryptocurrency projects which allow investors to buy tokens in a platform}\cite{batico} or mass-driven games such as CryptoKitties\footnote{\url{https://cryptokitties.co}}\cite{cryptokitties} transactions become very expensive and can take long times to confirm.
 
@@ -213,11 +210,9 @@ This process is called `mining'. In the future, Ethereum is planning to transiti
 At a low level, the EVM has its own Turing Complete language called the EVM bytecode. Programmers write in higher-level languages and compile the code from them to EVM bytecode which gets executed by the EVM\@.
 
 \subsection{Programming Languages}
-Languages that compile to EVM code are Solidity, Serpent, LLL or Vyper. Solidity is the most popular language in the ecosystem and although often comparable to Javascript, we argue that Solidity Smart Contracts remind more of C++ or Java, due to their object oriented design. The Solidity Compiler is called \textit{solc}. In order to deploy a smart contract, its EVM Bytecode and its Application Binary Interface (ABI) are needed, which can be obtained from the compiler.
+Languages that compile to EVM code are Solidity, Serpent, LLL or Vyper. Active research is being done towards more safe and secure smart contract languages~\cite{bamboo, flint}. Solidity is the most popular language in the ecosystem and although often comparable to Javascript, we argue that Solidity Smart Contracts remind more of C++ or Java, due to their object oriented design. The Solidity Compiler is called \texttt{solc}. In order to deploy a smart contract, its EVM Bytecode and its Application Binary Interface (ABI) are needed, which can be obtained from the compiler.
 
 \input{figures/ch2/example-contract.tex}
-
-Due to the nascence of these languages and the security mistakes that have occurred due to them providing programmers with powerful state-changing functions, active research is being done towards safer languages~\cite{bamboo}.
 
 \subsection{Tooling}
 The following section describes tools and software that are often used by Ethereum users and developers to interact with the network.
