@@ -1,21 +1,17 @@
 \begin{figure}[ht!]
-    \makebox[\linewidth][c]{%
-    \begin{subfigure}[b]{0.58\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \lstinputlisting[language=Solidity, firstline=1, lastline=9]{contracts/CreateCharacter.sol}
         \caption{Method 1: \texttt{CreateCharacter}}
         \label{fig:method1:createcharacter}
     \end{subfigure}
 
-    \hspace{1cm}
-
-    \begin{subfigure}[b]{0.6\textwidth}
+    \begin{subfigure}[b]{\textwidth}
         \centering
         \lstinputlisting[language=Solidity, firstline=29, lastline=39]{contracts/CreateCharacter.sol}
         \caption{Method 1: \texttt{GetCharacterStats}}
         \label{fig:method1:getcharacterstats}
     \end{subfigure}
-    }
     \caption{Method 1 API}
     \label{fig:method1}
 \end{figure}
