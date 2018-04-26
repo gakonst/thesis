@@ -1,10 +1,11 @@
 \chapter{Metering and Billing of Energy on Ethereum}\label{ch:implementation}
 
-Smart contracts can be transformative for the energy industry. In this chapter we explore the inefficiencies of the energy market and identify gaps which can be filled by blockchain. We go through the advantages of an energy-based application  built on smart contracts. Finally, we describe the business logic of a specific energy use-case which we implemented on Ethereum. The implementation takes into account the methods and concepts described in Chapter \ref{ch:scalability} and Chapter \ref{ch:security} in order to ensure that the smart contracts are efficient and robust.
+Smart contracts can transform the energy industry. In this chapter we explore the inefficiencies of the energy market and identify gaps which can be filled by blockchain. We go through the advantages of an energy-based application built on smart contracts. Finally, we describe the business logic of a specific energy use-case which we implemented on Ethereum. The implementation takes into account the methods and concepts described in Chapter \ref{ch:scalability} and Chapter \ref{ch:security} in order to ensure that the smart contracts are efficient and robust.
+
 
 \section{Energy Market inefficiencies}
 
-The global energy market is gradually transitioning to clean and renewable energy. Regulations encourage usage of distributed energy resources (DERs). The grid is becoming digitalized and the expectations and behaviors of the consumers are changing. With the integration of DERs, consumers are gradually transforming to prosumers who store their energy surplus or sell it to their peers, effectively distributing the generation of energy, contrary to existing power systems which were designed to accomodate central points of energy generation.
+The global energy market is gradually transitioning to clean and renewable energy. Regulations encourage usage of distributed energy resources (DERs) \cite{europe2030}. With the integration of DERs, consumers are gradually transforming to \textit{prosumers} who store their energy surplus or sell it to their peers, effectively distributing the generation of energy, contrary to existing power systems which were designed to accommodate central points of energy generation.
 
 There are numerous inefficiencies which need to be resolved in today's energy markets \cite{ey-inefficiencies}:
 \begin{enumerate}
@@ -14,7 +15,6 @@ There are numerous inefficiencies which need to be resolved in today's energy ma
     \item \textbf{Geographic mismatches:} Locations that fully utilize DERs are usually far from key points of energy demand. Transmitting energy over long distances is inefficient.
     \item \textbf{Trust and Security:} New participants will only choose the system if it is able to be trusted and is properly secured.
 \end{enumerate}
-
 
 %Today's energy markets are called to resolve a number of issues.
 % Having discussed how Ethereum works, and explained techniques to improve smart contracts' scalability and security, we proceed to discuss the topic of making energy markets more transparent and efficient by utilizing smart contracts. The use-case we describe can be used as a starting point for better tracking of energy usage inside a company, allowing better prediction of future needs.  
@@ -28,13 +28,14 @@ There are numerous inefficiencies which need to be resolved in today's energy ma
  
 \section{Energy Market use-cases for Blockchain}
 
-A number of use-cases for smart contracts have been identified in the energy market. We proceed to describe applications that derive from the advantages of blockchain (transparency, trustlessness, security) as discussed in Section \ref{advantages}.
+A number of use-cases for smart contracts have been identified in the energy market. We proceed to describe applications that derive from the advantages of blockchain (transparency, trustlessness, security) as discussed in Section~\ref{advantages}.
 
 \begin{enumerate}
     \item \textbf{Supply chain tracking and optimization:} This is a broad blockchain use case which allows for optimization on logistics and tracking the location of products, reducing fraud and ensuring the validity of an event.
     \item \textbf{Energy metering and billing:} By committing the values of energy consumed by entities to a blockchain, a timestamped record of meter readings gets generated which allows for the verification and more clear understanding of energy consumption across resources. This can be augmented to provide billing functionality (further described in \ref{business-logic}).
     \item \textbf{Peer to Peer (P2P) energy trading:} Consumers and prosumers operate in a local microgrid and trade energy between them, without a centralized operator, resulting in reduced loss of energy during transportation.
-    \item \textbf{Electric vehicles charging:} This is an extension of P2P energy trading, allowing a car that is far from its charging station to be charged by the surplus energy of another car. It can also contribute to peak shaving~\footnote{Energy is billed based on the peak energy consumed during a time window. By consuming energy for charging during low peak times the peak can be reduced.} effectively reducing the costs during that time window.
+    \item \textbf{P2P Energy Micropayments:} A car that is far from its charging station is charged by the surplus energy of another car. Since this is a short-lived process that happens often, such as during the waiting time at a traffic light, in order to send and receive micropayments between the involved parties, a blockchain can be used to utilize fast payments and low transaction fees. 
+    % It can also contribute to peak shaving~\footnote{Energy is billed based on the peak energy consumed during a time window. By consuming energy for charging during low peak times the peak can be reduced.} effectively reducing the costs during that time window.
 \end{enumerate}
 
 % By using smart contracts, all of the above use-cases can be automated
@@ -54,17 +55,15 @@ A number of use-cases for smart contracts have been identified in the energy mar
 \section{Business Logic} \label{business-logic}
 In collaboration with Honda R\&D Germany, we create a pilot suite of smart contracts for in-house use in order to track and bill the consumed energy of the company's headquarters as measured by a set of smart meters. 
 
-We proceed to discuss the business logic of the use-case and then implement it. We utilize the technique from \ref{method3} to optimize our smart contracts for gas efficiency and utilize Slither from \ref{slither} and the learned best-practices to ensure that the developed smart contracts are robust. Due to the intellectual property of Honda R\&D, the contracts were tested and deployed on a private local blockchain, however it is possible to deploy the implementation to the Ethereum mainnet.
+We proceed to discuss the business logic of the use-case and then implement it. We utilize the Method 3 from Section \ref{method3} to optimize our smart contracts for gas efficiency and utilize Slither from Section~\ref{slither} and the learned best-practices to ensure that the developed smart contracts are robust. Due to the intellectual property of Honda R\&D, the contracts were tested and deployed on a private local blockchain, however it is possible to deploy the implementation to the Ethereum mainnet.
 
 %The purpose is to serve as a means of tracking the energy consumed by the company's smart meters and ensuring the data's validity and existence in a smart contract. In addition, due to the complex structure of the company, every smart meter's consumption can contribute with different coefficients to the total energy consumption of the rooms in a building. As a result, the developed smart contract are able to track the energy consumption of each room and assign it to a higher-order 
-
-% INSERT GRAPH OF PULLING DATA FROM MONITORING SERVER TO CLIENT, CLIENT SIMULATES THE METERS AND SENDS THE DATA SIGNED WITH THEIR PRIVATE KEYS. TRANSACTIONS GET EXECUTED IN A 3-NODE POA BLOCKCHAIN. EXPLAIN DOCKER HERE. 
 
 \subsection{Metering of Energy} \label{metering}
 
 \paragraph{Smart Meters}
 
-A smart meter is an energy meter which sends its measured values to a monitoring server for logging. A smart contract must track each smart meter by a unique identifier and store each meter's power readings in kWh, along with the time of measurement. Due to the meter not being able to \textit{ping}\footnote{When we refer to ping hereafter, it is implied that a kWh,timestamp tuple is stored to the blockchain.} its reading directly to the blockchain, we create a pull-push mechanism, where for each meter its reading and timestamp is pulled from the monitoring server and then pushed to the blockchain. 
+A smart meter is an energy meter which sends its measured energy readings to a monitoring server for logging. A smart contract must track each smart meter by a unique identifier and store each meter's power readings, along with the time of measurement. Due to the meter not being able to \textit{ping}\footnote{Hereafter, refers to a kWh,timestamp tuple which gets stored in the blockchain.} its reading directly to the blockchain, we create a process where each the reading and timestamp of each meter is pulled from the monitoring server and then pushed to the blockchain. 
 
 \input{figures/ch5/meters_monitoringserver.tex}
 % must be able to keep track of the current reading and timestamp of the reading as well as the last reading and timestamp in order to calculate the difference of the two. It also has a unique identifier which is used to retrieve it in the smart contract.
@@ -74,7 +73,7 @@ A smart meter is an energy meter which sends its measured values to a monitoring
 Smart meters get grouped in \textit{Virtual Meters}. The purpose of a Virtual Meter (VM) is to track the consumption of multiple Smart Meters across various rooms of a company building. As a result, the power consumption of each VM is a function of the power consumptions of its linked smart meters. % contributes to a room's consumption with a real coefficient, according to Equation \ref{roomcost}
 \input{figures/ch5/virtual_meters.tex}
 
-The formula that describes each Virtual Meter is supplied from an internal partner and is considered to be known. An example formula can be seen in Equation \ref{eq:formula}. $VM$ is a Virtual Meter, $ELT$ and $KMZ$ represent Smart Meters and $F$ are constants.
+The formula that describes each Virtual Meter is supplied from an internal partner and is considered to be known. An example formula can be seen in Equation \ref{eq:formula}. Variables prefixed with $VM$ represent Virtual Meters, $ELT$ and $KMZ$ represent Smart Meters and $F$ represent constants.
 
 \begin{equation} \label{eq:formula}
     \begin{aligned}
@@ -88,7 +87,7 @@ The formula that describes each Virtual Meter is supplied from an internal partn
     \end{aligned}
 \end{equation}
 
-Due to the amount of involved complexity, each Virtual Meter pulls the values for all of its associated Smart Meters, it applies its corresponding formula to the readings off-chain and pushes back the value to the smart contract.
+It is the case that this process could be done entirely on-chain, by creating a smart contract that manages virtual meters separately. This would require another smart contract for virtual meters, which would need to store the Meter IDs for each meter associated to the virtual meter, along with the formula that describes how the virtual meter consumption is calculated. This logic is unnecessarily complex to be performed on a smart contract directly. Instead, it is done off-chain on the client side, by pulling the readings of each smart meter, calculating the reading of the virtual meter, and then pushing the aggregated reading to the smart contract's storage.
 
 \subsection{Accounting Logic} \label{billing}
 
