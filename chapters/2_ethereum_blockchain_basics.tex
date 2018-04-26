@@ -1,7 +1,7 @@
 \chapter{Ethereum and Blockchain Basics}\label{ch:basics}
 
 \section{General Background}
-Before getting into the specifics of blockchains and Ethereum, the next section will be used to explain fundamental terms on cryptography (hash functions and public key cryptography) and blockchain.
+Before getting into the specifics of blockchains and Ethereum, this section will be used to explain fundamental terms of cryptography (hash functions and public key cryptography) and blockchain.
 
 A blockchain can be described as a list of \textit{blocks} that grows over time. Each block contains various metadata (called \textit{block headers}) and a list of transactions. A block is linked to another block by referencing its \textit{hash}. A blockchain gets formed when each existing block has a valid reference to the previous block. It is the case that as more blocks get added to a blockchain, older blocks and their contents are considered to be more secure.
 
@@ -65,8 +65,9 @@ Due to the distributed nature of the ledger, it is currently impossible for a pa
 The ledger is secured by the used protocol rules which utilize so called \textit{consensus algorithms} to provide transaction finality and immutability. As a result, blockchains can be used to timestamp events in history \cite{ots} which can be utilized to prevent fraud. This feature is incompatible with the flexibility of centralized databases which allow for any past event to be rewritten, which allows for scenarios such as reverting the bank balance of a customer in the case of a mistaken transaction. 
 
 \subsection{Blockchain Types}
-In order to tackle the disadvantages mentioned in \ref{advantages}, blockchains that make tradeoffs in decentralization for more 
-Blockchains are inspectable and public. Any entity can setup a node, download the full blockchain history and view all the transactions caused by anyone participating in that network. This is one of the main benefits of using a blockchain, transparency.
+In order to tackle the disadvantages mentioned in Section~\ref{advantages}, blockchains that make tradeoffs in decentralization for more transaction throughput or privacy exist. 
+
+% Blockchains are inspectable and public. Any entity can setup a node, download the full blockchain history and view all the transactions caused by anyone participating in that network. This is one of the main benefits of using a blockchain, transparency.
 
 There are two blockchain categories:
 \begin{enumerate}
@@ -78,7 +79,7 @@ There are two blockchain categories:
     Participation is limited based on the rules set by a group of operators. There are added privacy features and immutability is not absolute. 
 \end{enumerate}
 
-Vitalik Buterin goes indepth in the advantages and disadvantages between private and public blockchains in~\cite{publicprivate}. Due to the scalability and privacy restrictions of public blockchains, corporations can use permissioned blockchain frameworks~\cite{quorum, hyperledger, r3} to include blockchain technology in their processes.
+Vitalik Buterin goes indepth in the advantages and disadvantages between private and public blockchains in~\cite{publicprivate}. Due to the scalability and privacy restrictions of public blockchains, corporations can use permissioned blockchain frameworks to include blockchain technology in their processes~\cite{quorum, hyperledger, r3}.
 
 \section{Ethereum Blockchain}
 The Ethereum blockchain acts as a transactional state machine. The first state is the \textit{genesis} state referred to as the \textit{genesis block}. After the execution of each transaction, the state changes. Transactions are collated together in \textit{blocks}. 
@@ -87,7 +88,7 @@ The Ethereum blockchain acts as a transactional state machine. The first state i
 
 A valid state transition requires the appending of a new block to the existing list of blocks. Each block contains transactions and a reference~to the previous block, forming a chain. In Ethereum, the only way for a block to be validated and appended to the list is through a validation process called mining. Mining involves a group of computers, known as miners, expending their computational resources to find the solution to a puzzle. The first miner to find a solution to the puzzle is rewarded with Ether\footnote{The Ethereum network's native currency} and is able to validate their block proposal. This is a process known as \textit{Proof of Work} (PoW) \cite{pow}. 
 
-Due to a large number of miners competing to solve the PoW puzzle, sometimes a miner might solve the PoW at the same time with another miner, but for different block contents. This results in a \textit{fork} of the blockchain. Nodes will accept the first valid block that they receive\footnote{This depends on block propagation time based on bandwith, block-size, connectivity etc.}. Each blockchain protocol has a way to resolve forks and determine which chain is the valid chain. In Ethereum the longest chain is based on total difficulty\footnote{Difficulty is a measure of how much computational effort needs to be given coon average by a mir to solve a PoW puzzle. Total Difficulty is the sum of the difficulties of all blocks until the examined block} which can be found in the \textit{blockheader}. Ethereum is advertised to be using a modification of the GHOST Protocol \cite{GHOST} as its chain selection mechanism which uses \textit{uncle blocks}\footnote{In Bitcoin a block with a valid PoW that arrived to a node after another valid block at the same height is called an orphan because it gets discarded by Bitcoin's algorithm. In Ethereum these blocks do not get discarded; instead they are added to the chain as \textit{uncle blocks} and receive a reduced block reward}. This is contradictory since Ethereum's uncle blocks do not count towards difficulty and as a result, Ethereum does not actually use an adaptation of the GHOST protocol \cite{Gervais:2016:SPP:2976749.2978341}; the uncle reward is just used to reduce miner centralization.
+Due to a large number of miners competing to solve the PoW puzzle, sometimes a miner might solve the PoW at the same time with another miner, but for different block contents. This results in a \textit{fork} of the blockchain. Nodes will accept the first valid block that they receive\footnote{This depends on block propagation time based on bandwith, block-size, connectivity etc.}. Each blockchain protocol has a way to resolve forks and determine which chain is the valid chain. In Ethereum the longest chain is based on total difficulty\footnote{Difficulty is a measure of how much computational effort needs to be performed by a miner to solve a PoW puzzle. Total Difficulty is the sum of the difficulties of all blocks until the examined block.} which can be found in the \textit{blockheader}. Ethereum is advertised to be using a modification of the GHOST Protocol \cite{GHOST} as its chain selection mechanism which uses \textit{uncle blocks}\footnote{In Bitcoin a block with a valid PoW that arrived to a node after another valid block at the same height is called an orphan because it gets discarded by Bitcoin's algorithm. In Ethereum these blocks do not get discarded; instead they are added to the chain as \textit{uncle blocks} and receive a reduced block reward}. This is contradictory since Ethereum's uncle blocks do not count towards difficulty and as a result, Ethereum does not actually use an adaptation of the GHOST protocol \cite{Gervais:2016:SPP:2976749.2978341}; the uncle reward is just used to reduce miner centralization.
 
 \input{figures/ch2/blockchain-forks.tex}
 
@@ -106,7 +107,7 @@ A different kind of node called \textit{light node} exists for cases where there
 
 \input{figures/ch2/merkle-tree.tex}
 
-That way, instead of storing the whole tree of transactions, nodes can verify if a transaction was included in a block or not just by checking if the `Merkle path' to the Merkle root is valid. This is efficient as there are only $O(lg_{2}(n))$ comparisons needed to check the validity of a transaction, as shown in Figure \ref{fig:Merkleproof}
+That way, instead of storing the whole tree of transactions, nodes can verify if a transaction was included in a block or not, just by checking if the `Merkle path' to the Merkle root is valid. This is efficient as there are only $O(lg_{2}(n))$ comparisons needed to check the validity of a transaction, as shown in Figure \ref{fig:Merkleproof}
 
 \input{figures/ch2/merkle-proof.tex}
 
@@ -126,7 +127,7 @@ We describe the contents of the Account State shown in Figure \ref{fig:accounts}
     \item \textbf{Nonce:} The number of transactions sent if it's an EOA, or the number of contracts created if it's a CA.
     \item \textbf{Balance:} The account's balance denominated in `wei'\footnote{1 ether $= 10^{18}$ wei }
     \item \textbf{Storage Hash:} The Merkle root of the account's storage contents. This is empty for EOAs
-    \item \textbf{Code Hash:} The hash of the code of the account. For EOAs this field is the KECCAK-256 hash of `' while for CAs it is the KECCAK-256 of the bytecode that exists at the CAs address.
+    \item \textbf{Code Hash:} The hash of the code of the account. For EOAs this field is the KECCAK-256 hash of the empty string (`') while for CAs it is the KECCAK-256 of the bytecode that exists at the CAs address.
 \end{enumerate}
 
 \subsection{Transactions} \label{transactions}
