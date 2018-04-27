@@ -59,8 +59,6 @@ Web3py example:
     \label{apx:scalability:overflow}
 \end{figure}
 
-
-
 \begin{figure}[H]
   \begin{subfigure}[b]{\textwidth}
     \centering
@@ -173,7 +171,13 @@ Method 3 code:
     \caption{Inspecting the first storage slot of a contract}
     \label{fig:storage}
 \end{figure}
-\chapter{Code for Smart Meters}
+
+\chapter{Implementation}
+
+\section{Listening for Events} \label{apx:implementation:events}
+
+\section{Access Control}\label{apx:implementation:acl}
+Explain modifiers and whitelist. Compare to having ACL contract.
 
 % The above contract was initialized with 1 ether at its balance. An attack can drain the contract by calling the $GetGift$ function with the correct password. Due to the attacker not knowing the password, they proceed to change it, using the $SetPass$ function, which requires at least a 1 ether deposit, which is acceptable since the attacker will get that back. This also requires that the `passHasBeenSet' variable is false, or that the PassHasBeenSet function has not been called yet.
 

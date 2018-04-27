@@ -7,11 +7,11 @@
 	\begin{tabular}{|c|c|c|}
         \hline
         \textbf{Name} & \textbf{Type}  & \textbf{Comment}\\ \hline 
-        active      & bool         & Department activated?\\
-        headcount      & uint7         & Headcount percentage, between 0 and 100\\
-        power         & uint32          & Power readings can reach up to 2**32, which is enough to store 1TWh readings \\
-        delegatedPower         & uint32          & Power readings can reach up to 2**32, which is enough to store 1TWh readings \\
-        clearedPower         & uint32          & Power readings can reach up to 2**32, which is enough to store 1TWh readings \\
+        active         & bool         & Department active flag\\
+        headcount      & uint7        & Headcount percentage, between 0 and 100\\
+        power          & uint80       & Power readings can reach up to 2**80\\
+        delegatedPower & uint80       & Power readings can reach up to 2**80\\
+        clearedPower   & uint80       & Power readings can reach up to 2**80\\
         \hline
     \end{tabular}
     \label{table:department}

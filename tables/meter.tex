@@ -1,4 +1,4 @@
-\begin{table}[H]
+\begin{table}[htb]
 	\centering
 	\vspace*{-1ex}
 	\scriptsize
@@ -7,9 +7,9 @@
 	\begin{tabular}{|c|c|c|}
         \hline
         \textbf{Name} & \textbf{Type}  & \textbf{Comment}\\ \hline 
-        meterID      & bytes8         & IDs can be encoded in 8 bytes, can be optimized but hurts UX\\
-        creationTime  & uint32         & Meter supports timestamps up to 2**32 = 02/07/2106 @ 6:28am (UTC) \\
-        power         & uint32          & Power readings can reach up to 2**32, which is enough to store 1TWh readings \\
+        meterID      & bytes8         & A Meter's ID can be stored in 8 bytes\\
+        creationTime  & uint80         & Meter supports timestamps up to 2**80 \\
+        power         & uint80          & Power readings can reach up to 2**80 \\
         \hline
     \end{tabular}
     \label{table:meter}
