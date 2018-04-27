@@ -103,7 +103,7 @@ There are two ways for a department to forward its consumption to its delegates:
 
 \begin{enumerate}
     \item \textbf{Headcount Split:} Top tier departments can perform a headcount split of their consumption based on the percentage of staff that works at each \textit{Delegate} department.
-    \item \textbf{Fixed Split:} This process can only involve a department which has exactly 2 \textit{Delegates}. The first delegate receives $X\%$ of the sender's consumption and second one receives $(100-X)\%$.
+    \item \textbf{Fixed Split:} This process can only involve a department which has exactly 2 \textit{Delegates}. The first delegate receives $X\%$ of the sender's consumption and the second delegates receives $(100-X)\%$.
 \end{enumerate}
 
 As an example, in \ref{fig:hierarchy} Department 1.1 and 1.2 are fixed split delegates of Business Unit 2. When BU2 forwards its consumption, it will get split among the 2 \textit{Delegates}. After delegation, Business Unit 2 has its consumption cleared and will not be calculated towards the total Energy Billing. The billing process starts from the inner-most tier and iteratively moves outwards until the top-tier departments are reached.
@@ -140,7 +140,7 @@ We proceed to describe the access control enforced on each of the actors involve
 \begin{enumerate}
     \item Administrator: Can call all functions in all deployed contracts.
     \item Meter Operator: Can call \texttt{activateMeter} and \texttt{deactivateMeter} in \texttt{MeterDB}.
-    \item Accounting Operator: Can call \texttt{activateDepartment} and \texttt{deactivateDepartment} in \texttt{AccountingDB}.
+    \item Accounting Operator: Can call \texttt{activateDepartment}, \texttt{deactivateDepartment} \texttt{setDelegates},\texttt{setVirtualMeters},\texttt{setSubdepartments},   \texttt{setHeadcount}, in \texttt{AccountingDB}.
     \item Accountant: Can call \texttt{billPower}, \texttt{fixedSplit}, \texttt{headcountSplit} and \texttt{clearDepartment} in \texttt{AccountingDB}.
 \end{enumerate}
 
@@ -150,7 +150,10 @@ In order to be able to retrieve the addresses of smart contracts by name a \text
 
 \subsection{Deployment Pipeline}
 
-Explain deploying authority, linking to authority.
+The full deployment pipeline involves deploying each contract separately and linking it to the Access Control List as shown in Figure~\ref{fig:pipeline}. At each step, the Administrator grants permissions to call specific functions of the smart contract to each role. Finally, after all contracts have been initialized, their addresses are stored in the Registry for later resolving.
+
+
+\input{figures/ch5/pipeline.tex}
 
 \section{Client Side} \label{ch:implementation:client}
 
