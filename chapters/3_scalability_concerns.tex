@@ -45,7 +45,7 @@ Contrary to the previous solutions which still record messages on a blockchain, 
 \section{Contract Level Scalability}
 In a recent study \cite{DBLP:journals/corr/ChenLLZ17}, after evaluating 4240 smart contracts, it is found that over 70\% of them cost more gas than they should due to the compiler failing to properly optimize the Solidity code during compilation. In this section we explore how gas gets computed in smart contracts and potential ways we can save on gas and transaction costs.
 
-\subsection{Gas Costs}
+\subsection{Gas Costs} \label{gas-costs}
 An Ethereum transaction total gas costs are split in two: % https://ethereum.stackexchange.com/a/29560
 \begin{enumerate}
     \item \textbf{Base Transaction Costs:} The cost of sending data to the blockchain. There are 4 items which make up the full transaction cost:

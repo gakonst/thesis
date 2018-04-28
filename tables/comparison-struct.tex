@@ -1,0 +1,18 @@
+\begin{table}[htb]
+	\centering
+	\caption{Gas costs comparison between Method 1 and Method 3 for storing meter readings and department energy consumptions, optimizer runs = 200}
+	\vspace*{-1ex}
+	\scriptsize
+	\vspace{-1ex}
+	\begin{tabular}{|c|c|c|}
+		\hline
+		\textbf{Contract} & \textbf{Method 1} & \textbf{Method 3}\\ \hline
+		MeterDB::deployment		 &    70003 &   66620 \\
+		MeterDB::ping 			 &    70003 &   66620 \\
+        AccountingDB::deployment &    69943 &   66365\\
+        AccountingDB::billPower  &    69943 &   66365\\
+		\hline
+	\end{tabular}
+	\vspace{-2ex}
+	\label{table:compare-gas}
+\end{table}

@@ -1,2 +1,26 @@
-\chapter{Results}\label{ch:results}
-Summarize results from 5, explain how 3 improved scalability and how 4 improved security of the SC's.
+\chapter{Evaluation of Implementation and Results}\label{ch:results}
+
+We have described an ecosystem of smart contracts that combined with their corresponding client scripts can perform metering and billing of energy on complex business logic. The energy billing per department is done in kilowatthours because there was no specified method of calculating the cost in fiat currency. Converting the measured energy to a fiat currency during the billing process is done outside of the proposed system, without loss of generality. We proceed to evaluate the performance of the implementation of Chapter \ref{ch:implementation}, and explain how the findings from Chapter \ref{ch:scalability} and Chapter \ref{ch:security} are applied to enable better scalability and robustness in the contract design.
+
+\section{Scalability}
+On scalability, we applied Method 3 (\ref{method3} and following the rules defined in Section \ref{gas-costs} to save gas. More specifically:
+
+\begin{enumerate}
+    \item The optimizer was run 200 times, which was the default option for the Truffle Framework.
+    \item Using libraries via Method 3 for storing meter readings and department values resulted in significant code reuse, and reduction of gas costs shown in Table \ref{table:compare-gas}. 
+    \item Any meter, department that is no longer used can be deactivated, freeing up storage in the smart contract.
+    \item Any iterations over arrays are initializing the break condition outside of the loop, reducing the number of \texttt{SLOAD} operations done and thus saving gas.
+    \item In all cases, \texttt{string} is avoided and \texttt{bytes32} is used. If a representation was needed that was larger than 32 bytes would be needed, it would be rendered in the front end by matching the 32 bytes to a potential string. 
+    \item The minimal amount of data needed is stored in the smart contract. The latest reading and timestamp values are needed for each meter and department, and each department additionally requires storing its hierarchical relationship with other departments, virtual meters and its delegates. The formula for each virtual meter (\ref{metering}) is stored locally because it would significantly increase gas costs to store an arbitrarily long \texttt{string} variable in the smart contract.
+    \item Events are emitted for each action providing an inexpensive way to store the historical data of a meter or department. Emitting an event requires 2000 gas, compared to the 20000 gas needed for storing a value. The disadvantage is that event data cannot be accessed by another smart contract which is acceptable in this case as historical data is only meant to be accessed by a client and not a smart contract directly. 
+\end{enumerate}
+
+\input{tables/comparison-struct.tex}
+
+\section{Security}
+The security of the system, explain why ACL is important, larger smart contract ecosystem, more contracts more actors, enforce principle of least privilege on who can call what, look what happened to parity. We ran Slither on the contracts and found no issue, which given that it's been ran on many other smart contracts and has found issues gives a certain degree of confidence. 
+
+\section{Complete overview}
+The implementation is lightweight, robust, was tesetd with 44 virtual meters 50 meters and the whole complex compoany architecture, access control holds, gas costs are enough, with just 1 ether the system can run for X time.
+
+Due to the company requirements, deployment was limited to local network, The design is implemented to be able to migrate to a public chain, and was designed so that gas costs were within public net limits.
