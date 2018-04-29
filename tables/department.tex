@@ -3,15 +3,15 @@
 	\vspace*{-1ex}
 	\scriptsize
 	\vspace{-1ex}
-	\caption{Required variables and size to describe a Meter.}
+	\caption{Required variables and sizes to describe a Department.}
 	\begin{tabular}{|c|c|c|}
         \hline
         \textbf{Name} & \textbf{Type}  & \textbf{Comment}\\ \hline 
         active         & bool         & Department active flag\\
         headcount      & uint7        & Headcount percentage, between 0 and 100\\
-        power          & uint80       & Power readings can reach up to 2**80\\
-        delegatedPower & uint80       & Power readings can reach up to 2**80\\
-        clearedPower   & uint80       & Power readings can reach up to 2**80\\
+        power          & uint80       & Department power from its virtual meters, up to 2**80\\
+        delegatedPower & uint80       & Department power that has been delegated to it, up to 2**80\\
+        clearedPower   & uint80       & Department power that has been cleared, up to 2**80 \\
         \hline
     \end{tabular}
     \label{table:department}

@@ -3,11 +3,11 @@
 We have described an ecosystem of smart contracts that combined with their corresponding client scripts can perform metering and billing of energy on complex business logic. The energy billing per department is done in kilowatthours because there was no specified method of calculating the cost in fiat currency. Converting the measured energy to a fiat currency during the billing process is done outside of the proposed system, without loss of generality. We proceed to evaluate the performance of the implementation of Chapter \ref{ch:implementation}, and explain how the findings from Chapter \ref{ch:scalability} and Chapter \ref{ch:security} are applied to enable better scalability and robustness in the contract design.
 
 \section{Scalability}
-On scalability, we applied Method 3 (\ref{method3} and following the rules defined in Section \ref{gas-costs} to save gas. More specifically:
+On scalability, we applied Method 3 (\ref{method3}) and followed the rules from Section \ref{gas-costs} to save gas. More specifically:
 
 \begin{enumerate}
     \item The optimizer was run 200 times, which was the default option for the Truffle Framework.
-    \item Using libraries via Method 3 for storing meter readings and department values resulted in significant code reuse, and reduction of gas costs shown in Table \ref{table:compare-gas}. 
+    \item Using libraries via Method 3 for storing meter readings and department values resulted in significant code reuse, and reduction of gas costs. Table \ref{table:compare-gas} illustrates the gas savings that the proposed method provides, for each function of the contracts\footnote{The ACL logic was removed for these calculations.}.
     \item Any meter, department that is no longer used can be deactivated, freeing up storage in the smart contract.
     \item Any iterations over arrays are initializing the break condition outside of the loop, reducing the number of \texttt{SLOAD} operations done and thus saving gas.
     \item In all cases, \texttt{string} is avoided and \texttt{bytes32} is used. If a representation was needed that was larger than 32 bytes would be needed, it would be rendered in the front end by matching the 32 bytes to a potential string. 

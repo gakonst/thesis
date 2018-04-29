@@ -4,13 +4,15 @@
 	\vspace*{-1ex}
 	\scriptsize
 	\vspace{-1ex}
-	\begin{tabular}{|c|c|c|}
+	\begin{tabular}{|c|c|c|c|}
 		\hline
-		\textbf{Contract} & \textbf{Method 1} & \textbf{Method 3}\\ \hline
-		MeterDB::deployment		 &    70003 &   66620 \\
-		MeterDB::ping 			 &    70003 &   66620 \\
-        AccountingDB::deployment &    69943 &   66365\\
-        AccountingDB::billPower  &    69943 &   66365\\
+		\textbf{Contract} & \textbf{Method 1} & \textbf{Method 3} & \textbf{Improvement} \\ \hline
+		MeterDB::deployment		      &    793279 &   637403 & 20\% \\
+		AccountingDB::deployment      &    1691164 &   1088253   & 36\%\\
+		MeterDB::ping 			      &    57844 &   31422   & 46\% \\
+        AccountingDB::billPower       &    82025 &   28250   & 65\%\\
+        AccountingDB::fixedSplit      &    98126 &   47260   & 51\%\\
+        AccountingDB::headcountSplit  &    231305 &   55024   & 76\%\\
 		\hline
 	\end{tabular}
 	\vspace{-2ex}

@@ -3,13 +3,15 @@
 	\vspace*{-1ex}
 	\scriptsize
 	\vspace{-1ex}
-	\caption{Required variables and size to describe a Meter.}
+	\caption{Required variables and sizes to describe a Meter.}
 	\begin{tabular}{|c|c|c|}
         \hline
         \textbf{Name} & \textbf{Type}  & \textbf{Comment}\\ \hline 
-        meterID      & bytes8         & A Meter's ID can be stored in 8 bytes\\
-        creationTime  & uint80         & Meter supports timestamps up to 2**80 \\
-        power         & uint80          & Power readings can reach up to 2**80 \\
+        meterID        & bytes8        & A Meter's ID can be stored in 8 bytes\\
+        lastPower      & uint48        & Previous power reading, up to 2**48 \\
+        lastTimestamp  & uint32        & Previous timestamp, up to 2**32 \\
+        power          & uint48        & Current power reading, up to 2**48 \\
+        timestamp      & uint32        & Current timestamp, up to 2**32 \\
         \hline
     \end{tabular}
     \label{table:meter}
