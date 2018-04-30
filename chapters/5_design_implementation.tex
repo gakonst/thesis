@@ -5,76 +5,47 @@ Smart contracts can transform the energy industry. In this chapter we explore th
 
 \section{Energy Market inefficiencies}
 
-The global energy market is gradually transitioning to clean and renewable energy. Regulations encourage usage of distributed energy resources (DERs) \cite{europe2030}. With the integration of DERs, consumers are gradually transforming to \textit{prosumers} who store their energy surplus or sell it to their peers, effectively distributing the generation of energy, contrary to existing power systems which were designed to accommodate central points of energy generation.
+The global energy market is gradually transitioning to clean and renewable energy. Regulations encourage the usage of distributed energy resources (DERs) \cite{europe2030}. With the integration of DERs, consumers are gradually transforming to \textit{prosumers} who store their energy surplus or sell it to their peers, effectively decentralizing the generation of energy, contrary to existing power systems which were designed to accommodate central points of energy generation.
 
 There are numerous inefficiencies which need to be resolved in today's energy markets~\cite{ey-inefficiencies}:
 \begin{enumerate}
-    \item \textbf{Transaction complexity:} More participants in the networks result in more complex transactions.
-    \item \textbf{Predictability and Reliability:} Availability of DERs is less predictable compared to traditional energy resources like coal. 
-    \item \textbf{Empowered prosumer:} There need be monitoring tools and infrastructure that allow prosumers to manage their energy production and consumption.
-    \item \textbf{Geographic mismatches:} Locations that fully utilize DERs are usually far from key points of energy demand. Transmitting energy over long distances is inefficient.
-    \item \textbf{Trust and Security:} New participants will only choose the system if it is able to be trusted and is properly secured.
+    \item \textbf{Transaction complexity:} The complexity of energy transactions is correlated to the size of the network participants
+    \item \textbf{Predictability and Reliability:} Availability of DERs is less predictable compared to traditional energy resources
+    \item \textbf{Empowered prosumer:} Monitoring tools and infrastructure does not allow prosumers to manage their energy production and consumption sufficiently
+    \item \textbf{Geographic mismatches:} Locations that fully utilize DERs are usually far from key points of energy demand. Transmitting energy over long distances is inefficient
+    \item \textbf{Trust and Security:} New participants will only choose the system if it is able to be trusted and is properly secured
 \end{enumerate}
 
-%Today's energy markets are called to resolve a number of issues.
-% Having discussed how Ethereum works, and explained techniques to improve smart contracts' scalability and security, we proceed to discuss the topic of making energy markets more transparent and efficient by utilizing smart contracts. The use-case we describe can be used as a starting point for better tracking of energy usage inside a company, allowing better prediction of future needs.  
-% The world is gradually shifting from nuclear and fossil fuels to Renewable Energy Sources (RES). RES have been taking a larger share of Germany's gross energy production and this has created a 
-% Germany is on a rollout plan of installing smart meters in every household which incorporates RES.  
-% The barrier to entry to become an energy producer\footnote{By installing solar panels for example} 
-% Chart for renewables: https://www.cleanenergywire.org/factsheets/germanys-energy-consumption-and-power-mix-charts
-% In its current state, most consumers do not know what they are paying Business level take long time and are 
-
-% Price of energy, consumer does not know always what they pay, or what they gain from their renewables
- 
 \section{Energy Market use-cases for Blockchain}
 
 A number of use-cases for smart contracts have been identified in the energy market. We proceed to describe applications that derive from the advantages of blockchain (transparency, trustlessness, security) as discussed in Section~\ref{advantages}.
 
 \begin{enumerate}
-    \item \textbf{Supply chain tracking and optimization:} This is a broad blockchain use case which allows for optimization on logistics and tracking the location of products, reducing fraud and ensuring the validity of an event.
-    \item \textbf{Energy metering and billing:} By committing the values of energy consumed by entities to a blockchain, a timestamped record of meter readings gets generated which allows for the verification and more clear understanding of energy consumption across resources. This can be augmented to provide billing functionality (further described in \ref{business-logic}).
-    \item \textbf{Peer to Peer (P2P) energy trading:} Consumers and prosumers operate in a local microgrid and trade energy between them, without a centralized operator, resulting in reduced loss of energy during transportation.
-    \item \textbf{P2P Energy Micropayments:} A car that is far from its charging station is charged by the surplus energy of another car. Since this is a short-lived process that happens often, such as during the waiting time at a traffic light, in order to send and receive micropayments between the involved parties, a blockchain can be used to utilize fast payments and low transaction fees. 
-    % It can also contribute to peak shaving~\footnote{Energy is billed based on the peak energy consumed during a time window. By consuming energy for charging during low peak times the peak can be reduced.} effectively reducing the costs during that time window.
+    \item \textbf{Supply chain tracking and logistics:} This is a broad blockchain use case which allows for optimization on logistics and tracking the location of products, reducing fraud and ensuring the validity of an event
+    \item \textbf{Energy metering and billing:} By committing the values of energy consumed by entities to a blockchain, a timestamped record of meter readings gets generated which allows for the verification and more clear understanding of energy consumption across resources. This can be augmented to provide billing functionality (further described in \ref{business-logic})
+    \item \textbf{Peer to Peer (P2P) energy trading:} Consumers and prosumers operate in a local microgrid and trade energy between them, without a centralized operator, resulting in reduced loss of energy during transportation
+    \item \textbf{P2P Energy Micropayments:} Micropayments can occur when there are short term coincident of wants, such as in the case of charging a car in a traffic light stop from the energy surplus of another car. The supplier is expected to receive a micropayment for the energy they supplied. Using a blockchain for the payment is more efficient than a centralized payment provider due to speed of confirmation and low transaction costs
 \end{enumerate}
 
-% By using smart contracts, all of the above use-cases can be automated
-% Use Cases:
-% - P2P Energy Trading
-% - Sharing Economy - EV share and charge
-
-% Internet of Things sensors can securely streamline inspections and repairs and automatically reduce outages.
-% Applications have been developed \cite{DBLP:journals/ife/MengelkampNBDW18}
-
-% Blockchains have the ability to provide transparency and immutability. Also,  When talking about energy and transparency, full history of meter readings, price calculation, billing of inhouse energy departments. This can be extended for EV car payment microtransactions and so on.
-
-% The blockchain is a particularly interesting technology for decentralized processes that require large networks and trust relationships between all parties. Therefore, it offers great benefits to the power & utilities market, with its large networks of power and utilities companies, (maintenance) subtractors, (local) suppliers and end users.
-
-% Smart meters Still, there are other applications that are ready for use in the near future. Smart meters for instance have already entered many homes. Up until now, sharing data through smart meters was a threat to the privacy of the owner of the meter. Again, the blockchain offers a potential solution. It can provide the accurate data to the supplier without requiring a direct link to the meter of specific users. When needed, the owner of the smart meter can prove to the supplier that the data are his, using his private key, and the cryptographic security of the blockchain proves that the information is accurate and hasn’t been tampered with. This puts the owner in control of his own data.
-
 \section{Business Logic} \label{business-logic}
+
 In collaboration with Honda R\&D Germany, we create a pilot suite of smart contracts for in-house use in order to track and bill the consumed energy of the company's headquarters as measured by a set of smart meters. 
 
-We proceed to discuss the business logic of the use-case and then implement it. We utilize the Method 3 from Section \ref{method3} to optimize our smart contracts for gas efficiency, and utilize Slither from Section~\ref{slither} and the learned best-practices to ensure that the developed smart contracts are robust. The contracts were tested and deployed on a private Ethereum blockchain, however it is possible to deploy the implementation to the Ethereum mainnet.
-
-%The purpose is to serve as a means of tracking the energy consumed by the company's smart meters and ensuring the data's validity and existence in a smart contract. In addition, due to the complex structure of the company, every smart meter's consumption can contribute with different coefficients to the total energy consumption of the rooms in a building. As a result, the developed smart contract are able to track the energy consumption of each room and assign it to a higher-order 
+We proceed to discuss the business logic of the use-case and then implement it. We utilize the Method 3 from Section \ref{method3} to optimize our smart contracts for gas efficiency, and utilize Slither from Section~\ref{slither} and the learned best-practices to ensure that the developed smart contracts are robust. 
 
 \subsection{Metering of Energy} \label{metering}
 
-\paragraph{Smart Meters}
+% \paragraph{Smart Meters}
 
-A smart meter is an energy meter which logs its measured energy readings to a monitoring server. A smart contract must track each smart meter by a unique identifier and store its power readings, along with the corresponding time of measurement. Due to the meter not being able to \textit{ping}\footnote{Hereafter, refers to a kWh,timestamp tuple which gets stored in the blockchain.} its reading directly to the blockchain, we create a pipeline where the reading and timestamp of each meter is pulled from the monitoring server and then pushed to the blockchain. 
+A \textit{Smart Meter} is an energy meter which logs its measured energy readings to a monitoring server. A smart contract must track each smart meter by a unique identifier and store its power readings, along with the corresponding time of measurement. Due to the meter not being able to \textit{ping}\footnote{Hereafter, refers to a kWh,timestamp tuple which gets stored in the blockchain.} its reading directly to the blockchain, we create a pipeline where the reading and timestamp of each meter is pulled from the monitoring server and then pushed to the blockchain. 
 
 \input{figures/ch5/meters_monitoringserver.tex}
-% must be able to keep track of the current reading and timestamp of the reading as well as the last reading and timestamp in order to calculate the difference of the two. It also has a unique identifier which is used to retrieve it in the smart contract.
 
-\paragraph{Virtual Meters}
+% \paragraph{Virtual Meters}
 
-A \textit{Virtual Meter} is a group of \textit{Smart meters}. The purpose of a Virtual Meter (VM) is to track the consumption of multiple Smart Meters across various rooms of a company building. The consumption of a VM is a function of the power consumptions of its linked smart meters. 
+A \textit{Virtual Meter} is a group of \textit{Smart Meters}. The purpose of a Virtual Meter (VM) is to track the consumption of multiple Smart Meters across various rooms of a company building. The consumption of a VM is a function of the power consumptions of its associated smart meters. 
 
-The formula that describes each Virtual Meter is supplied from an internal partner and is considered to be known. An example formula can be seen in Equation \ref{eq:formula}. Variables prefixed with $VM$ represent Virtual Meters, $ELT$ and $KMZ$ represent Smart Meters and $F$ represent constants.
-
-It is the case that this process could be done entirely on-chain, by creating a smart contract that manages virtual meters separately. This would require another smart contract for virtual meters, which would need to store the Meter IDs for each meter associated to the virtual meter, along with the formula that describes how the virtual meter consumption is calculated. This logic is unnecessarily complex to be performed on a smart contract directly. Instead, it is done off-chain on the client side, by pulling the readings of each smart meter, calculating the reading of the virtual meter, and then pushing the aggregated reading to the smart contract's storage.
+The function that describes each Virtual Meter is supplied from an internal partner and is considered to be known. An example function can be seen in Equation \ref{eq:formula}. Variables prefixed with $VM$ represent Virtual Meters, $ELT$ and $KMZ$ represent Smart Meters and $F$ represent constant factors.
 
 \begin{equation} \label{eq:formula}
     \begin{aligned}
@@ -88,66 +59,63 @@ It is the case that this process could be done entirely on-chain, by creating a 
     \end{aligned}
 \end{equation}
 
+It is the case that this process could be done entirely on-chain, by creating a smart contract that manages virtual meters separately. This would require another smart contract for virtual meters, which would need to store the Meter IDs for each meter associated to the virtual meter, along with the formula that describes how the virtual meter consumption is calculated. This logic is unnecessarily complex to be performed on a smart contract directly. Instead, it is done off-chain on the client side, by pulling the readings of each smart meter, calculating the reading of the virtual meter, and then pushing the aggregated reading to the smart contract's storage, as shown in Figure \ref{fig:virtual_meters_consumption}.
+
 \input{figures/ch5/virtual_meters.tex} % IMPROVE FIGURE
 
 \subsection{Accounting Logic} \label{billing}
 
 The accounting business logic of the company breaks down in a hierarchy which is described by \textit{Business Units} (BUs) and \textit{Departments}. BUs are used for external accounting, while Departments are used for internal accounting. In implementation terms, a Business Unit is equivalent to a Department.
-
-A Department is composed of Virtual Meters, other Departments of a lower tier % better word?
- (hereafter called \textit{Subdepartments}) and \textit{Delegates}. A Department may forward its power consumption to its Delegates as part of the internal accounting process. The total consumption of a department is the sum of energy consumed by its Virtual Meters, Departments and Delegates. After a department delegates its debt, its consumption is considered to be cleared from an accounting perspective.
-
-\input{figures/ch5/hierarchy.tex} % TODO: BETTER FIGURE
+ 
+A \textit{Department} is composed of \textit{Virtual Meters}, other Departments of a lower tier (hereafter called \textit{Subdepartments}) and \textit{Delegates}. A Department may forward its power consumption to its Delegates as part of the internal accounting process. The total consumption of a department is the sum of energy consumed by its Virtual Meters, Subdepartments and Delegates. After a department delegates its debt, its consumption is cleared.
 
 There are two ways for a department to forward its consumption to its delegates:
 
 \begin{enumerate}
-    \item \textbf{Headcount Split:} Top tier departments can perform a headcount split of their consumption based on the percentage of staff that works at each \textit{Delegate} department.
-    \item \textbf{Fixed Split:} This process can only involve a department which has exactly 2 \textit{Delegates}. The first delegate receives $X\%$ of the sender's consumption and the second delegates receives $(100-X)\%$.
+    \item \textbf{Headcount Split:} A department can perform a headcount split of its consumption based on the percentage of staff that works at each of its \textit{Delegate} department.
+    \item \textbf{Fixed Split:} A department with exactly two \textit{Delegates} can perform a fixed split of its consumption, where thefirst delegate receives $X\%$ of the department's consumption and the second delegate receives $(100-X)\%$.
 \end{enumerate}
 
-As an example, in \ref{fig:hierarchy} Department 1.1 and 1.2 are fixed split delegates of Business Unit 2. When BU2 forwards its consumption, it will get split among the 2 \textit{Delegates}. After delegation, Business Unit 2 has its consumption cleared and will not be calculated towards the total Energy Billing. The billing process starts from the inner-most tier and iteratively moves outwards until the top-tier departments are reached.
+\input{figures/ch5/hierarchy.tex} % TODO: BETTER FIGURE
 
+As an example, in \ref{fig:hierarchy}, BU2 performs a fixed split and forwards its consumption to its 2 delegates, Department 1.1 and Department 1.2. After delegation, the consumption of Business Unit 2 is cleared and is not calculated towards the total Energy Billing.
 
 \section{Smart Contracts} \label{ch:implementation:sc}
-In this section we go over the implementation and the rationale of each developed smart contract. We explain the inner workings and provide tests of their functionality. We follow the design principle that the data stored on the blockchain is the minimal amount of data that needs to be trustlessly verified. Any piece of data that can be derived from the already on-chain data is generated and verified off-chain. In case data does not need to be accessed by another contract but must be transmitted to an end-user, the \texttt{Event} functionality of Solidity is used (explained in \ref{apx:implementation:events}). 
+In this section we go over the implementation and the rationale of each developed smart contract. We explain the inner workings and provide tests of their functionality. We follow the design principle that the data stored on the blockchain is the minimal amount of data that needs to be trustlessly verified. Any piece of data that can be derived from the already on-chain data is generated and verified off-chain. In case data does not need to be accessed by another contract but must be transmitted to an end-user, a Solidity \texttt{Event} is emitted (explained in \ref{apx:implementation:events}). It is considered that selected functions of each smart contract must be only used by selected operators, and thus they must be protected by an access control mechanism.
 
 \subsection{MeterDB}
-MeterDB utilizes Method 3 (\ref{method3}) to keep track of the energy consumption values and logged timestamps of a smart meter or a virtual meter. We assume that a meter can be any IoT device that has its own Ethereum account\footnote{As a prerequisite, a private-public keypair needs to be generated for every meter.}. The contract is designed to map each Meter's address to its details (\texttt{id}, \texttt{reading}, \texttt{timestamp}).
+MeterDB utilizes Method 3 (\ref{method3}) to keep track of the energy consumption values and logged timestamps of a smart meter or a virtual meter. We assume that a meter can be any IoT device that has its own Ethereum account\footnote{As a prerequisite, a private-public keypair needs to be generated for every meter.}. The contract is designed to map each Meter's address to its details (\texttt{id}, \texttt{lastPower}, \texttt{lastTimestamp}, \texttt{power}, \texttt{timestamp}).
 
-The contract is split in two files, \texttt{MeterDB.sol} which contains the business logic, and \texttt{Meter.sol} which contains the gas optimization logic that encodes and decodes meter data in a \texttt{bytes32} variable. In order for a meter to be able to call the \texttt{ping} function it first needs to be activated, by registering its id and address in the smart contract. Deactivating a decommissioned meter results in its data being deleted from the storage of the smart contract, which refunds gas as mentioned in Rule 3 of \ref{ch:scalability}. By storing a mapping of meter ids to address we are able to access a meter's data by id in $O(1)$ instead of iterating over a list of registered meters.
+The contract is split in two files, \texttt{MeterDB.sol} which contains the business logic, and \texttt{Meter.sol} which contains the gas optimization logic that encodes and decodes meter data in a \texttt{bytes32} variable. In order for a meter to be able to call the \texttt{ping} function it first needs to be activated, by registering its id and address in the smart contract. Deactivating a decommissioned meter results in its data being deleted from the storage of the smart contract, which refunds gas as explained in Chapter \ref{ch:scalability}. We additionally store a mapping of \texttt{id}s to addresses to access a meter in $O(1)$ time instead of iterating over a list of registered meters and checking if the \texttt{id} is matched.
 
-For each meter, its latest reading is pulled from the monitoring server and if a new consumption value has arrived it replaces the previous reading along with its timestamp by calling \texttt{ping}. A \texttt{Pinged} event is emitted after each \texttt{ping} function call which enables users to fetch the full history of readings and timestamps for a meter. Table~\ref{table:meter} illustrates the design of the storage in \texttt{Meter.sol}.
+For each meter, its latest reading is pulled from the monitoring server and if a new consumption value has arrived it replaces the previous reading along with its timestamp by calling \texttt{ping}. A \texttt{Pinged} event is emitted after each \texttt{ping} function call which enables users to fetch the full history of readings and timestamps for a meter. Table~\ref{table:meter} illustrates the design of the storage in \texttt{Meter.sol}. A timestamp is made to count up to $2^{32}$ which is big enough to handle time values until the year 2106. Power readings can be up to $2^{48}$ which allows meter values up to multiple terawatthours, with milliwatthour granularity.
 
 \input{tables/meter.tex}
 
 \subsection{AccountingDB}
 
-AccountingDB stores the ids of each Virtual Meter, Subdepartment and Delegate in order to be able to calculate the consumption of each Department. 
+AccountingDB stores the data required to performing metering and billing for a department. Each department's data is broken down in department data and its accounting data. Storing department data involves using Method 3 (\ref{method3}) to store the consumption of each department, the headcount and activity status of the department and is done in \texttt{Department.sol}. For each department, the list of Virtual Meters, Subdepartments and Delegates is stored in a \texttt{struct}, because Method 3 cannot be used for array types.
 
-The setting of energy reading values is done in \texttt{Department.sol} which utilizes Method 3 (\ref{method3}) to keep track of the energy consumed by a department due to its associated Virtual Meters, Subdepartments and Delegates. 
-
-Due to the forwarding of a department consumption to another, we keep track of the power that is generated by the virtual meters, the delegated power that is received from another department, and the cleared power which is the amount of power that has been cleared from that department, either through delegation or from accounting. The consumption forwarding logic is implemented as described in Section~\ref{billing}. A \texttt{active} variable is used to keep track of activated departments.
+Due to the forwarding of a department consumption to another, we keep track of the power that is generated by the virtual meters, the delegated power that is received from another department, and the cleared power which is the amount of power that has been cleared from that department, either through delegation or from an accountant. The consumption forwarding logic is implemented as described in Section~\ref{billing}. 
 
 \input{tables/department.tex}
 
+\subsection{Contract Registry} 
+
+In order to be able to retrieve the addresses of smart contracts by name, a \texttt{Registry} smart contract was implemented. The contract resolves contract names to addresses through a \texttt{bytes32} to \texttt{address} mapping. The address of a contract can be changed by the registry operator. This lays the foundation of a basic pattern for upgradeable smart contracts via a controlled name registry. Exploring the possible implementations of upgradeable contracts with this method is considered out of scope for this Thesis. Finally, this method can be utilized in the client scripts in Section \ref{ch:implementation:client} to reduce the number of addresses that need to be supplied to interact with the smart contracts\footnote{The registry's address is provided from the command line and then the registry resolves each contract's address by their names which are known beforehand}.
+
 \subsection{Access Control} \label{acl}
-As discussed in Chapter \ref{ch:security} enforcing proper access control on critical functions of a smart contract is very important. It is common to find Access Control Lists (ACL) in enterprise environments which allow only participants to access resources based on their clearance levels. This functionality does not exist by default in smart contracts. Access control can be done separately in each contract, by using a whitelist and a function modifier, however that needs to be done for each contract and does not scale for a rich smart contract ecosystem (further explained in \ref{apx:implementation:acl}). 
+As discussed in Chapter \ref{ch:security} enforcing proper access control on critical functions of a smart contract is very important. It is common to find Access Control Lists (ACL) in enterprise environments which allow participants to access selected resources based on their clearance levels. This functionality does not exist by default in smart contracts. Access control can be done separately in each contract, by implementing whitelists and checking that a sender of a transaction is whitelisted, however that needs to be done for each contract and does not scale for a rich smart contract ecosystem (further explained in \ref{apx:implementation:acl}). 
 
-As a result, we use a pattern for access control by calling a separate smart contract that stores the logic for allowing or denying permission to a user about calling a function of a contract at an address. 
-
-We proceed to describe the access control enforced on each of the actors involved in the developed smart contracts:
+We use a pattern for access control that involves calling an external smart contract that stores the permissioning logic. We proceed to describe the access control enforced on each of the identified roles involved in the developed smart contracts:
 \begin{enumerate}
     \item Administrator: Can call all functions in all deployed contracts.
     \item Registry Operator: Can call \texttt{enable} and \texttt{disable} in \texttt{Registry}.
     \item Meter Operator: Can call \texttt{activateMeter} and \texttt{deactivateMeter} in \texttt{MeterDB}.
-    \item Accounting Operator: Can call \texttt{activateDepartment}, \texttt{deactivateDepartment} \texttt{setDelegates},\texttt{setVirtualMeters},\texttt{setSubdepartments},   \texttt{setHeadcount}, in \texttt{AccountingDB}.
+    \item Accounting Operator: Can call \texttt{activateDepartment}, \texttt{deactivateDepartment}, \texttt{setDelegates}, \texttt{setVirtualMeters}, \texttt{setSubdepartments}, \texttt{setHeadcount} in \texttt{AccountingDB}.
     \item Accountant: Can call \texttt{billPower}, \texttt{fixedSplit}, \texttt{headcountSplit} and \texttt{clearDepartment} in \texttt{AccountingDB}.
 \end{enumerate}
 
-\subsection{Contract Registry} 
-
-In order to be able to retrieve the addresses of smart contracts by name a \texttt{Registry} smart contract was implemented. The contract resolves contract names to addresses through a \texttt{bytes32} to \texttt{address} mapping. The address of a contract can be changed by the registry's operator. This lays the foundation of a basic pattern for upgradeable smart contracts via a controlled name registry. Exploring the possible implementations of upgradeable contracts with this method is considered out of scope for this Thesis. Finally, this method can be utilized in the client scripts in Section \ref{ch:implementation:client} to reduce the number of addresses that need to be supplied to interact with the smart contracts\footnote{The registry's address is provided from the command line and then the registry resolves each contract's address by their names which are known beforehand}.
 
 \subsection{Deployment Pipeline}
 
