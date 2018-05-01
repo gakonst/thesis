@@ -1,7 +1,7 @@
 \chapter{Ethereum and Blockchain Basics}\label{ch:basics}
 
 \section{General Background}
-Before getting into the specifics of blockchains and Ethereum, the next section will be used to explain fundamental terms on cryptography (hash functions and public key cryptography) and blockchain.
+Before getting into the specifics of blockchains and Ethereum, this section will be used to explain fundamental terms of cryptography (hash functions and public key cryptography) and blockchain.
 
 A blockchain can be described as a list of \textit{blocks} that grows over time. Each block contains various metadata (called \textit{block headers}) and a list of transactions. A block is linked to another block by referencing its \textit{hash}. A blockchain gets formed when each existing block has a valid reference to the previous block. It is the case that as more blocks get added to a blockchain, older blocks and their contents are considered to be more secure.
 
@@ -65,8 +65,9 @@ Due to the distributed nature of the ledger, it is currently impossible for a pa
 The ledger is secured by the used protocol rules which utilize so called \textit{consensus algorithms} to provide transaction finality and immutability. As a result, blockchains can be used to timestamp events in history \cite{ots} which can be utilized to prevent fraud. This feature is incompatible with the flexibility of centralized databases which allow for any past event to be rewritten, which allows for scenarios such as reverting the bank balance of a customer in the case of a mistaken transaction. 
 
 \subsection{Blockchain Types}
-In order to tackle the disadvantages mentioned in \ref{advantages}, blockchains that make tradeoffs in decentralization for more 
-Blockchains are inspectable and public. Any entity can setup a node, download the full blockchain history and view all the transactions caused by anyone participating in that network. This is one of the main benefits of using a blockchain, transparency.
+In order to tackle the disadvantages mentioned in Section~\ref{advantages}, blockchains that make tradeoffs in decentralization for more transaction throughput or privacy exist. 
+
+% Blockchains are inspectable and public. Any entity can setup a node, download the full blockchain history and view all the transactions caused by anyone participating in that network. This is one of the main benefits of using a blockchain, transparency.
 
 There are two blockchain categories:
 \begin{enumerate}
@@ -78,7 +79,7 @@ There are two blockchain categories:
     Participation is limited based on the rules set by a group of operators. There are added privacy features and immutability is not absolute. 
 \end{enumerate}
 
-Vitalik Buterin goes indepth in the advantages and disadvantages between private and public blockchains in~\cite{publicprivate}. Due to the scalability and privacy restrictions of public blockchains, corporations can use permissioned blockchain frameworks~\cite{quorum, hyperledger, r3} to include blockchain technology in their processes.
+Vitalik Buterin goes indepth in the advantages and disadvantages between private and public blockchains in~\cite{publicprivate}. Due to the scalability and privacy restrictions of public blockchains, corporations can use permissioned blockchain frameworks to include blockchain technology in their processes~\cite{quorum, hyperledger, r3}.
 
 \section{Ethereum Blockchain}
 The Ethereum blockchain acts as a transactional state machine. The first state is the \textit{genesis} state referred to as the \textit{genesis block}. After the execution of each transaction, the state changes. Transactions are collated together in \textit{blocks}. 
@@ -87,7 +88,7 @@ The Ethereum blockchain acts as a transactional state machine. The first state i
 
 A valid state transition requires the appending of a new block to the existing list of blocks. Each block contains transactions and a reference~to the previous block, forming a chain. In Ethereum, the only way for a block to be validated and appended to the list is through a validation process called mining. Mining involves a group of computers, known as miners, expending their computational resources to find the solution to a puzzle. The first miner to find a solution to the puzzle is rewarded with Ether\footnote{The Ethereum network's native currency} and is able to validate their block proposal. This is a process known as \textit{Proof of Work} (PoW) \cite{pow}. 
 
-Due to a large number of miners competing to solve the PoW puzzle, sometimes a miner might solve the PoW at the same time with another miner, but for different block contents. This results in a \textit{fork} of the blockchain. Nodes will accept the first valid block that they receive\footnote{This depends on block propagation time based on bandwith, block-size, connectivity etc.}. Each blockchain protocol has a way to resolve forks and determine which chain is the valid chain. In Ethereum the longest chain is based on total difficulty\footnote{Difficulty is a measure of how much computational effort needs to be given coon average by a mir to solve a PoW puzzle. Total Difficulty is the sum of the difficulties of all blocks until the examined block} which can be found in the \textit{blockheader}. Ethereum is advertised to be using a modification of the GHOST Protocol \cite{GHOST} as its chain selection mechanism which uses \textit{uncle blocks}\footnote{In Bitcoin a block with a valid PoW that arrived to a node after another valid block at the same height is called an orphan because it gets discarded by Bitcoin's algorithm. In Ethereum these blocks do not get discarded; instead they are added to the chain as \textit{uncle blocks} and receive a reduced block reward}. This is contradictory since Ethereum's uncle blocks do not count towards difficulty and as a result, Ethereum does not actually use an adaptation of the GHOST protocol \cite{Gervais:2016:SPP:2976749.2978341}; the uncle reward is just used to reduce miner centralization.
+Due to a large number of miners competing to solve the PoW puzzle, sometimes a miner might solve the PoW at the same time with another miner, but for different block contents. This results in a \textit{fork} of the blockchain. Nodes will accept the first valid block that they receive\footnote{This depends on block propagation time based on bandwith, block-size, connectivity etc.}. Each blockchain protocol has a way to resolve forks and determine which chain is the valid chain. In Ethereum the longest chain is based on total difficulty\footnote{Difficulty is a measure of how much computational effort needs to be performed by a miner to solve a PoW puzzle. Total Difficulty is the sum of the difficulties of all blocks until the examined block.} which can be found in the \textit{blockheader}. Ethereum is advertised to be using a modification of the GHOST Protocol \cite{GHOST} as its chain selection mechanism which uses \textit{uncle blocks}\footnote{In Bitcoin a block with a valid PoW that arrived to a node after another valid block at the same height is called an orphan because it gets discarded by Bitcoin's algorithm. In Ethereum these blocks do not get discarded; instead they are added to the chain as \textit{uncle blocks} and receive a reduced block reward}. This is contradictory since Ethereum's uncle blocks do not count towards difficulty and as a result, Ethereum does not actually use an adaptation of the GHOST protocol \cite{Gervais:2016:SPP:2976749.2978341}; the uncle reward is just used to reduce miner centralization.
 
 \input{figures/ch2/blockchain-forks.tex}
 
@@ -107,7 +108,7 @@ A different kind of node called \textit{light node} exists for cases where there
 
 \input{figures/ch2/merkle-tree.tex}
 
-That way, instead of storing the whole tree of transactions, nodes can verify if a transaction was included in a block or not just by checking if the `Merkle path' to the Merkle root is valid. This is efficient as there are only $O(lg_{2}(n))$ comparisons needed to check the validity of a transaction, as shown in Figure \ref{fig:Merkleproof}
+That way, instead of storing the whole tree of transactions, nodes can verify if a transaction was included in a block or not, just by checking if the `Merkle path' to the Merkle root is valid. This is efficient as there are only $O(lg_{2}(n))$ comparisons needed to check the validity of a transaction, as shown in Figure \ref{fig:Merkleproof}
 
 \input{figures/ch2/merkle-proof.tex}
 
@@ -127,7 +128,7 @@ We describe the contents of the Account State shown in Figure \ref{fig:accounts}
     \item \textbf{Nonce:} The number of transactions sent if it's an EOA, or the number of contracts created if it's a CA.
     \item \textbf{Balance:} The account's balance denominated in `wei'\footnote{1 ether $= 10^{18}$ wei }
     \item \textbf{Storage Hash:} The Merkle root of the account's storage contents. This is empty for EOAs
-    \item \textbf{Code Hash:} The hash of the code of the account. For EOAs this field is the KECCAK-256 hash of `' while for CAs it is the KECCAK-256 of the bytecode that exists at the CAs address.
+    \item \textbf{Code Hash:} The hash of the code of the account. For EOAs this field is the KECCAK-256 hash of the empty string (`') while for CAs it is the KECCAK-256 of the bytecode that exists at the CAs address.
 \end{enumerate}
 
 \subsection{Transactions} \label{transactions}
@@ -179,14 +180,11 @@ Every computational step on Ethereum costs gas. The simplest transaction which i
 
 When referring to blocks, the \textit{gasLimit} is the maximum gas that can be included in a block. Since each transaction consumes a certain amount of gas, the cumulative gas used by all transactions in a block needs to be less than \textit{gasLimit}. There is a similarity between the block gasLimit and the block size in Bitcoin in that they are both used to limit the amount of transactions that can be included in a block. The difference in Ethereum is that miners can `vote' on the block gasLimit.
 
-Every unit of gas costs a certain amount of \textit{gasPrice} which is set by the sender of the transaction. The cost of a transaction in wei is calculated from the following formula:
+Every unit of gas costs a certain amount of \textit{gasPrice} which is set by the sender of the transaction. The cost of a transaction in wei is calculated from the formula
 \begin{equation}\label{}
     totalTransactionCost = gasPrice * gasUsed
 \end{equation}
-\begin{quote}
-    \noindent
-    where $gasUsed$ is the amount of gas consumed by the transaction.
-\end{quote}
+where $gasUsed$ is the amount of gas consumed by the transaction.
 
 Miners are considered to be rational players who are looking to maximize their profit. As a result, they are expected to include transactions with transaction costs before transactions with low transaction costs. This effectively creates a `fee market'  where users are willing to pay more by increasing the \textit{gasPrice} to have their transactions confirmed faster. In the times of network congestion such as popular Initial Coin Offerings\footnote{Crowdfunding for cryptocurrency projects which allow investors to buy tokens in a platform}\cite{batico} or mass-driven games such as CryptoKitties\footnote{\url{https://cryptokitties.co}}\cite{cryptokitties} transactions become very expensive and can take long times to confirm.
 
@@ -213,11 +211,9 @@ This process is called `mining'. In the future, Ethereum is planning to transiti
 At a low level, the EVM has its own Turing Complete language called the EVM bytecode. Programmers write in higher-level languages and compile the code from them to EVM bytecode which gets executed by the EVM\@.
 
 \subsection{Programming Languages}
-Languages that compile to EVM code are Solidity, Serpent, LLL or Vyper. Solidity is the most popular language in the ecosystem and although often comparable to Javascript, we argue that Solidity Smart Contracts remind more of C++ or Java, due to their object oriented design. The Solidity Compiler is called \textit{solc}. In order to deploy a smart contract, its EVM Bytecode and its Application Binary Interface (ABI) are needed, which can be obtained from the compiler.
+Languages that compile to EVM code are Solidity, Serpent, LLL or Vyper. Active research is being done towards more safe and secure smart contract languages~\cite{bamboo, flint}. Solidity is the most popular language in the ecosystem and although often comparable to Javascript, we argue that Solidity Smart Contracts remind more of C++ or Java, due to their object oriented design. The Solidity Compiler is called \texttt{solc}. In order to deploy a smart contract, its EVM Bytecode and its Application Binary Interface (ABI) are needed, which can be obtained from the compiler.
 
 \input{figures/ch2/example-contract.tex}
-
-Due to the nascence of these languages and the security mistakes that have occurred due to them providing programmers with powerful state-changing functions, active research is being done towards safer languages~\cite{bamboo}.
 
 \subsection{Tooling}
 The following section describes tools and software that are often used by Ethereum users and developers to interact with the network.
@@ -227,7 +223,7 @@ Ethereum's official implementations are Geth (golang) and cpp-ethereum (C++). Th
 
 Smart contracts are immutable once deployed which means that their deployed bytecode (and thus their functionality) cannot change. As a result, if a flaw is found on a deployed contract, the only way to fix it is by deploying a new contract. In addition, the deployment costs can be expensive, so development and iterative testing can be costly. For that, public test networks (testnets) exist which allow for testing free of charge. Kovan and Rinkeby are functioning with the Proof of Authority \cite{poa} consensus algorithm, while Ropsten is running Ethash \cite{ethash} with less difficulty.
 
-We provide a comparison between test networks:
+We provide a listing of the currently public test networks:
 \begin{enumerate}
     \item Kovan: Proof of Authority consensus supported by Parity nodes only
     \item Rinkeby: Proof of Authority consensus supported by Geth nodes only
@@ -247,8 +243,16 @@ Web3 is the library used for interacting with an Ethereum node. The most feature
 The Truffle Framework is a development framework for smart contract development written in NodeJS. It is currently the industry standard for developers. It allows for automating the smart contract deployment pipeline through \textit{migration} scripts and scripting test suites for scenarios using the Mocha Testing suite. Finally, it includes a debugger for stepping through transaction execution and can internally launch a ganache testnet.
 
 \section{Related Work}
-Techniques which illustrate more efficient smart contracts by storing less data on a blockchain are described in~\cite{stateless}. Cheng at al makes it clear that compiler optimizations in smart contracts still need improvements in order to avoid unnecessary expenses \cite{DBLP:journals/corr/ChenLLZ17}. On network level scalability there are various approaches such as executing transactions `off-chain'\footnote{An exchange of cryptographically signed messages that does not happen on a blockchain.} and use a blockchain only for the final settling of a series of transactions~\cite{raiden, funfair, counterfactual}. Other approaches exist which involve creating `sidechains' which can be used to offload the computational effort from the `mainchain' \cite{sidechains, loom, cosmos, plasmacash, plasma}. Finally, another approach to achieving scalability is via permissioned blockchains which trade decentralization and transparency for efficiency~\cite{hyperledger, Vukolic:2017:RPB:3055518.3055526}.
+Techniques which illustrate more efficient smart contracts by storing less data on a blockchain are described in~\cite{stateless}. With this method, it is possible to store the data in the input of a transaction, removing the need of smart contract. The data can then be processed in an application by watching for transactions that get sent to the contract's address and decoding their inputs. 
 
-Extensive analyses have been performed on the security of blockchains as networks~\cite{Gervais:2016:SPP:2976749.2978341, cryptoeprint:2018:236} and specifically on the security of Ethereum smart contracts~\cite{Atzei:2017:SAE:3080353.3080363} which have proven to be insufficiently secure for the amounts of funds that they hold. As a result, tools that are able to analyze both source code and compiled bytecode for vulnerabilities have been developed~\cite{Luu:2016:MSC:2976749.2978309, mythril, echidna, smartcheck, securify, zeus}. A recent study \cite{greedyprodigal} illustrates how smart contracts that can freeze or cause loss of funds can be detected \cite{maian}.
+% Network Level Scalability
+On network level scalability there are various approaches such as executing transactions `off-chain'\footnote{An exchange of cryptographically signed messages that does not happen on a blockchain.} and use a blockchain only for the final settling of a series of transactions by utilizing a technique called payment channels~\cite{lightning, raiden, funfair, counterfactual}. Other approaches exist which involve creating `sidechains' which can be utilized to perform trustless computation on another blockchain, that is pegged to the security of the root chain~\cite{sidechains, loom, cosmos, plasmacash, plasma}. Finally, another approach to achieving scalability is via permissioned blockchains which trade decentralization and transparency for efficiency~\cite{hyperledger, Vukolic:2017:RPB:3055518.3055526}.
 
-Utilizing blockchain for Internet of Things is explored in \cite{iot, integrationiot}, while a model for billing and accounting with smart contracts is proposed in~\cite{billaccount}. Energy market use-cases are being piloted by~\cite{gridplus, powerledger} and prototypes are being tested such as \cite{brooklyn, DBLP:journals/ife/MengelkampNBDW18}.
+% Contract Level Scalability
+Cheng et al make it clear that compiler optimizations in smart contracts still need improvements in order to avoid unnecessary expenses \cite{DBLP:journals/corr/ChenLLZ17}. They identify 7 gas-costly patterns and develop a tool called GASPER that is able to identify 3 of these patterns from the bytecode of already deployed smart contracts. The evaluation of the frequency of these patterns show that over 70\% of the deployed smart contracts on Ethereum until Nov. 5th. 2016 suffer from these 3 patterns. Although experienced software engineers can avoid these bad practices, the compiler should be able to detect and optimize parts of the code which are unreachable, and not perform redundant operations.
+
+% Security tools
+Extensive analyses have been performed on the security of blockchains as networks and specifically on the security of Ethereum smart contracts~\cite{Gervais:2016:SPP:2976749.2978341, Atzei:2017:SAE:3080353.3080363}. While the Ethereum network as a Proof of Work blockchain has not been successfully attacked since its inception, Smart contracts have proven to be insufficiently secure for the amounts of funds that they hold, with large amounts of funds being stolen in multiple occurences \cite{parityhack, paritypostmortem, hackingdistibuteddao}. As a result, tools that are able to analyze both source code and compiled bytecode for vulnerabilities have been developed~\cite{Luu:2016:MSC:2976749.2978309, mythril, echidna, smartcheck, securify, zeus}. A recent study identifies `greedy', `prodigal' and `suicidal' smart contracts that can freeze or cause loss of funds, however there has been criticism on the validity of the authors' findings \cite{greedyprodigal, criticismgreedyprodigal}.
+
+% Use case
+Utilizing blockchain for Internet of Things is explored in \cite{iot, integrationiot}, while a model for billing and accounting with smart contracts is proposed in~\cite{billaccount}. In all cases, it is acknowledged that existing blockchain infrastructure cannot support the amount of transaction load that is needed by the IoT ecosystem. Energy market use-cases are being piloted by introducing peer to peer energy market trading, while utilizing hardware agents to facilitate the energy management~\cite{gridplus, powerledger}. Finally, microgrid blockchain prototypes are being tested such as \cite{brooklyn, DBLP:journals/ife/MengelkampNBDW18}.
