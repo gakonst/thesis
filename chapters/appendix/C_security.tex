@@ -1,0 +1,16 @@
+\chapter{Security}
+
+\section{Deleting a struct with mapping} \label{apx:security:mapping}
+
+We provide an example of a smart contract with a \texttt{mapping} inside a \texttt{struct}, how it can be possibly exploited and show that Slither detects this kind of flaw. 
+
+\begin{figure}[htb]
+    \centering
+    \lstinputlisting[language=Solidity]{contracts/Bank.sol}
+    \caption{Mapping inside a struct}
+    \label{fig:mapping-struct}
+\end{figure}
+
+\section{Access Control List Contract}
+
+In this section we further explain how the logic of the Access Control List from DAppHub works. Cite  https://github.com/dapphub/ds-roles
