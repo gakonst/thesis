@@ -47,20 +47,13 @@ Libraries are contracts which cannot hold ether and do not have storage. Using l
     \label{fig:usingfor}
 \end{figure}
 
-Our implementation of the library for saving gas requires firstly defining the layout of variables in storage, as shown in \ref{table:meterlayout} for a Meter. 
+Our implementation of the library for saving gas requires firstly defining the layout of variables in storage, as shown in Table \ref{table:meterlayout} for a Meter. 
 
 \input{tables/meterlayout.tex}
 
 After that, we define a \texttt{mask} variable for each size of the datatypes we use and a variable that indicates how many shifts must be done to set or retrieve a variable, as shown in Figure \ref{fig:masking:a}. For example, setting \texttt{lastPower} requires shifting left 145 bits and applying a 48 bit mask, shown in Figure \ref{fig:masking:b}. The exposed API for setting the value is abstracted from the end user as shown in Figure \ref{fig:masking:c}.
 
 \begin{figure}[H]
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting[firstline=32, lastline=40, language=Solidity]{contracts/MeterMaskingLib.sol}
-    \caption{Getting and setting a property}
-    \label{fig:masking:a}
-  \end{subfigure}
-
   \begin{subfigure}[b]{\textwidth}
     \centering
     \lstinputlisting[linerange={20-20,27-27}, language=Solidity]{contracts/MeterMaskingLib.sol}
@@ -70,7 +63,14 @@ After that, we define a \texttt{mask} variable for each size of the datatypes we
 
   \begin{subfigure}[b]{\textwidth}
     \centering
-    \lstinputlisting[linerange={63-69,77-82}, language=Solidity]{contracts/MeterMaskingLib.sol}
+    \lstinputlisting[firstline=32, lastline=40, language=Solidity]{contracts/MeterMaskingLib.sol}
+    \caption{Getting and setting a property}
+    \label{fig:masking:a}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \lstinputlisting[linerange={63-68,76-81}, language=Solidity]{contracts/MeterMaskingLib.sol}
     \caption{Getting and Setting lastPower API}
     \label{fig:masking:c}
   \end{subfigure}

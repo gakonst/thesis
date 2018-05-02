@@ -17,7 +17,7 @@ library Meter {
     uint private constant mask1         =  1;                //binary 1
     uint private constant mask64        = (1 << 64) - 1;     //binary ...
     uint private constant mask32        = (1 << 32) - 1;     //binary ...
-    uint private constant mask48        = (1 << 48) - 1;     //binary ...
+    uint private constant mask48        = (1 << 48) - 1;     
 
     /**Here we create shift indices for each property. It is simply 1 shifted left by the Index listed above.*/
     uint private constant _active = 1 << 0;
@@ -60,14 +60,25 @@ library Meter {
         return setProperty(MeterData, mask32,  _currentTimestamp, timestamp); 
     }
 
-    function setLastPower(bytes32 MeterData, uint48 power) internal pure returns (bytes32)     { return setProperty(MeterData, mask48,  _lastPower, power); }
+function setLastPower(bytes32 MeterData, uint48 power) internal 
+    pure 
+    returns (bytes32) 
+{ return 
+    setProperty(MeterData, mask48,  _lastPower, power); 
+}
     function setLastTimestamp(bytes32 MeterData, uint32 timestamp) internal pure returns (bytes32)     { return setProperty(MeterData, mask32,  _lastTimestamp, timestamp); }
 
 
     /// GETTER FUNCTIONS
 
     function getCurrentPower(bytes32 MeterData) internal pure returns (uint48) { return uint48(getProperty(MeterData, mask48, _currentPower)); }
-    function getLastPower(bytes32 MeterData) internal pure returns (uint48) { return uint48(getProperty(MeterData, mask48, _lastPower)); }
+
+function getLastPower(bytes32 MeterData) internal 
+    pure 
+    returns (uint48)
+{ 
+    return uint48(getProperty(MeterData, mask48, _lastPower)); 
+}
 
     function getCurrentTimestamp(bytes32 MeterData) internal pure returns (uint32) { return uint32(getProperty(MeterData, mask32, _currentTimestamp)); }
     function getLastTimestamp(bytes32 MeterData) internal pure returns (uint32) { return uint32(getProperty(MeterData, mask32, _lastTimestamp)); }
