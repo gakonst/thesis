@@ -1,9 +1,16 @@
 \chapter{Implementation}
 
-\section{Listening for Events} \label{apx:implementation:events}
+\section{Gas Costs Comparison}
 
-In order to fetch all the past readings of a meter we implement some js scripts to allow fetching all past events. <describe implementation>
-
+Explain gas cost differences, truffle test test/testMeter{Libs,Structs}.js, truffle test test/testDepartment{Libs,Structs}.js, 
+GAS_REPORTER=1 -> eth-gas-reporter, comparing during testing
 
 \section{Access Control}\label{apx:implementation:acl}
 Explain modifiers and whitelist. Compare to having ACL contract.
+
+In this section we further explain how the logic of the Access Control List from DAppHub works. Cite  https://github.com/dapphub/ds-roles
+
+\section{Listening for Events} \label{apx:implementation:events}
+
+In order to fetch all the past readings of a meter we implement some js scripts to allow fetching all past events. <describe implementation>
+These techniques can be used for rendering the info on a react webpage.
