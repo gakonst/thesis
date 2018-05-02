@@ -47,92 +47,53 @@ Libraries are contracts which cannot hold ether and do not have storage. Using l
     \label{fig:usingfor}
 \end{figure}
 
-Our implementation of the library for saving gas requires firstly defining the layout of variables in storage. After that, we define a \texttt{mask} variable for each size of the datatypes we use and a variable that indicates how many shifts must be done to set or retrieve a variable. 
+Our implementation of the library for saving gas requires firstly defining the layout of variables in storage, as shown in \ref{table:meterlayout} for a Meter. 
+
+\input{tables/meterlayout.tex}
+
+After that, we define a \texttt{mask} variable for each size of the datatypes we use and a variable that indicates how many shifts must be done to set or retrieve a variable, as shown in Figure \ref{fig:masking:a}. For example, setting \texttt{lastPower} requires shifting left 145 bits and applying a 48 bit mask, shown in Figure \ref{fig:masking:b}. The exposed API for setting the value is abstracted from the end user as shown in Figure \ref{fig:masking:c}.
 
 \begin{figure}[H]
   \begin{subfigure}[b]{\textwidth}
     \centering
-    \lstinputlisting[firstline=35, lastline=41, language=Solidity]{contracts/GameByteMaskingLib.sol}
+    \lstinputlisting[firstline=32, lastline=40, language=Solidity]{contracts/MeterMaskingLib.sol}
     \caption{Getting and setting a property}
+    \label{fig:masking:a}
   \end{subfigure}
+
   \begin{subfigure}[b]{\textwidth}
     \centering
-    \lstinputlisting[linerange={21-21,26-26}, language=Solidity]{contracts/GameByteMaskingLib.sol}
-    \caption{Mask and shift offsets for CreationTime}
+    \lstinputlisting[linerange={20-20,27-27}, language=Solidity]{contracts/MeterMaskingLib.sol}
+   \caption{Mask and shift offsets for lastPower}
+    \label{fig:masking:b}
   \end{subfigure}
+
   \begin{subfigure}[b]{\textwidth}
     \centering
-    \lstinputlisting[linerange={44-44,53-53}, language=Solidity]{contracts/GameByteMaskingLib.sol}
-    \caption{Getting and Setting creation time API}
+    \lstinputlisting[linerange={63-69,77-82}, language=Solidity]{contracts/MeterMaskingLib.sol}
+    \caption{Getting and Setting lastPower API}
+    \label{fig:masking:c}
   \end{subfigure}
-  \caption{Parts of the Library API for Character Creation}
+
+  \caption{API for setting and retrieving values by using a library}
   \label{apx:scalability:lib}
 \end{figure}
 
 \section{Comparing Gas Costs across Implementations}
 
-Explain the deployment scripts and how they work and compare gas costs across method1/2/3 for all compiler runs.
+In Section \ref{ch:scalability:results} we made gas comparisons between the 3 developed methods, in order to determine which was the most efficient in terms of gas. The process followed for each implementation was:
 
+\begin{enumerate}
+  \item Compile the contract with $N$ optimizer runs, where $N$ in $[0, 1, 100, 500, 500000]$ 
+  \item Deploy the compiled ABI and Bytecode to a local testnet\footnote{We used ganache as a testnet.}
+  \item Get gas costs for deployment.
+  \item Execute each of the contract functions\footnote{The functions were called once since the gas costs are deterministically the same for all calls}.
+  \item Get gas costs for each function call.
+\end{enumerate}
 
-% Tightly packed code:
-% \begin{figure}[H]
-%   % Struct Definition
-%   \begin{subfigure}[b]{\textwidth}
-%     \centering
-%     \lstinputlisting[language=Solidity, firstline=4, lastline=13]{contracts/GameTightlyPacked.sol}
-%     \caption{Character structure definition}
-%     \label{fig:struct_optimization:a}
-%   \end{subfigure}
-
-%   \begin{subfigure}[b]{\textwidth}
-%     \centering
-%     \lstinputlisting[language=Solidity, firstline=38, lastline=66]{contracts/GameTightlyPacked.sol}
-%     \caption{Create character simply sets values to each struct variable}
-%     \label{fig:struct_optimization:b}
-%   \end{subfigure}
-% \end{figure}
-
-% \begin{figure}[H] \ContinuedFloat
-%   \begin{subfigure}[b]{\textwidth}
-%     \centering
-%     \lstinputlisting[language=Solidity, firstline=68, lastline=92]{contracts/GameTightlyPacked.sol}
-%     \caption{Retrieve the character and save it in memory, then return all values.}
-%     \label{fig:struct_optimization:c}
-%   \end{subfigure}
-%   \caption{Implementation requires a Solidity `struct' to pack all the variables together. CreateCharacter and GetCharacterStats  }
-%   \label{fig:struct_optimization}
-% \end{figure}
-
-% Method 2 code:
-
-% \begin{figure}[H]
-%     \centering
-%     \lstinputlisting[language=Solidity, firstline=10, lastline=36]{contracts/GameByteMasking.sol}
-%     \caption{Create Character by shifting variables}
-%     \label{fig:uint_encoding_code}
-% \end{figure}
-
-% \begin{figure}[H] 
-%     \centering
-%     \lstinputlisting[language=Solidity, firstline=38, lastline=61]{contracts/GameByteMasking.sol}
-%     \caption{Get the traits of a character by shifting and masking appropriately. Typecasting is the same as applying a mask of $N$ bits.}
-%     \label{fig:uint_decoding_code}
-% \end{figure}
-
-% Method 3 code:
-
-
-% \begin{figure}[H]
-%     \begin{subfigure}[b]{0.5\textwidth}
-%         \centering
-%         \lstinputlisting[language=Solidity, linerange={101-108}]{contracts/GameByteMaskingLib.sol}
-%         \caption{Create Character by shifting variables}
-%         \label{fig:bytes_encoding_code}
-%     \end{subfigure}
-%     \begin{subfigure}[b]{0.5\textwidth}
-%         \centering
-%         \lstinputlisting[language=Solidity, linerange={129-139}]{contracts/GameByteMaskingLib.sol}
-%         \caption{get character variables}
-%         \label{fig:bytes_decoding_code}
-%     \end{subfigure}
-% \end{figure}
+For that, we implemented a set of Python scripts responsible for automating the process. Specifically, we created:
+\begin{enumerate}
+  \item A \texttt{getWeb3} script which allows connecting to an Ethereum node by providing an endpoint with the syntax \texttt{w3 = getWeb3(<endpoint>)}.
+  \item A \texttt{framework} script which exports a \texttt{Contract} class that can compile and deploy a smart contract when given its source code. It also provides a \texttt{call} method which allows calling a smart contract function and retrieve its gas usage. 
+  \item A comparison script which utilizes the \texttt{framework} and the \texttt{pandas} library to create a dataframe with the gas costs for each function of the supplied smart contracts, for the specified optimizer runs.
+\end{enumerate}

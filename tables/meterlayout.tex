@@ -1,0 +1,19 @@
+\begin{table}[htb]
+	\centering
+	\vspace*{-1ex}
+	\scriptsize
+	\vspace{-1ex}
+	\caption{Layout of variables required to store a meter in a 256 bit word}
+	\begin{tabular}{|c|c|c|c|}
+        \hline
+        \textbf{Type} &     \textbf{Name}    & \textbf{Index} & \textbf{Bits} \\ \hline 
+            bool      &     active           &    0           &      1  \\
+            bytes8    &     id               &    1           &      64 \\
+            uint48    &     power            &    65          &      48 \\
+            uint32    &     timestamp        &    113         &      32 \\
+            uint48    &     lastPower        &    145         &      48 \\
+            uint32    &     lastTimestamp    &    193         &      32 \\
+        \hline
+    \end{tabular}
+    \label{table:meterlayout}
+\end{table}
