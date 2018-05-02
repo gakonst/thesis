@@ -2,7 +2,14 @@
 
 \section{Deleting a struct with mapping} \label{apx:security:mapping}
 
-We provide an example of a smart contract with a \texttt{mapping} inside a \texttt{struct}, how it can be possibly exploited and show that Slither detects this kind of flaw. 
+Slither provides a module for detecting a vulnerability which involves deleting a \texttt{struct} which contains a \texttt{mapping}. We provide an example of a smart contract with this flaw in Figure \ref{fig:mapping-struct}. The steps to reproduce the vulnerability are the following:
+
+\begin{enumerate}
+    \item Create a balance for a user by calling \texttt{createBalance(idx)}, let \texttt{idx} be \texttt{42}.
+    \item Set the balance of a target address to a value, let the address be \texttt{0x1} and the value \texttt{100}.
+    \item Delete the balance by calling \texttt{deleteBalance(42)}. It is expected that the \texttt{struct} at the index 42 will be deleted, along with all its contents.
+    \item Create a balance for another user by calling \texttt{createBalance(42)}. Retrieving that user's balance it can be seen that it is 100, instead of the expected 0.
+\end{enumerate}
 
 \begin{figure}[htb]
     \centering
@@ -12,6 +19,7 @@ We provide an example of a smart contract with a \texttt{mapping} inside a \text
 \end{figure}
 
 \section{Honeypot Smart Contracts} \label{honeypots}
+
 Since the second Parity bug no novel critical vulnerabilities have been identified in smart contracts. However, smart contracts that are architected to look vulnerable to known exploits started surfacing, with their true goal being to steal the funds of potential hackers. Hackers who attempt to exploit them need to first deposit some amount of ether before trying to drain the contract. Each honeypot has a mechanism to prevent the attacker from draining any funds. As a result, only the contract owner is able to withdraw the balance of the contract, including any stolen amounts. We proceed to describe the functionality of a honeypot which takes advantage of `Variable Shadowing' in Solidity. 
 
 The contract in Figure \ref{fig:owner_honeypot} was deployed with an initial amount of 0.1 ether as a balance. At first, it seems that an adversary can send an amount of ether to the smart contract, and due to the fallback function\footnote{A fallback function is a unnamed function which gets called when a call is made to a smart contract that does not match any of its function signatures, or when ether is send to the contract's address.}, if the amount is larger than the value of \texttt{jackpot} the \texttt{owner} variable will be changed to the attacker's address. After that, the adversary should be able to call \texttt{takeAll} and withdraw the funds from the contract.
@@ -38,6 +46,3 @@ Users tried to exploit it by depositing funds and expecting the ownership to cha
     \caption{Slither is able to detect the variable shadowing in \texttt{owner}}
     \label{fig:slither_shadowing}
 \end{figure}
-\section{Access Control List Contract}
-
-In this section we further explain how the logic of the Access Control List from DAppHub works. Cite  https://github.com/dapphub/ds-roles
