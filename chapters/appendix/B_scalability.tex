@@ -2,81 +2,52 @@
 
 \section{Advantages of the Optimizer}
 
-Running optimizer makes less stores among others, explain example.
+The Solidity compiler optimizer operates on assembly. It is able to analyze the compiled code and break it down in blocks, where each instruction gets analyzed~\cite{docsmisc}. It tries to simplify expressions which can be evaluated at runtime, and `pack' items that are less than 32 bytes long into a single storage slot, according to the following rules:
+
+\begin{enumerate}
+  \item The first item in a storage slot is stored lower-order aligned.
+  \item Elementary types use only that many bytes that are necessary to store them.
+  \item If an elementary type does not fit the remaining part of a storage slot, it is moved to the next storage slot.
+  \item Structs and array data always start a new slot and occupy whole slots (but items inside a struct or array are packed tightly according to these rules).
+\end{enumerate}
+
+Variable packing is very efficient because writing to storage which has been already written to before by \text{SSTORE} requires only 5000 gas instead of 20000 (\ref{table:opcode_table}). The execution cost for \texttt{set()} in Figure \ref{fig:optimizer:a} is ~60000\footnote{The gas costs were obtained by calling the function in Remix IDE, \url{http://remix.ethereum.org/}} because it initializes 3 storage slots, compared to \ref{fig:optimizer:b} where it costs ~45000 because it initializes 2 storage slots\footnote{The \texttt{uint128} items get packed in one storage slot.}. By using the optimizer, the third \texttt{SSTORE} is removed as shown in Figure \ref{fig:optimizer:c} because the compiler can set both values with 1 \texttt{SSTORE} command in the same storage slot. As a result, the gas cost for calling \texttt{set()} with the optimizer in \ref{fig:optimizer:b} is ~40000 and requires only 2 \texttt{SSTORE} calls, compared to Figure \ref{fig:optimizer:a} where the optimizer is unable to provide any additional savings.
 
 \begin{figure}[htb]
   \begin{subfigure}[b]{\textwidth}
     \centering
-    \lstinputlisting[language=Solidity]{contracts/Packing.sol}
+    \lstinputlisting[language=Solidity]{contracts/CannotPack.sol}
+    \label{fig:optimizer:a}
+  \end{subfigure}
+
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \lstinputlisting[language=Solidity]{contracts/CanPack.sol}
+    \label{fig:optimizer:b}
   \end{subfigure}
 
   \begin{subfigure}[b]{\textwidth}
     \centering
     \lstinputlisting{code/solc.txt}
+    \label{fig:optimizer:c}
   \end{subfigure}
-  \caption{Running the optimizer in storage variables less than 256 bytes results in 2 SSTORE commands instead of 6 which reults in significant savings in gas costs}
-  \label{fig:struct_optimization}
-\end{figure}
 
-It should be noted that if the number of words were more than 256 and you were trying to save slots, this wont happen such as: uint128 - uint256 - uint128 vs uint128 uint128 uint256.
+  \caption{The optimizer saves a call to \texttt{SSTORE} when it operates on packed storage variables.} 
+  \label{fig:optimizer}
+\end{figure}
 
 \section{Using Libraries in Smart Contracts}
 
+Libraries are contracts which cannot hold ether and do not have storage. Using libraries results in gas savings and code reuse. According to the Solidity Documentation, `Libraries can be seen as implicit base contracts of the contracts that use them'. The functions of deployed Librares are called by using the opcode \texttt{DELEGATECALL}, which allows a function to be executed in the context of the caller. This results in contracts being able to delegate complex computation on an already deployed library's functionality, without having to deploy the library code. Libraries can be used to modify their associated contract's variables. Utilizing the \texttt{using} syntax, a function in a library can be called as a method of its first parameter as shown in Figure \ref{fig:usingfor}.
+
 \begin{figure}[htb]
     \centering
-    \lstinputlisting[language=Solidity]{contracts/LibraryExample.sol}
-    \caption{Example of using the \texttt{using X for Y} syntax to enhance operations done on datatypes.}
-    \label{fig:library}
+    \lstinputlisting[language=Solidity]{contracts/Counter.sol}
+    \caption{Example of using the \texttt{using X for Y} syntax to create a \texttt{Counter} datatype~\cite{library}}
+    \label{fig:usingfor}
 \end{figure}
 
-As a result, a developer can import the library and use it for all their variables, or use the new datatypes in the library.
-
-Tightly packed code:
-\begin{figure}[H]
-  % Struct Definition
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting[language=Solidity, firstline=4, lastline=13]{contracts/GameTightlyPacked.sol}
-    \caption{Character structure definition}
-    \label{fig:struct_optimization:a}
-  \end{subfigure}
-
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting[language=Solidity, firstline=38, lastline=66]{contracts/GameTightlyPacked.sol}
-    \caption{Create character simply sets values to each struct variable}
-    \label{fig:struct_optimization:b}
-  \end{subfigure}
-\end{figure}
-
-\begin{figure}[H] \ContinuedFloat
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \lstinputlisting[language=Solidity, firstline=68, lastline=92]{contracts/GameTightlyPacked.sol}
-    \caption{Retrieve the character and save it in memory, then return all values.}
-    \label{fig:struct_optimization:c}
-  \end{subfigure}
-  \caption{Implementation requires a Solidity `struct' to pack all the variables together. CreateCharacter and GetCharacterStats  }
-  \label{fig:struct_optimization}
-\end{figure}
-
-Method 2 code:
-
-\begin{figure}[H]
-    \centering
-    \lstinputlisting[language=Solidity, firstline=10, lastline=36]{contracts/GameByteMasking.sol}
-    \caption{Create Character by shifting variables}
-    \label{fig:uint_encoding_code}
-\end{figure}
-
-\begin{figure}[H] 
-    \centering
-    \lstinputlisting[language=Solidity, firstline=38, lastline=61]{contracts/GameByteMasking.sol}
-    \caption{Get the traits of a character by shifting and masking appropriately. Typecasting is the same as applying a mask of $N$ bits.}
-    \label{fig:uint_decoding_code}
-\end{figure}
-
-Method 3 code:
+Our implementation of the library for saving gas requires firstly defining the layout of variables in storage. After that, we define a \texttt{mask} variable for each size of the datatypes we use and a variable that indicates how many shifts must be done to set or retrieve a variable. 
 
 \begin{figure}[H]
   \begin{subfigure}[b]{\textwidth}
@@ -98,17 +69,70 @@ Method 3 code:
   \label{apx:scalability:lib}
 \end{figure}
 
-\begin{figure}[H]
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, linerange={101-108}]{contracts/GameByteMaskingLib.sol}
-        \caption{Create Character by shifting variables}
-        \label{fig:bytes_encoding_code}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.5\textwidth}
-        \centering
-        \lstinputlisting[language=Solidity, linerange={129-139}]{contracts/GameByteMaskingLib.sol}
-        \caption{get character variables}
-        \label{fig:bytes_decoding_code}
-    \end{subfigure}
-\end{figure}
+\section{Comparing Gas Costs across Implementations}
+
+Explain the deployment scripts and how they work and compare gas costs across method1/2/3 for all compiler runs.
+
+
+% Tightly packed code:
+% \begin{figure}[H]
+%   % Struct Definition
+%   \begin{subfigure}[b]{\textwidth}
+%     \centering
+%     \lstinputlisting[language=Solidity, firstline=4, lastline=13]{contracts/GameTightlyPacked.sol}
+%     \caption{Character structure definition}
+%     \label{fig:struct_optimization:a}
+%   \end{subfigure}
+
+%   \begin{subfigure}[b]{\textwidth}
+%     \centering
+%     \lstinputlisting[language=Solidity, firstline=38, lastline=66]{contracts/GameTightlyPacked.sol}
+%     \caption{Create character simply sets values to each struct variable}
+%     \label{fig:struct_optimization:b}
+%   \end{subfigure}
+% \end{figure}
+
+% \begin{figure}[H] \ContinuedFloat
+%   \begin{subfigure}[b]{\textwidth}
+%     \centering
+%     \lstinputlisting[language=Solidity, firstline=68, lastline=92]{contracts/GameTightlyPacked.sol}
+%     \caption{Retrieve the character and save it in memory, then return all values.}
+%     \label{fig:struct_optimization:c}
+%   \end{subfigure}
+%   \caption{Implementation requires a Solidity `struct' to pack all the variables together. CreateCharacter and GetCharacterStats  }
+%   \label{fig:struct_optimization}
+% \end{figure}
+
+% Method 2 code:
+
+% \begin{figure}[H]
+%     \centering
+%     \lstinputlisting[language=Solidity, firstline=10, lastline=36]{contracts/GameByteMasking.sol}
+%     \caption{Create Character by shifting variables}
+%     \label{fig:uint_encoding_code}
+% \end{figure}
+
+% \begin{figure}[H] 
+%     \centering
+%     \lstinputlisting[language=Solidity, firstline=38, lastline=61]{contracts/GameByteMasking.sol}
+%     \caption{Get the traits of a character by shifting and masking appropriately. Typecasting is the same as applying a mask of $N$ bits.}
+%     \label{fig:uint_decoding_code}
+% \end{figure}
+
+% Method 3 code:
+
+
+% \begin{figure}[H]
+%     \begin{subfigure}[b]{0.5\textwidth}
+%         \centering
+%         \lstinputlisting[language=Solidity, linerange={101-108}]{contracts/GameByteMaskingLib.sol}
+%         \caption{Create Character by shifting variables}
+%         \label{fig:bytes_encoding_code}
+%     \end{subfigure}
+%     \begin{subfigure}[b]{0.5\textwidth}
+%         \centering
+%         \lstinputlisting[language=Solidity, linerange={129-139}]{contracts/GameByteMaskingLib.sol}
+%         \caption{get character variables}
+%         \label{fig:bytes_decoding_code}
+%     \end{subfigure}
+% \end{figure}

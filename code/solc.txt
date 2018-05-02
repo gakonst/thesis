@@ -1,4 +1,9 @@
-$ solc --optimize --asm Packing.sol | grep sstore | wc-l
+$ solc --asm CannotPack.sol | grep sstore | wc -l
+3
+$ solc --optimize --asm CannotPack.sol | grep sstore | wc -l
+3
+
+$ solc --asm CanPack.sol | grep sstore | wc -l
+3
+$ solc --optimize --asm CanPack.sol | grep sstore | wc -l
 2
-$ solc --asm Packing.sol | grep sstore | wc -l
-6
