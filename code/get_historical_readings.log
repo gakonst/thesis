@@ -1,0 +1,5 @@
+$ ./get_meter_readings --rpc http://localhost:8545 --address "0xb549d25374337a3d2cc7bad7a4009d8cb1c3f537" --meter "ELT01 ELT02"
+Meter ELT01: 10 kWh at 1525281846
+Meter ELT01: 20 kWh at 1525285175
+Meter ELT02: 15 kWh at 1525281852
+Meter ELT02: 22 kWh at 1525285166
