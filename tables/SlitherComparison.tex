@@ -1,64 +1,25 @@
-\begin{table}[H]
+\begin{table}[htb]
 	% \caption{Comparison of vulnerabilities each tool is able to find. Slither is able to detect well known issues along with more subtle ones which are not detectable by other tools. It is not able to recognize Time Order Dependency (TOD) or High Gas cost patterns because they require symbolic execution.}
 	\caption{Slither is able to detect more vulnerabilities compared to other tools.}
+	\label{table:slither}
 	\centering
 	\scriptsize
 	\setlength\LTleft{-1in}
 	\setlength\LTright{-1in}
-	\begin{longtable}{C{0.12\textwidth}
-					  C{0.10\textwidth} C{0.10\textwidth}
-					  C{0.10\textwidth} C{0.10\textwidth}
-					  C{0.10\textwidth} C{0.11\textwidth}
-					  C{0.10\textwidth} C{0.10\textwidth}
-					  C{0.10\textwidth}}
+	\begin{tabular}{|c|c|c|c|c|c|c|}
 		\hline
-		\textbf{Security Tool} & 
-		\textbf{Re Entrancy} & 
-		\textbf{TOD} &  
-		\textbf{High Gas} &
-		\textbf{Unprot. Function} & 
-		\textbf{No Constructor} & 
-		\textbf{tx.origin} & 
-		\textbf{blockhash} & 
-		\textbf{Var. Shadowing} &
-		\textbf{Mapping in struct}
-		\\
+		\textbf{Vulnerability} & 
+		\textbf{Oyente} & \textbf{Remix} & \textbf{Securify} & \textbf{SmartCheck} & \textbf{Mythril} & \textbf{Slither} \\ \hline
+		\textbf{Reentrancy}        & Y & Y & Y & Y & Y & Y \\
+		\textbf{TOD}               & Y & Y & Y & Y & Y & N \\
+		\textbf{High Gas}          & N & Y & N & Y & Y & N \\
+		\textbf{Unprot. Function}  & N & N & N & N & Y & Y \\  
+		\textbf{No Constructor}    & Y & N & N & N & Y & Y \\ 
+		\textbf{tx.origin}         & N & Y & Y & Y & Y & Y \\ 
+		\textbf{blockhash}         & N & Y & N & N & N & Y \\
+		\textbf{Var. Shadowing}    & N & N & N & N & N & Y \\ 
+		\textbf{Mapping in struct} & N & N & N & N & N & Y \\ 
 		\hline
-		\textbf{Oyente} &
-			Y & Y & N & 
-			N & Y & N & 
-			N & N & N
-			\\ \hline
-
-		\textbf{Remix} &
-			Y & Y & Y & 
-			N & N & Y & 
-			Y & N & N 
-			\\ \hline
-
-		\textbf{Securify} &
-			Y & Y & N & 
-			N & N & Y & 
-			N & N & N 
-			\\ \hline
-
-		\textbf{SmartCheck} &
-			Y & Y & Y & 
-			N & N & Y & 
-			N & N & N 
-			\\ \hline
-
-		\textbf{Mythril} &
-			Y & Y & Y & 
-			Y & Y & Y & 
-			N & N & N 
-			\\ \hline
-
-		\textbf{Slither} &
-			Y & N & N & 
-			Y & Y & Y & 
-			Y & Y & Y 
-			\\ \hline
-	\end{longtable}
-	\label{table:slither}
+	\end{tabular}
+	\vspace{-2ex}
 \end{table}
