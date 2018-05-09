@@ -1,6 +1,6 @@
 \begin{table}[htb]
 	% \caption{Comparison of vulnerabilities each tool is able to find. Slither is able to detect well known issues along with more subtle ones which are not detectable by other tools. It is not able to recognize Time Order Dependency (TOD) or High Gas cost patterns because they require symbolic execution.}
-	\caption{Slither is able to detect more vulnerabilities compared to other tools.}
+	\caption{Slither is able to detect more vulnerabilities compared to other tools. Updated table from \cite{tools}}
 	\label{table:slither}
 	\centering
 	\scriptsize
@@ -11,13 +11,13 @@
 		\textbf{Vulnerability} & 
 		\textbf{Oyente} & \textbf{Remix} & \textbf{Securify} & \textbf{SmartCheck} & \textbf{Mythril} & \textbf{Slither} \\ \hline
 		\textbf{Reentrancy}        & Y & Y & Y & Y & Y & Y \\
-		\textbf{TOD}               & Y & Y & Y & Y & Y & N \\
+		\textbf{Time-Order Dependency}               & Y & Y & Y & Y & Y & N \\
 		\textbf{High Gas}          & N & Y & N & Y & Y & N \\
-		\textbf{Unprot. Function}  & N & N & N & N & Y & Y \\  
+		\textbf{Unprotected Function}  & N & N & N & N & Y & Y \\  
 		\textbf{No Constructor}    & Y & N & N & N & Y & Y \\ 
 		\textbf{tx.origin}         & N & Y & Y & Y & Y & Y \\ 
 		\textbf{blockhash}         & N & Y & N & N & N & Y \\
-		\textbf{Var. Shadowing}    & N & N & N & N & N & Y \\ 
+		\textbf{Variable Shadowing}    & N & N & N & N & N & Y \\ 
 		\textbf{Mapping in struct} & N & N & N & N & N & Y \\ 
 		\hline
 	\end{tabular}

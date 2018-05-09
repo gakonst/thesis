@@ -45,18 +45,10 @@ A \textit{Smart Meter} is an energy meter which logs its measured energy reading
 
 A \textit{Virtual Meter} is a group of \textit{Smart Meters}. The purpose of a Virtual Meter (VM) is to track the consumption of multiple Smart Meters across various rooms of a company building. The consumption of a VM is a function of the power consumptions of its associated smart meters. 
 
-The function that describes each Virtual Meter is supplied from an internal partner and is considered to be known. An example function can be seen in Equation \ref{eq:formula}. Variables prefixed with $VM$ represent Virtual Meters, $ELT$ and $KMZ$ represent Smart Meters and $F$ represent constant factors.
+The function that describes each Virtual Meter is supplied from an internal partner and is considered to be known. An example function for calculating the consumption of a virtual meter can be seen in Equation \ref{eq:formula}. $VM$ is used for Virtual Meters, $ELT$ for Smart Meters and $F$ for constant factors.
 
 \begin{equation} \label{eq:formula}
-    \begin{aligned}
-        VM15= \\
-        & (ELT46-(ELT31+ELT16+ELT17+ELT35+ELT36))*F57
-        \\
-        + & (ELT35+ELT36-ELT18)*F27*F66
-        \\
-        + & (KMZ6-KMZ5)*(ELT16+ELT17+ELT18+ELT19+ELT20)\\
-        & /KMZ2*F27*F66 
-    \end{aligned}
+    VM01 = 2 * ELT01 + ELT02 + F1 * ELT03
 \end{equation}
 
 It is the case that this process could be done entirely on-chain, by creating a smart contract that manages virtual meters separately. This would require another smart contract for virtual meters, which would need to store the Meter IDs for each meter associated to the virtual meter, along with the formula that describes how the virtual meter consumption is calculated. This logic is unnecessarily complex to be performed on a smart contract directly. Instead, it is done off-chain on the client side, by pulling the readings of each smart meter, calculating the reading of the virtual meter, and then pushing the aggregated reading to the smart contract's storage, as shown in Figure \ref{fig:virtual_meters_consumption}.
@@ -86,7 +78,7 @@ In this section we go over the implementation and the rationale of each develope
 \subsection{MeterDB}
 MeterDB utilizes Method 3 (\ref{method3}) to keep track of the energy consumption values and logged timestamps of a smart meter or a virtual meter. We assume that a meter can be any IoT device that has its own Ethereum account\footnote{As a prerequisite, a private-public keypair needs to be generated for every meter.}. The contract is designed to map each Meter's address to its details (\texttt{id}, \texttt{lastPower}, \texttt{lastTimestamp}, \texttt{power}, \texttt{timestamp}).
 
-The contract is split in two files, \texttt{MeterDB.sol} which contains the business logic, and \texttt{Meter.sol} which contains the gas optimization logic that encodes and decodes meter data in a \texttt{bytes32} variable. In order for a meter to be able to call the \texttt{ping} function it first needs to be activated, by registering its id and address in the smart contract. Deactivating a decommissioned meter results in its data being deleted from the storage of the smart contract, which refunds gas as explained in Chapter \ref{ch:scalability}. We additionally store a mapping of \texttt{id}s to addresses to access a meter in $O(1)$ time instead of iterating over a list of registered meters and checking if the \texttt{id} is matched.
+The contract is split in two files, \texttt{MeterDB.sol} which contains the business logic, and \texttt{Meter.sol} which contains the gas optimization logic that encodes and decodes meter data in a \texttt{bytes32} variable. In order for a meter to be able to call the \texttt{ping} function it first needs to be activated, by registering its id and address in the smart contract through the \texttt{activateMeter} function. Deactivating a decommissioned meter results in its data being deleted from the storage of the smart contract, which refunds gas as explained in Chapter \ref{ch:scalability}. This is done through \texttt{deactivateMeter}. We additionally store a mapping of \texttt{id}s to addresses to access a meter in $O(1)$ time instead of iterating over a list of registered meters and checking if the \texttt{id} is matched.
 
 For each meter, its latest reading is pulled from the monitoring server and if a new consumption value has arrived it replaces the previous reading along with its timestamp by calling \texttt{ping}. A \texttt{Pinged} event is emitted after each \texttt{ping} function call which enables users to fetch the full history of readings and timestamps for a meter. Table~\ref{table:meter} illustrates the design of the storage in \texttt{Meter.sol}. A timestamp is made to count up to $2^{32}$ which is big enough to handle time values until the year 2106. Power readings can be up to $2^{48}$ which allows meter values up to multiple terawatthours, with milliwatthour granularity.
 
@@ -94,9 +86,11 @@ For each meter, its latest reading is pulled from the monitoring server and if a
 
 \subsection{AccountingDB}
 
-AccountingDB stores the data required to performing metering and billing for a department. Each department's data is broken down in department data and its accounting data. Storing department data involves using Method 3 (\ref{method3}) to store the consumption of each department, the headcount and activity status of the department and is done in \texttt{Department.sol}. For each department, the list of Virtual Meters, Subdepartments and Delegates is stored in a \texttt{struct}, because Method 3 cannot be used for array types.
+AccountingDB stores the data required to performing metering and billing for a department. Each department's data is broken down in department data and its accounting data. Storing department data involves using Method 3 (\ref{method3}) to store the consumption of each department, the headcount and activity status of the department and is done in \texttt{Department.sol}. 
 
 Due to the forwarding of a department consumption to another, we keep track of the power that is generated by the virtual meters, the delegated power that is received from another department, and the cleared power which is the amount of power that has been cleared from that department, either through delegation or from an accountant. The consumption forwarding logic is implemented as described in Section~\ref{billing}. 
+
+Departments are activated through \texttt{activateDepartment} and deactivated through \texttt{deactivateDepartment} and the headcount is set through \texttt{setHeadcount}. For each department, the list of Virtual Meters, Subdepartments and Delegates is stored in a \texttt{struct}, via the methods \texttt{setDelegates}, \texttt{setSubdepartments}, and \texttt{setVirtualMeters}. Finally, the billing of energy for a department is done through \texttt{billPower}, clearing is done through \texttt{clearDepartment} and forwarding a department's consumption is done through \texttt{headcountSplit} and \texttt{fixedSplit}.
 
 \input{tables/department.tex}
 
@@ -126,7 +120,7 @@ The full deployment pipeline involves deploying each contract separately and lin
 
 \section{Client Side} \label{ch:implementation:client}
 
-As described in Section \ref{ch:basics:insideevm}, smart contract functions get executed only in response to transactions made by EOAs. Since the goal is to have an automated process of pulling data from and pushing data to the smart contracts, we implement client scripts which perform that functionality. We use Python and Web3.py to implement utilities and multiple command line interfaces (CLIs) which are used to interact with the smart contracts. A module is also developed for interacting with the REST API of the monitoring server. A separate keypair is generated for every role mentioned in Section \ref{acl}, and each CLI is designed to function only with by using the corresponding role's private key.
+As described in Section \ref{ch:basics:insideevm}, smart contract functions get executed only in response to transactions made by EOAs\footnote{Externally Owned Accounts, as described in Section \ref{ch:basics:insideevm}}. Since the goal is to have an automated process of pulling data from and pushing data to the smart contracts, we implement client scripts which perform that functionality. We use Python and Web3.py to implement utilities and multiple command line interfaces (CLIs) which are used to interact with the smart contracts. A module is also developed for interacting with the REST API of the monitoring server. A separate keypair is generated for every role mentioned in Section \ref{acl}, and each CLI is designed to function only with by using the corresponding role's private key.
 
 \subsection{Utilities} \label{utils}
 
@@ -152,13 +146,13 @@ The accounting operator role is used to activate or deactivate departments in th
 
 \subsection{Single and Multiple Meters CLI}
 
-A \texttt{meter} module is implemented which is responsible for connecting to \texttt{MeterDB} and the monitoring server API as explained in Section \ref{utils}. The meter first needs to be activated by the meter operator as explained in Section \ref{meter-operator}. The client is responsible for polling the monitoring server and ping any new power readings to the smart contract. The \texttt{single-meter} CLI expects the meter's private key as input, and retrieves the meter id from the smart contract in order to connect to the monitoring server.
+A \texttt{meter} module is implemented which is responsible for connecting to \texttt{MeterDB} and the monitoring server API as explained in Section \ref{utils}. The meter first needs to be activated by the meter operator as explained in Section \ref{meter-operator}. The client is responsible for polling the monitoring server and ping any new power readings to the smart contract. The \texttt{single-meter} CLI expects the meter's private key as input, and retrieves the meter id from the smart contract in order to connect to the monitoring server. A frequency parameter can also be supplied to set how often a meter will poll the monitoring server for new data. This process runs in an infinite loop, or it can be modified to run as a cronjob.
 
-Due to having multiple smart meters in our use-case, a \texttt{multiple-meters} CLI is also implemented which is responsible for launching multiple \texttt{single-meter} processes, each one running independently of each other. The output of each process is saved in a log file.
+Due to having multiple smart meters in our use-case, a \texttt{multiple-meters} CLI is also implemented which is responsible for launching multiple \texttt{single-meter} processes, each one running independently of each other. The output of each process is saved in a log file. 
 
 \subsection{Single and Multiple Virtual Meters CLI}
 
-A \texttt{virtualMeter} module is implemented which is responsible for connecting to \texttt{MeterDB} and pulling the reading of its connected meters as described in Section \ref{metering}. Along with the virtual meter's private key, a function is supplied to the CLI as arguments which specifies how the Virtual Meter consumption is calculated from its associated meters. The virtual meter and the meters included in the formula must be previously activated by the meter operator. Given the formula, each referenced meter's readings are fetched, and the formula is evaluated\footnote{Using the module: \url{https://github.com/Axiacore/py-expression-eval}} before pinging the final value to the smart contract.
+A \texttt{virtualMeter} module is implemented which is responsible for connecting to \texttt{MeterDB} and pulling the reading of its connected meters as described in Section \ref{metering}. Along with the virtual meter's private key, a function is supplied to the CLI as arguments which specifies how the Virtual Meter consumption is calculated from its associated meters. The virtual meter and the meters included in the formula must be previously activated by the meter operator. Given the formula, each referenced meter's readings are fetched, and the formula is evaluated\footnote{Using the module: \url{https://github.com/Axiacore/py-expression-eval}} before pinging the final value to the smart contract. The process runs in an infinite loop, and can be modified to run as a cronjob.
 
 Similarly to normal smart meters, a \texttt{multiple-virtualmeters} CLI is implemented which is responsible for launching multiple \texttt{single-virtualmeter} processes, each one running independently of each other. The output of each process is saved in a log file.
 
