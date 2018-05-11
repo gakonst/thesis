@@ -11,24 +11,27 @@ The Solidity compiler optimizer operates on assembly. It is able to analyze the 
   \item Structs and array data always start a new slot and occupy whole slots (but items inside a struct or array are packed tightly according to these rules).
 \end{enumerate}
 
-Variable packing is very efficient because writing to storage which has been already written to before by \text{SSTORE} requires only 5000 gas instead of 20000 (\ref{table:opcode_table}). The execution cost for \texttt{set()} in Figure \ref{fig:optimizer:a} is ~60000\footnote{The gas costs were obtained by calling the function in Remix IDE, \url{http://remix.ethereum.org/}} because it initializes 3 storage slots, compared to \ref{fig:optimizer:b} where it costs ~45000 because it initializes 2 storage slots\footnote{The \texttt{uint128} items get packed in one storage slot.}. By using the optimizer, the third \texttt{SSTORE} is removed as shown in Figure \ref{fig:optimizer:c} because the compiler can set both values with 1 \texttt{SSTORE} command in the same storage slot. As a result, the gas cost for calling \texttt{set()} with the optimizer in \ref{fig:optimizer:b} is ~40000 and requires only 2 \texttt{SSTORE} calls, compared to Figure \ref{fig:optimizer:a} where the optimizer is unable to provide any additional savings.
+Variable packing is very efficient because writing to storage which has been already written to before by \text{SSTORE} requires only 5000 gas instead of 20000 (\ref{table:opcode_table}). The execution cost for \texttt{set()} in Figure \ref{fig:optimizer} is ~60000\footnote{The gas costs were obtained by calling the function in Remix IDE, \url{http://remix.ethereum.org/}} because it initializes 3 storage slots, compared to \ref{fig:optimizer:b} where it costs ~45000 because it initializes 2 storage slots\footnote{The \texttt{uint128} items get packed in one storage slot.}. By using the optimizer, the third \texttt{SSTORE} is removed as shown in Figure \ref{fig:optimizer:c} because the compiler can set both values with 1 \texttt{SSTORE} command in the same storage slot. As a result, the gas cost for calling \texttt{set()} with the optimizer in \ref{fig:optimizer:b} is ~40000 and requires only 2 \texttt{SSTORE} calls, compared to Figure \ref{fig:optimizer:a} where the optimizer is unable to provide any additional savings.
 
 \begin{figure}[htb]
   \begin{subfigure}[b]{\textwidth}
     \centering
     \lstinputlisting[language=Solidity]{contracts/CannotPack.sol}
+    \caption{Variables cannot be packed}
     \label{fig:optimizer:a}
   \end{subfigure}
 
   \begin{subfigure}[b]{\textwidth}
     \centering
     \lstinputlisting[language=Solidity]{contracts/CanPack.sol}
+    \caption{Variables can be packed}
     \label{fig:optimizer:b}
   \end{subfigure}
 
   \begin{subfigure}[b]{\textwidth}
     \centering
     \lstinputlisting{code/solc.txt}
+    \caption{2 SSTOREs required for the CanPack contract compared to 3 for CannotPack}
     \label{fig:optimizer:c}
   \end{subfigure}
 

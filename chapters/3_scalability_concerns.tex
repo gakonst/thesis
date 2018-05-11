@@ -82,7 +82,7 @@ General rules that should be followed for saving gas costs:
 
 As described in \cite{DBLP:journals/corr/ChenLLZ17} there is a lot of room for further compiler optimizations. Future Solidity compiler versions are addressing some already\footnote{\url{https://github.com/ethereum/solidity/issues/3760}}\footnote{\url{https://github.com/ethereum/solidity/issues/3716}}\footnote{\url{https://github.com/ethereum/solidity/issues/3691}}.
 
-The EVM operates on 32 byte (256 bit) words. The compiler is able to `tightly pack' data together, which means that 2 128-bit storage variables can be efficiently stored with 1 SSTORE command. The \textit{optimize} flag of the Solidity compiler needs to be activated to access this feature when programming in Solidity. Refer to \ref{fig:struct_optimization} for an example of the optimizer's functionality.
+The EVM operates on 32 byte (256 bit) words. The compiler is able to `tightly pack' data together, which means that 2 128-bit storage variables can be efficiently stored with 1 SSTORE command. The \textit{optimize} flag of the Solidity compiler needs to be activated to access this feature when programming in Solidity. Refer to \ref{apx:scalability} for an example of the optimizer's functionality.
 
 \subsection{Gas Savings Case Study}
 
@@ -96,7 +96,7 @@ We proceed to compare the gas efficiency of 3 methods for storing data in a smar
 \input{tables/character.tex}
 
 
-The choice of variables in Table \ref{table:characteristics} is made to represent what the traits of a character would be in a game built on a smart contract. The size of the variables is selected so that all the information required to describe a \texttt{Character} can fit in a 256-bit word. The interface that satisfies the requirements is shown in~\ref{fig:game_interface}.
+The choice of variables in Table \ref{table:characteristics} is made to represent what the traits of a character would be in a game built on a smart contract. The size of the variables is selected so that all the information required to describe a \texttt{Character} can fit in a 256-bit word. 
 
 We will examine the gas costs for deployment and for calling each function for the following implementations:
 
@@ -108,11 +108,11 @@ We will examine the gas costs for deployment and for calling each function for t
 We use \texttt{bytes32} in Method 3 because the bit operations done in Solidity when extracted in functions do not function as expected with \texttt{uint256} variables. The full contract implementations for each method can be found in Appendix \ref{apx:scalability}. A comparison of the performance for each method is shown in \ref{ch:scalability:results}% In this section we describe the methods and in section \label{results} we go over the results and caveats of each method.
 
 \subsubsection{Packing of traits by utilizing Solidity's optimizer and \texttt{struct} variables} \label{method1}
-We use Solidity's built-in \texttt{struct}\footnote{\url{http://solidity.readthedocs.io/en/v0.4.21/types.html}} keyword as means to group all traits of a \texttt{Character} as described in \ref{table:characteristics}. This allows for easy code readability since every variable of a \texttt{struct} can be accessed by its name as seen in \ref{fig:struct_optimization:c}, like the property of an object. 
+We use Solidity's built-in \texttt{struct}\footnote{\url{http://solidity.readthedocs.io/en/v0.4.21/types.html}} keyword as means to group all traits of a \texttt{Character} as described in \ref{table:characteristics}. This allows for easy code readability since every variable of a \texttt{struct} can be accessed by its name like the property of an object. 
 
 \input{figures/ch3/method1-code.tex}
 
-In this case, assignment and retrieval of the variables is done in a very straightforward way. By utilizing Solidity's built-in structures and arrays, we can create an array of \texttt{Character} type structures and access their traits by their indexes, as done in \ref{fig:struct_optimization:c}. The gas costs per function call with this method are shown in \ref{table:tightpacking}.
+In this case, assignment and retrieval of the variables is done in a very straightforward way. By utilizing Solidity's built-in structures and arrays, we can create an array of \texttt{Character} type structures and access their traits by their indexes. The gas costs per function call with this method are shown in \ref{table:tightpacking}.
 
 \input{tables/GameTightlyPacked.sol_data.tex}
 
@@ -124,13 +124,13 @@ In \ref{method1} we rely on the optimizer to make storing a character's traits m
 
 % By left shifting a trait's value by the sum of the size of all variables to its right and then performing a bitwise OR operation with the \texttt{uint256}, the trait gets encoded in the \texttt{uint256}, as shown in~\ref{fig:uint_encoding}. 
 
-Setting data requires shifting left $N$ times and performing bitwise OR with the target variable, where $N$ is the sum of the number of bits of all variables to the right of the target variable, as shown in Figure \ref{fig:uint_encoding}. This is implemented in \ref{fig:uint_encoding_code}
+Setting data requires shifting left $N$ times and performing bitwise OR with the target variable, where $N$ is the sum of the number of bits of all variables to the right of the target variable, as shown in Figure \ref{fig:uint_encoding}. 
 
 \input{figures/ch3/uint-encoding.tex}
 
 % By right shifting the \texttt{uint256} by the sum of the size of all variables to the right of a trait and then performing a bitwise AND operations with the trait's size retrieves the value of the trait. 
 
-Retrieving data requires shifting right $N$ times and performing bitwise AND with the target variable's size, where $N$ is the sum of the number of bits of all variables to the right of the target variable. Figure \ref{fig:uint_decoding} illustrates retrieving the \texttt{creationTime} trait from the \texttt{uint256} by shifting right 16 times and performing bitwise AND with $2^{32}-1$ since \texttt{creationTime} is a 32 bit variable. This is implemented in \ref{fig:uint_decoding_code}.
+Retrieving data requires shifting right $N$ times and performing bitwise AND with the target variable's size, where $N$ is the sum of the number of bits of all variables to the right of the target variable. Figure \ref{fig:uint_decoding} illustrates retrieving the \texttt{creationTime} trait from the \texttt{uint256} by shifting right 16 times and performing bitwise AND with $2^{32}-1$ since \texttt{creationTime} is a 32 bit variable. 
 
 \input{figures/ch3/uint-decoding.tex}
 
@@ -140,7 +140,7 @@ The gas costs per function call with this method are:
 \subsubsection{Manually pack traits in a bytes32 variable with masking and shifting, utilizing Solidity Libraries} \label{method3}
 
 Code reusability and readability should always be given high priority. Although data packing is very efficient in~\ref{method2} compared to~\ref{method1}, the code is hardly readable and it is impossible to reuse parts of it. % It is possible to extract the logic into functions, however the overheads introduced by the additional operations make it inferior to the technique we describe in this section.
-We utilize Solidity's \texttt{Library} built-in which allows us to define a set of methods which can be applied on a datatype using the \texttt{using X for Y} syntax\footnote{This is similar to calling functions on struct's in Golang}. A simple example is shown in \ref{fig:library}.
+We utilize Solidity's \texttt{Library} built-in which allows us to define a set of methods which can be applied on a datatype using the \texttt{using X for Y} syntax\footnote{This is similar to calling functions on struct's in Golang}. A simple example is shown in \ref{fig:usingfor}.
 
 
 The visibility of a Library's exported functions can be: 
@@ -170,7 +170,7 @@ Observing \ref{table:tightpacking}, \ref{table:uint_masking_gas} and \ref{table:
 
 It is clear that the biggest savings are achieved through Method 2. Deploying a contract with Method 2 is 29\% more efficient than Method 1, while Method 3 is only 4\% more efficient than Method 1. Calling \texttt{CreateCharacter} is approximately 36\% more efficient in both methods compared to Method 1. 
 
-Method 2 is the most efficient in terms of gas, however the coding style used for it is extremely compact and non-verbose, which makes difficult to maintain and modify the code, in case software requirements change, as seen in \ref{fig:method2}. In addition, there is no measure taken for overflows, so in case the \texttt{CreateCharacter} function gets called with an argument that is larger than the designed size, the result is miscalculated (\ref{apx:scalability:overflow}) 
+Method 2 is the most efficient in terms of gas, however the coding style used for it is extremely compact and non-verbose, which makes difficult to maintain and modify the code, in case software requirements change, as seen in \ref{fig:method2}. In addition, there is no measure taken for overflows, so in case the \texttt{CreateCharacter} function gets called with an argument that is larger than the designed size, the result is miscalculated.
 
 In an attempt to improve the readability and maintainability of the method by extracting the bit shifting logic to functions the deployment gains over Method 3 are in the range of 5\%, and the function costs differ in the range of 0.001\%, thus negating most of the gas efficiency advantages.
 

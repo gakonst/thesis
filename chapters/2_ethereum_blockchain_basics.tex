@@ -132,11 +132,7 @@ We describe the contents of the Account State shown in Figure \ref{fig:accounts}
 \end{enumerate}
 
 \subsection{Transactions} \label{transactions}
-A transaction is a specially formatted data structure that gets signed by an EOA\footnote{With the EOAs private key} and gets broadcasted to an Ethereum node. Figure \ref{fig:transaction} shows the contents of a transaction as seen after querying an Ethereum node for its contents.
-
-% In Bitcoin, the state is created through the Unspent Transaction Outputs set, which defines the amount of BTC  a user can spend. As Ethereum does not use UTXO but an account model, there needs to be a way to monitor the state. This is done through a data structure called Patricia State Trie \cite{Morrison:1968:PAR:321479.321481} which provides an efficient mapping of key and value pairs where the key is the address of the Ethereum account and the value is the Recursive Length Prefix encoding \cite{rlp} of the account's data. % TODO: Explain further or not? https://medium.com/cybermiles/diving-into-ethereums-world-state-c893102030ed %Whenever a transaction gets successfully mined, the world state gets updated accordingly.
-
-Specifically:
+A transaction is a specially formatted data structure that gets signed by an EOA\footnote{With the EOAs private key} and gets broadcasted to an Ethereum node. A transaction in Ethereum specifically contains the following:
 \begin{enumerate}
     \item \textbf{blockHash:} The hash of the block that included the transaction.
     \item \textbf{blockNumber:} The number of the block that included the transaction.
@@ -150,9 +146,9 @@ Specifically:
 \end{enumerate}
 
 \subsection{Blocks} \label{block}
-A block contains the block header and a list of transaction hashes for all of the included transactions in that block. Figure \ref{fig:block} shows the contents of a transaction as seen after querying an Ethereum node for its contents.
+A block contains the block header and a list of transaction hashes for all of the included transactions in that block. 
 
-Specifically:
+Specifically a block in Ethereum contains:
 \begin{enumerate}
     \item \textbf{difficulty:} The difficulty of the block.
     \item \textbf{extraData:} Extra data relevant to the block. Miners use it to claim credit for mining a block. In Bitcoin fields with extra data are used to let miners vote on a debate.
