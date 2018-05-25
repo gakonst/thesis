@@ -16,9 +16,9 @@ First of all, transactions per second as a metric is inaccurate. Solving scalabi
     The trilemma claims that blockchain systems can only at most have two of the following three properties:
 
     \begin{itemize}
-        \item Decentralization (defined as the system being able to run in a scenario where each participant only has access to $O(c)$ resources, ie. a regular laptop or small VPS)
-        \item Scalability (defined as being able to process $O(n) > O(c)$ transactions)
-        \item Security (defined as being secure against attackers with up to $O(n)$ resources)
+        \item Decentralization (defined as the system being able to run in a scenario where each participant only has access to $O(c)$ resources, ie. a regular laptop or small VPS).
+        \item Scalability (defined as being able to process $O(n) > O(c)$ transactions).
+        \item Security (defined as being secure against attackers with up to $O(n)$ resources).
     \end{itemize}
 \end{quote}
 
@@ -66,7 +66,7 @@ Gas costs get translated to transaction fees. As a result, a contract should be 
 
 % bytecontracts includes constructor and general initialisation contracts which is not needed anymore at runtime. The contracts that is sent during deployment (bytecontracts), even excluding the constructor arguments, is - in general - different from the contracts that is stored at that address (the runtimeBytecontracts).
 
-As seen in Table \ref{table:opcode_table}, the most expensive operations involve CREATE\footnote{Used to create a new contract.} and SSTORE\footnote{Used to store data operations}. The focus of this section will be to explore ways to decrease gas costs on Smart Contracts, either through better practices or by handcrafting optimizations for specific use cases.
+As seen in Table \ref{table:opcode_table}, the most expensive operations involve CREATE, CALL and SSTORE. The focus of this section will be to explore ways to decrease gas costs on Smart Contracts, either through better storage practices or by handcrafting optimizations for specific use cases. We choose to optimize the usage of SSTORE because it gets executed whenever a storage variable is modified, contrary to CREATE and CALL which get executed when a contract creates another contract or makes external calls to another contract.
 
 It should be noted, that non-standard methods have been proposed for reducing fees incurred by gas costs. A recent construction \cite{gastoken} describes a method of buying gas at low cost periods and saving it in order to spend it when gas prices are higher\footnote{When the network is congested}. The economic implications of gas arbitrage are outside the scope of this Master Thesis. 
 
@@ -101,7 +101,7 @@ The choice of variables in Table \ref{table:characteristics} is made to represen
 We will examine the gas costs for deployment and for calling each function for the following implementations:
 
 \begin{enumerate}
-    \item Packing of traits by utilizing Solidity's optimizer and \texttt{struct} variables
+    \item Packing of traits by utilizing Solidity's optimizer and \texttt{struct} variables.
     \item Manually pack traits in a \texttt{uint256} variable with masking and shifting.
     \item Manually pack traits in a \texttt{bytes32} variable (equivalent in length to \texttt{uint256}) with masking and shifting, utilizing Solidity Libraries, influenced by~\cite{virtualstruct}.
 \end{enumerate}
@@ -180,11 +180,11 @@ On the other hand, by comparing Method 1 (Figure \ref{fig:method1}) with Method 
 % similar gas efficiency when it comes to calling \texttt{CreateCharacter}. The increased deployment costs happen because it utilizes the \texttt{CharacterLib}, described in \ref{apx:scalability:lib}
 
 
-In order to effectively compare and evaluate which method is the most effective for the described use case, we evaluate on a weighted score based on \textit{Readability}, \textit{Portability}, \textit{Gas Efficiency} and \textit{Security}, as illustrated in Table \ref{table:weights}. The values of the weights are chosen based on the observations made on smart contract optimization with respect to security.
+In order to effectively compare and evaluate which method is the most effective for the described use case, we evaluate on a weighted score based on \textit{Readability}, \textit{Portability}, \textit{Gas Efficiency} and \textit{Security}, as illustrated in Table \ref{table:weights}. The values of the weights are chosen based on the observations made on smart contract optimization with respect to security. Compared to Method 2, Method 3's score higher on portability because it utilizes Libraries which by definition are more portable, and it also scores higher on security due to the ability to reuse code which has been audited and tested.
 
 \input{tables/weights.tex}
 
-Taking the above into consideration, we choose to use Method 3 in order to make the implementation described in Chapter \ref{ch:implementation} more gas efficient while retaining its readability and maintainability. The results of the evaluation are shown in Table \ref{table:evaluation}:
+The results of the evaluation are shown in Table \ref{table:evaluation}, on a scale of 0 to 5, with 5 being the highest value. Based on that, we choose to use Method 3 in order to make the implementation described in Chapter \ref{ch:implementation} more gas efficient while retaining its readability and maintainability. 
 
 \input{tables/evaluation.tex}
 

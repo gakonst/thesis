@@ -3,10 +3,10 @@
 We have described an ecosystem of smart contracts that combined with their corresponding client scripts can perform metering and billing of energy with complex business logic. We proceed to evaluate the performance of the implementation described in Chapter \ref{ch:implementation}, and explain how the findings from Chapter \ref{ch:scalability} and Chapter \ref{ch:security} are applied to enable better scalability and robustness in the contract design.
 
 \section{Scalability}
-On scalability, we applied Method 3 (\ref{method3}) and followed the rules from Section \ref{gas-costs} to save gas. More specifically:
+On scalability, we applied Method 3 (\ref{method3}) and followed the rules from Section \ref{gas-costs} to save gas. Method 2 was not evaluated on the smart contracts as it would require significant refactoring, and based on the results from Chapter \ref{ch:scalability} it is expected to have similar performance. More specifically:
 
 \begin{enumerate}
-    \item The optimizer flag was activated during compilation
+    \item The optimizer flag was activated during compilation.
     \item Using libraries via Method 3 for storing meter readings and department values resulted in significant code reuse, and reduction of gas costs. Table \ref{table:compare-gas} illustrates the gas savings that the proposed method provides, for each function of the contracts.
     \item Any meter, department that is no longer used can be deactivated, freeing up storage in the smart contract.
     \item Any iterations over arrays are initializing the break condition outside of the loop, reducing the number of \texttt{SLOAD} operations done and thus saving gas.
@@ -19,7 +19,16 @@ On scalability, we applied Method 3 (\ref{method3}) and followed the rules from 
 
 \section{Security}
 
-Having studied and understood past literature as well as attacks on smart contracts, the implementation is developed so that none of the known attacks can be reproduced. In Section \ref{slither} we evaluated that Slither can detect a wide variety of vulnerabilities, and can outperform at most cases the other available security auditing tools. Auditing our smart contracts through Slither showed no true positives which, given the past performance of the tool, gives us a high degree of confidence with regard to the robustness of the developed smart contracts against known attacks.
+Having studied and understood past literature as well as attacks on smart contracts, the implementation is developed so that none of the known attacks can be reproduced. In Section \ref{slither} we evaluated that Slither can detect a wide variety of vulnerabilities, and can outperform at most cases the other available security auditing tools. Given that the written code does not have
+\begin{enumerate}
+    \item Reentrant functions since there is no external call to an address controlled by an attacker.
+    \item Functions dependent on block inclusion time.
+    \item block.hash
+    \item tx.origin
+    \item Mappings inside structs.
+\end{enumerate} 
+
+the only vulnerabilities to look for are `Variable Shadowing' and `No Constructor'. The only tool able to find both of the issues is Slither, which gave no positive results for the written contracts. Mythril was also executed in order to detect `No Constructor', which also gave negative results. These results, give us confidence regarding the robustness of the developed smart contracts against known attacks. 
 
 We utilized and applied an access control list to the implemented smart contracts to enforce role based access control. Roles are allowed to access only the functions of a smart contract that they absolutely must have access to, following the security principle of least privilege. Each user is then granted a role, which provides a portable method to revoke and modify the permissions of a user. 
 

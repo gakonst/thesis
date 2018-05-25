@@ -126,8 +126,8 @@ The public key of an EOA is derived from the private key through elliptic curve 
 We describe the contents of the Account State shown in Figure \ref{fig:accounts} as follows:
 \begin{enumerate}
     \item \textbf{Nonce:} The number of transactions sent if it's an EOA, or the number of contracts created if it's a CA.
-    \item \textbf{Balance:} The account's balance denominated in `wei'\footnote{1 ether $= 10^{18}$ wei }
-    \item \textbf{Storage Hash:} The Merkle root of the account's storage contents. This is empty for EOAs
+    \item \textbf{Balance:} The account's balance denominated in `wei'\footnote{1 ether $= 10^{18}$ wei }.
+    \item \textbf{Storage Hash:} The Merkle root of the account's storage contents. This is empty for EOAs.
     \item \textbf{Code Hash:} The hash of the code of the account. For EOAs this field is the KECCAK-256 hash of the empty string (`') while for CAs it is the KECCAK-256 of the bytecode that exists at the CAs address.
 \end{enumerate}
 
@@ -221,9 +221,9 @@ Smart contracts are immutable once deployed which means that their deployed byte
 
 We provide a listing of the currently public test networks:
 \begin{enumerate}
-    \item Kovan: Proof of Authority consensus supported by Parity nodes only
-    \item Rinkeby: Proof of Authority consensus supported by Geth nodes only
-    \item Ropsten: Proof of Work consensus, supported by all node implementations, provides best simulation to the main network 
+    \item Kovan: Proof of Authority consensus supported by Parity nodes only.
+    \item Rinkeby: Proof of Authority consensus supported by Geth nodes only.
+    \item Ropsten: Proof of Work consensus, supported by all node implementations, provides best simulation to the main network.
     % https://ethereum.stackexchange.com/questions/27048/comparison-of-the-different-testnets
 \end{enumerate}
 % https://ethereum.stackexchange.com/questions/27048/comparison-of-the-different-testnets

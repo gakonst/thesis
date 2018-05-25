@@ -87,8 +87,8 @@ After that, we define a \texttt{mask} variable for each size of the datatypes we
 In Section \ref{ch:scalability:results} we made gas comparisons between the 3 developed methods, in order to determine which was the most efficient in terms of gas. The process followed for each implementation was:
 
 \begin{enumerate}
-  \item Compile the contract with $N$ optimizer runs, where $N$ in $[0, 1, 100, 500, 500000]$ 
-  \item Deploy the compiled ABI and Bytecode to a local testnet\footnote{We used ganache as a testnet.}
+  \item Compile the contract with $N$ optimizer runs, where $N$ in $[0, 1, 100, 500, 500000]$.
+  \item Deploy the compiled ABI and Bytecode to a local testnet\footnote{We used ganache as a testnet.}.
   \item Get gas costs for deployment.
   \item Execute each of the contract functions\footnote{The functions were called once since the gas costs are deterministically the same for all calls}.
   \item Get gas costs for each function call.
