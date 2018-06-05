@@ -21,9 +21,8 @@
 \pagestyle{fancy}
 \fancyhead{}
 \fancyhead[RO,LE]{Ethereum Master Thesis}
-\fancyfoot{:}
 \fancyfoot[LE,RO]{\thepage}
-\fancyfoot[C]{Chapter \thechapter}
+\fancyfoot[C]{\ifnum\value{chapter}>0 Chapter \thechapter \fi}
 \fancyfoot[RE,LO]{Georgios Konstantopoulos}
 \usepackage{etoolbox}
 
@@ -62,27 +61,21 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \graphicspath{ {images/} }
-
-\title{
-	{Decentralized Metering and Billing of energy on Ethereum with respect to scalability and security}\\
-	{Aristotle University of Thessaloniki}\\
-	{\large Honda R\&D Europe}\\
-}
-\author{Georgios Konstantopoulos}
-\date{}
 \setcounter{secnumdepth}{3} % default value for 'report' class is "2"
 
 
 % \loadglsentries{glossary}
 
 \begin{document}
-\maketitle
+
+\pagenumbering{Roman} 
+\input{title-page}
 \tableofcontents
-% \printglossaries
 \listoffigures
 \listoftables
 
 \input{chapters/0_abstract}
+\pagenumbering{arabic} 
 \input{chapters/1_introduction}
 \input{chapters/2_ethereum_blockchain_basics}
 \input{chapters/3_scalability_concerns}
