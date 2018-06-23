@@ -19,11 +19,16 @@
 % Setup Header / Footer
 \usepackage{fancyhdr}
 \pagestyle{fancy}
-\fancyhead{}
-\fancyhead[RO,LE]{Ethereum Master Thesis}
+\renewcommand{\chaptermark}[1]{%
+\markboth{#1}{}}
+% \fancyhead[RO,LE]{Decentralized Metering and Billing of energy on Ethereum with respect to scalability and security}
+
+\fancyhf{}
+
+\fancyhead[RE,LO]{\ifnum\value{chapter}>0 Chapter \thechapter: \leftmark \fi}
+
 \fancyfoot[LE,RO]{\thepage}
-\fancyfoot[C]{\ifnum\value{chapter}>0 Chapter \thechapter \fi}
-\fancyfoot[RE,LO]{Georgios Konstantopoulos}
+% \fancyfoot[RE,LO]{Georgios Konstantopoulos}
 \usepackage{etoolbox}
 
 % \usepackage{glossaries}
