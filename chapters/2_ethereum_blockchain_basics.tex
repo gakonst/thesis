@@ -3,7 +3,7 @@
 \section{General Background}
 Before getting into the specifics of blockchains and Ethereum, this section will be used to explain fundamental terms of cryptography (hash functions and public key cryptography) and blockchain.
 
-A blockchain can be described as a list of \textit{blocks} that grows over time. Each block contains various metadata (called \textit{block headers}) and a list of transactions. A block is linked to another block by referencing its \textit{hash}. A blockchain gets formed when each existing block has a valid reference to the previous block. It is the case that as more blocks get added to a blockchain, older blocks and their contents are considered to be more secure.
+A blockchain can be described as a list of \textit{blocks} that grows over time. Each block contains various metadata (called \textit{block headers}) and a list of transactions~\footnote{A transaction can be either a transfer of value between multiple parties or in more complex cases a call to an executable function of a smart contract}. A block is linked to another block by referencing its \textit{hash}. A blockchain gets formed when each existing block has a valid reference to the previous block. It is the case that as more blocks get added to a blockchain, older blocks and their contents are considered to be more secure.
 
 Any future reference to blockchain terminology such as the contents of a block or a transaction will be specific to the implementations of the Ethereum Platform. The Ethereum Yellowpaper provides details on the formal definitions and contents of each term~\cite{ethereum}.
 
@@ -113,7 +113,7 @@ That way, instead of storing the whole tree of transactions, nodes can verify if
 \input{figures/ch2/merkle-proof.tex}
 
 \subsubsection{Account State}
-An ethereum account is a mapping between an address and an account state. There are two kinds of accounts, \textit{Externally Owned Accounts} (EOA) and \textit{Contract Accounts} (CA). EOAs are controlled by their Private Key and cannot contain EVM code. CAs contain EVM code and are controlled by the EVM code,
+An ethereum account is a mapping between an address and an account state. There are two kinds of accounts, \textit{Externally Owned Accounts} (EOA) and \textit{Contract Accounts} (CA). EOAs are controlled by their Private Key and cannot contain EVM code. CAs contain EVM code and are controlled by the EVM code.
 
 \input{figures/ch2/accounts.tex}
 
@@ -190,7 +190,7 @@ In the case of a successful transaction, the consumed gas from \textit{gasLimit}
 \input{figures/ch2/successful-tx.tex}
 
 \subsubsection{Failed Transaction}
-A transaction can fail for reasons such as not being given enough gas for its computations, or some exception occurring during its execution. In this case, any gas consumed goes to the miners and any state changes that would happen are reverted. This is similar to the SQL transaction commit-rollback pattern.
+A transaction can fail for reasons such as not being given enough gas for its computations, or some exception occurring during its execution. In this case, any gas consumed goes to the miners and any state changes that would happen are reverted. This is similar to the SQL transaction commit-rollback pattern~\footnote{\url{https://docs.microsoft.com/en-us/sql/t-sql/language-elements/transactions-transact-sql}}.
 
 \input{figures/ch2/failed-tx.tex}
 
